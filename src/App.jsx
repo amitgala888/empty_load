@@ -1,3 +1,4 @@
+import { supabase } from './supabase'
 import { useState, useEffect } from "react";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -757,13 +758,20 @@ function PostLoad({ loads, setLoads, truckerName }) {
     setPreview({ from, to, date, via, truckerName, truckType, contact });
   };
 
-  const handleSubmit = () => {
-    const via = getCitiesAlongRoute(from, to);
-    const newLoad = { id: Date.now(), truckerName, truckType, from, to, date, via, contact };
-    setLoads([newLoad, ...loads]);
-    setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPreview(null); }, 3000);
-  };
+  const handleSubmit = async () => {
+  const via = getCitiesAlongRoute(from, to)
+  await supabase.from('loads').insert({
+    trucker_name: truckerName,
+    truck_type: truckType,
+    from_city: from,
+    to_city: to,
+    via_cities: via.join(','),
+    contact,
+    date,
+  })
+  // refresh loads after posting
+  window.location.reload()
+}
 
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
@@ -1456,7 +1464,26 @@ function LoginScreen({ onLogin }) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
-  const [loads, setLoads] = useState(SEED_LOADS);
+  const [loads, setLoads] = useState([])
+ 
+useEffect(() => {
+  async function fetchLoads() {
+    const { data } = await supabase
+      .from('loads')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (data) setLoads(data.map(l => ({
+      ...l,
+      from: l.from_city,
+      to: l.to_city,
+      via: l.via_cities ? l.via_cities.split(',') : [],
+      truckerName: l.trucker_name,
+      truckType: l.truck_type,
+    })))
+  }
+  fetchLoads()
+}, [])
+	
 
   if (!user) return <LoginScreen onLogin={setUser} />;
 
