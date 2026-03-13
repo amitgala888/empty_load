@@ -1,4 +1,3 @@
-import { supabase } from './supabase'
 import { useState, useEffect } from "react";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -688,8 +687,15 @@ const Badge = ({ children, color = "#f59e0b" }) => (
   }}>{children}</span>
 );
 
-const LoadCard = ({ load, highlight, currentUser }) => {
+const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
+  const [showContact, setShowContact] = useState(false);
   const isOwner = currentUser && currentUser.name === load.truckerName;
+
+  const handleContactClick = () => {
+    if (showContact) { setShowContact(false); return; }
+    const allowed = onRevealAttempt ? onRevealAttempt(load) : true;
+    if (allowed) setShowContact(true);
+  };
 
   return (
   <div style={{
@@ -723,7 +729,36 @@ const LoadCard = ({ load, highlight, currentUser }) => {
       </div>
       <div style={{ textAlign: "right" }}>
         <div style={{ color: "#f59e0b", fontWeight: 700, fontSize: 14 }}>📅 {load.date}</div>
-        <div style={{ color: "#6ee7b7", fontSize: 13, marginTop: 4 }}>📞 {load.contact || "—"}</div>
+        <div style={{ marginTop: 8 }}>
+          {showContact ? (
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "#065f4633", border: "1px solid #22c55e55",
+              borderRadius: 7, padding: "7px 14px",
+            }}>
+              <span style={{ fontSize: 16 }}>📞</span>
+              <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15, letterSpacing: 0.5 }}>{load.contact || "—"}</span>
+              <button onClick={() => setShowContact(false)} style={{
+                background: "none", border: "none", color: "#4b5563",
+                cursor: "pointer", fontSize: 14, padding: "0 2px", lineHeight: 1,
+              }}>✕</button>
+            </div>
+          ) : (
+            <button onClick={handleContactClick} style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              background: "#1f2937", color: "#f9fafb",
+              border: "2px solid #374151", borderRadius: 7,
+              padding: "7px 16px", fontSize: 13, fontWeight: 700,
+              cursor: "pointer", fontFamily: "'Barlow', sans-serif",
+              transition: "all .15s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#22c55e"; e.currentTarget.style.color = "#111827"; e.currentTarget.style.borderColor = "#22c55e"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#1f2937"; e.currentTarget.style.color = "#f9fafb"; e.currentTarget.style.borderColor = "#374151"; }}
+            >
+              📞 Contact Number
+            </button>
+          )}
+        </div>
       </div>
     </div>
     {load.via.length > 0 && (
@@ -758,20 +793,13 @@ function PostLoad({ loads, setLoads, truckerName }) {
     setPreview({ from, to, date, via, truckerName, truckType, contact });
   };
 
-  const handleSubmit = async () => {
-  const via = getCitiesAlongRoute(from, to)
-  await supabase.from('loads').insert({
-    trucker_name: truckerName,
-    truck_type: truckType,
-    from_city: from,
-    to_city: to,
-    via_cities: via.join(','),
-    contact,
-    date,
-  })
-  // refresh loads after posting
-  window.location.reload()
-}
+  const handleSubmit = () => {
+    const via = getCitiesAlongRoute(from, to);
+    const newLoad = { id: Date.now(), truckerName, truckType, from, to, date, via, contact };
+    setLoads([newLoad, ...loads]);
+    setSubmitted(true);
+    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPreview(null); }, 3000);
+  };
 
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
@@ -879,7 +907,7 @@ function PostLoad({ loads, setLoads, truckerName }) {
   );
 }
 
-function FindLoad({ loads, currentUser }) {
+function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimit, timeLeft }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
@@ -936,9 +964,14 @@ function FindLoad({ loads, currentUser }) {
 
       {searched && (
         <>
-          <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <div style={{ fontSize: 14, color: "#9ca3af" }}>
               Found <span style={{ color: results.length > 0 ? "#22c55e" : "#f87171", fontWeight: 700 }}>{results.length}</span> matching truck{results.length !== 1 ? "s" : ""} for <span style={{ color: "#f9fafb", fontWeight: 600 }}>{from} → {to}</span>
+            </div>
+            <div style={{ fontSize: 12, background: revealCount >= revealLimit ? "#7f1d1d33" : "#1f2937", border: `1px solid ${revealCount >= revealLimit ? "#dc262644" : "#374151"}`, borderRadius: 6, padding: "5px 12px", color: revealCount >= revealLimit ? "#f87171" : "#9ca3af" }}>
+              {revealCount >= revealLimit
+                ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
+                : `📞 ${revealCount}/${revealLimit} reveals used today`}
             </div>
           </div>
 
@@ -951,7 +984,7 @@ function FindLoad({ loads, currentUser }) {
             </div>
           ) : (
             results.map((l) => (
-              <LoadCard key={l.id} load={l} highlight={true} currentUser={currentUser} />
+              <LoadCard key={l.id} load={l} highlight={true} currentUser={currentUser} onRevealAttempt={onRevealAttempt} />
             ))
           )}
         </>
@@ -1380,11 +1413,11 @@ function LoginScreen({ onLogin }) {
   const [error, setError] = useState("");
 
   const USERS = {
-    admin: { password: "admin123", role: "admin", name: "Admin" },
-    rajan: { password: "truck123", role: "trucker", name: "Rajan Yadav" },
-    suresh: { password: "truck123", role: "trucker", name: "Suresh Kumar" },
-    amol: { password: "truck123", role: "trucker", name: "Amol Patil" },
-    demo: { password: "demo123", role: "trucker", name: "Demo Trucker" },
+    admin: { password: "admin123", role: "admin", name: "Admin", contact: "—" },
+    rajan: { password: "truck123", role: "trucker", name: "Rajan Yadav", contact: "98765-43210" },
+    suresh: { password: "truck123", role: "trucker", name: "Suresh Kumar", contact: "87654-32109" },
+    amol: { password: "truck123", role: "trucker", name: "Amol Patil", contact: "76543-21098" },
+    demo: { password: "demo123", role: "trucker", name: "Demo Trucker", contact: "99999-00000" },
   };
 
   const handleLogin = () => {
@@ -1392,7 +1425,7 @@ function LoginScreen({ onLogin }) {
     if (!user || user.password !== password) { setError("Invalid credentials. Try demo/demo123"); return; }
     if (mode === "admin" && user.role !== "admin") { setError("Not an admin account."); return; }
     if (mode === "trucker" && user.role !== "trucker") { setError("Not a trucker account."); return; }
-    onLogin({ username, name: user.name, role: user.role });
+    onLogin({ username, name: user.name, role: user.role, contact: user.contact });
   };
 
   return (
@@ -1460,32 +1493,175 @@ function LoginScreen({ onLogin }) {
   );
 }
 
+// ─── Enquiries Panel ──────────────────────────────────────────────────────────
+function EnquiriesPanel({ enquiries, truckerName }) {
+  return (
+    <div style={{ maxWidth: 700, margin: "0 auto" }}>
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
+          📬 ENQUIRIES
+        </h2>
+        <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>
+          Users who tried to contact you after reaching their reveal limit. Call them back!
+        </p>
+      </div>
+
+      {enquiries.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "64px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 14 }}>
+          <div style={{ fontSize: 48 }}>📭</div>
+          <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>No Enquiries Yet</div>
+          <div style={{ marginTop: 8, fontSize: 14, color: "#6b7280" }}>When someone tries to contact you after using their 2 free reveals, their details will appear here.</div>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {[...enquiries].reverse().map((e, i) => (
+            <div key={e.id} style={{
+              background: "#111827",
+              border: "2px solid #22c55e33",
+              borderRadius: 12,
+              padding: "18px 20px",
+              position: "relative",
+              boxShadow: "0 0 16px #22c55e11",
+            }}>
+              {/* New badge for latest */}
+              {i === 0 && (
+                <div style={{ position: "absolute", top: -10, right: 14 }}>
+                  <Badge color="#22c55e">🆕 NEW</Badge>
+                </div>
+              )}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+                {/* Inquirer info */}
+                <div>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                    👤 {e.inquirerName}
+                  </div>
+                  <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#065f4622", border: "1px solid #22c55e44", borderRadius: 7, padding: "6px 12px", width: "fit-content" }}>
+                      <span style={{ fontSize: 15 }}>📞</span>
+                      <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15 }}>{e.inquirerContact}</span>
+                    </div>
+                    <div style={{ fontSize: 13, color: "#9ca3af", marginTop: 2 }}>
+                      Interested in your load: <span style={{ color: "#f9fafb", fontWeight: 600 }}>{e.loadFrom} → {e.loadTo}</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>
+                      🚛 {e.truckType}
+                    </div>
+                  </div>
+                </div>
+                {/* Date / time */}
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <div style={{ fontSize: 13, color: "#f59e0b", fontWeight: 700 }}>📅 {e.date}</div>
+                  <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>🕐 {e.time}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {enquiries.length > 0 && (
+        <div style={{ marginTop: 16, fontSize: 12, color: "#4b5563", textAlign: "center" }}>
+          Showing {enquiries.length} enquir{enquiries.length === 1 ? "y" : "ies"} — enquirer's reveal limit resets every 24 hours
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main App ─────────────────────────────────────────────────────────────────
+// ─── Reveal quota helpers (24-hour reset via localStorage) ───────────────────
+const QUOTA_KEY = "truckroute_reveal_quota";
+const REVEAL_LIMIT = 2;
+
+function getQuota() {
+  try {
+    const raw = localStorage.getItem(QUOTA_KEY);
+    if (!raw) return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
+    const q = JSON.parse(raw);
+    if (Date.now() > q.resetAt) {
+      // 24 hours passed — reset
+      const fresh = { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
+      localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
+      return fresh;
+    }
+    return q;
+  } catch { return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 }; }
+}
+
+function saveQuota(q) {
+  try { localStorage.setItem(QUOTA_KEY, JSON.stringify(q)); } catch {}
+}
+
+function msUntilReset() {
+  try {
+    const raw = localStorage.getItem(QUOTA_KEY);
+    if (!raw) return 24 * 60 * 60 * 1000;
+    const q = JSON.parse(raw);
+    return Math.max(0, q.resetAt - Date.now());
+  } catch { return 0; }
+}
+
+function formatTimeLeft(ms) {
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
-  const [loads, setLoads] = useState([])
- 
-useEffect(() => {
-  async function fetchLoads() {
-    const { data } = await supabase
-      .from('loads')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (data) setLoads(data.map(l => ({
-      ...l,
-      from: l.from_city,
-      to: l.to_city,
-      via: l.via_cities ? l.via_cities.split(',') : [],
-      truckerName: l.trucker_name,
-      truckType: l.truck_type,
-    })))
-  }
-  fetchLoads()
-}, [])
-	
+  const [loads, setLoads] = useState(SEED_LOADS);
+  const [revealCount, setRevealCount] = useState(() => getQuota().count);
+  const [enquiries, setEnquiries] = useState([]);
+  const [limitPopup, setLimitPopup] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(() => msUntilReset());
+
+  // Tick every minute to update the "resets in X" display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const q = getQuota(); // also auto-resets if 24h passed
+      setRevealCount(q.count);
+      setTimeLeft(msUntilReset());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Called by LoadCard when user taps "Contact Number"
+  const handleRevealAttempt = (load) => {
+    const q = getQuota();
+    if (q.count >= REVEAL_LIMIT) {
+      const now = new Date();
+      setEnquiries(prev => [...prev, {
+        id: Date.now(),
+        inquirerName: user.name,
+        inquirerContact: user.contact || "Not provided",
+        loadId: load.id,
+        loadFrom: load.from,
+        loadTo: load.to,
+        loadTruckerName: load.truckerName,
+        truckType: load.truckType || "—",
+        date: now.toLocaleDateString("en-IN"),
+        time: now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+      }]);
+      setLimitPopup(true);
+      return false;
+    }
+    const updated = { ...q, count: q.count + 1 };
+    saveQuota(updated);
+    setRevealCount(updated.count);
+    return true;
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setActiveTab("post");
+  };
 
   if (!user) return <LoginScreen onLogin={setUser} />;
+
+  // Count new enquiries for the logged-in trucker
+  const myEnquiries = enquiries.filter(e => e.loadTruckerName === user.name);
 
   return (
     <div style={{ minHeight: "100vh", background: "#030712", fontFamily: "'Barlow', sans-serif", color: "#f9fafb" }}>
@@ -1494,6 +1670,31 @@ useEffect(() => {
 
       {/* Subtle grid bg */}
       <div style={{ position: "fixed", inset: 0, backgroundImage: "linear-gradient(#ffffff03 1px, transparent 1px), linear-gradient(90deg, #ffffff03 1px, transparent 1px)", backgroundSize: "40px 40px", zIndex: 0 }} />
+
+      {/* Limit Popup */}
+      {limitPopup && (
+        <div style={{ position: "fixed", inset: 0, background: "#000000cc", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "#111827", border: "2px solid #f59e0b", borderRadius: 16, padding: "36px 32px", maxWidth: 380, width: "100%", textAlign: "center", boxShadow: "0 0 60px #f59e0b33" }}>
+            <div style={{ fontSize: 52, marginBottom: 12 }}>🚛</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1, marginBottom: 12 }}>
+              Truck Owner will Call You
+            </div>
+            <div style={{ fontSize: 15, color: "#9ca3af", lineHeight: 1.6, marginBottom: 24 }}>
+              Thank you for using our Service.<br/>
+              <span style={{ color: "#6b7280", fontSize: 13 }}>The truck owner has been notified and will contact you shortly.</span>
+            </div>
+            <button onClick={() => setLimitPopup(false)} style={{
+              width: "100%", padding: "12px", background: "#f59e0b", color: "#111827",
+              border: "none", borderRadius: 8, fontWeight: 900, fontSize: 15, cursor: "pointer",
+              fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase",
+            }}>OK, Got It</button>
+            <div style={{ marginTop: 14, fontSize: 12, color: "#4b5563" }}>
+              You've reached the limit of {REVEAL_LIMIT} contact reveals per 24 hours.<br/>
+              <span style={{ color: "#6b7280" }}>Resets in {formatTimeLeft(timeLeft)}.</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <header style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
@@ -1504,11 +1705,19 @@ useEffect(() => {
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          {/* Reveal counter badge */}
+          {user.role === "trucker" && (
+            <div style={{ background: "#1f2937", border: "1px solid #374151", borderRadius: 8, padding: "5px 12px", fontSize: 12, color: revealCount >= REVEAL_LIMIT ? "#f87171" : "#9ca3af" }}>
+                {revealCount >= REVEAL_LIMIT
+                  ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
+                  : `📞 ${revealCount}/${REVEAL_LIMIT} reveals used today`}
+              </div>
+          )}
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#f9fafb" }}>{user.name}</div>
             <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 2, textTransform: "uppercase" }}>{user.role}</div>
           </div>
-          <button onClick={() => setUser(null)}
+          <button onClick={handleLogout}
             style={{ padding: "7px 14px", background: "#1f2937", color: "#9ca3af", border: "1px solid #374151", borderRadius: 6, fontSize: 12, cursor: "pointer", fontFamily: "'Barlow', sans-serif", fontWeight: 600 }}>
             Logout
           </button>
@@ -1521,10 +1730,12 @@ useEffect(() => {
           {[
             { key: "post", label: "📤 Post Empty Load" },
             { key: "find", label: "🔍 Find Empty Load" },
+            { key: "enquiries", label: `📬 Enquiries${myEnquiries.length > 0 ? ` (${myEnquiries.length})` : ""}` },
           ].map((t) => (
             <button key={t.key} onClick={() => setActiveTab(t.key)}
               style={{
-                padding: "16px 24px", background: "transparent", color: activeTab === t.key ? "#f59e0b" : "#6b7280",
+                padding: "16px 24px", background: "transparent",
+                color: activeTab === t.key ? "#f59e0b" : t.key === "enquiries" && myEnquiries.length > 0 ? "#22c55e" : "#6b7280",
                 border: "none", borderBottom: activeTab === t.key ? "3px solid #f59e0b" : "3px solid transparent",
                 fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Barlow', sans-serif", transition: "all .2s", letterSpacing: 0.5,
               }}>
@@ -1538,7 +1749,8 @@ useEffect(() => {
       <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "32px 20px" }}>
         {user.role === "admin" && <AdminPanel loads={loads} setLoads={setLoads} currentUser={user} />}
         {user.role === "trucker" && activeTab === "post" && <PostLoad loads={loads} setLoads={setLoads} truckerName={user.name} currentUser={user} />}
-        {user.role === "trucker" && activeTab === "find" && <FindLoad loads={loads} currentUser={user} />}
+        {user.role === "trucker" && activeTab === "find" && <FindLoad loads={loads} currentUser={user} onRevealAttempt={handleRevealAttempt} revealCount={revealCount} revealLimit={REVEAL_LIMIT} timeLeft={timeLeft} />}
+        {user.role === "trucker" && activeTab === "enquiries" && <EnquiriesPanel enquiries={myEnquiries} truckerName={user.name} />}
       </main>
     </div>
   );
