@@ -1876,31 +1876,37 @@ function EnquiriesPanel({ enquiries, truckerName }) {
 
 // --- Main App -----------------------------------------------------------------
 // --- Reveal quota helpers (24-hour reset via localStorage) -------------------
-const QUOTA_KEY = "truckroute_reveal_quota";
+const QUOTA_KEY_PREFIX = "truckroute_reveal_quota_";
 const REVEAL_LIMIT = 2;
 
-function getQuota() {
+function getUserQuotaKey(email) {
+  // Use email (or fallback) as unique key per user
+  return QUOTA_KEY_PREFIX + (email || "guest").replace(/[^a-zA-Z0-9]/g, "_");
+}
+
+function getQuota(email) {
   try {
-    const raw = localStorage.getItem(QUOTA_KEY);
+    const key = getUserQuotaKey(email);
+    const raw = localStorage.getItem(key);
     if (!raw) return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
     const q = JSON.parse(raw);
     if (Date.now() > q.resetAt) {
-      // 24 hours passed - reset
       const fresh = { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
-      localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
+      localStorage.setItem(key, JSON.stringify(fresh));
       return fresh;
     }
     return q;
   } catch { return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 }; }
 }
 
-function saveQuota(q) {
-  try { localStorage.setItem(QUOTA_KEY, JSON.stringify(q)); } catch {}
+function saveQuota(q, email) {
+  try { localStorage.setItem(getUserQuotaKey(email), JSON.stringify(q)); } catch {}
 }
 
-function msUntilReset() {
+function msUntilReset(email) {
   try {
-    const raw = localStorage.getItem(QUOTA_KEY);
+    const key = getUserQuotaKey(email);
+    const raw = localStorage.getItem(key);
     if (!raw) return 24 * 60 * 60 * 1000;
     const q = JSON.parse(raw);
     return Math.max(0, q.resetAt - Date.now());
@@ -1959,20 +1965,25 @@ export default function App() {
     setLoadsState(resolved);
     try { localStorage.setItem("truckroute_loads", JSON.stringify(resolved)); } catch {}
   };
-  const [revealCount, setRevealCount] = useState(() => getQuota().count);
+  const [revealCount, setRevealCount] = useState(0);
   const [enquiries, setEnquiries] = useState([]);
   const [limitPopup, setLimitPopup] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(() => msUntilReset());
+  const [timeLeft, setTimeLeft] = useState(24 * 60 * 60 * 1000);
 
-  // Tick every minute to update the "resets in X" display
+  // Load quota when user logs in, and tick every minute
   useEffect(() => {
+    if (!user) return;
+    const email = user.email || "";
+    const q = getQuota(email);
+    setRevealCount(q.count);
+    setTimeLeft(msUntilReset(email));
     const interval = setInterval(() => {
-      const q = getQuota(); // also auto-resets if 24h passed
-      setRevealCount(q.count);
-      setTimeLeft(msUntilReset());
+      const q2 = getQuota(email);
+      setRevealCount(q2.count);
+      setTimeLeft(msUntilReset(email));
     }, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   // Send email notification via Supabase Edge Function
   const sendEmailNotification = async (load, inquirer, type) => {
@@ -2004,7 +2015,8 @@ export default function App() {
 
   // Called by LoadCard when user taps "Contact Number"
   const handleRevealAttempt = (load) => {
-    const q = getQuota();
+    const email = user.email || "";
+    const q = getQuota(email);
     if (q.count >= REVEAL_LIMIT) {
       const now = new Date();
       setEnquiries(prev => [...prev, {
@@ -2019,13 +2031,13 @@ export default function App() {
         date: now.toLocaleDateString("en-IN"),
         time: now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
       }]);
-      // Send email — limit exceeded case
+      // Send email - limit exceeded case
       sendEmailNotification(load, user, "limit");
       setLimitPopup(true);
       return false;
     }
     const updated = { ...q, count: q.count + 1 };
-    saveQuota(updated);
+    saveQuota(updated, email);
     setRevealCount(updated.count);
     return true;
   };
