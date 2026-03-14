@@ -729,7 +729,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
           {load.from} <span style={{ color: "#f59e0b" }}>→</span> {load.to}
         </div>
         <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}>
-          ? {load.truckType || load.truckNo || "-"} &nbsp;|&nbsp; ? {load.truckerName}
+          🚛 {load.truckType || load.truckNo || "-"} &nbsp;|&nbsp; 👤 {load.truckerName}
         </div>
       </div>
       <div style={{ textAlign: "right" }}>
@@ -760,7 +760,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
               onMouseEnter={e => { e.currentTarget.style.background = "#22c55e"; e.currentTarget.style.color = "#111827"; e.currentTarget.style.borderColor = "#22c55e"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "#1f2937"; e.currentTarget.style.color = "#f9fafb"; e.currentTarget.style.borderColor = "#374151"; }}
             >
-              ? Contact Number
+              📞 Contact Number
             </button>
           )}
         </div>
@@ -783,16 +783,17 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
 }
 
 // --- Pages --------------------------------------------------------------------
-function PostLoad({ loads, setLoads, truckerName }) {
+function PostLoad({ loads, setLoads, truckerName, currentUser }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [truckType, setTruckType] = useState("");
   const [contact, setContact] = useState("");
   const [postDuration, setPostDuration] = useState(0);
+  const [notifyByEmail, setNotifyByEmail] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [preview, setPreview] = useState(null);
-  const [editingId, setEditingId] = useState(null); // id of load being edited
+  const [editingId, setEditingId] = useState(null);
 
   const handlePreview = () => {
     if (!from || !to || !date) return;
@@ -803,24 +804,24 @@ function PostLoad({ loads, setLoads, truckerName }) {
   const handleSubmit = () => {
     const via = getCitiesAlongRoute(from, to);
     if (editingId) {
-      // Update existing load
       setLoads(loads.map(l => l.id === editingId
-        ? { ...l, truckType, from, to, date, via, contact, postDuration: Number(postDuration) }
+        ? { ...l, truckType, from, to, date, via, contact, postDuration: Number(postDuration), notifyByEmail, ownerEmail: currentUser?.email || "" }
         : l
       ));
       setEditingId(null);
     } else {
-      // New load
       const newLoad = {
         id: Date.now(),
         truckerName, truckType, from, to, date, via, contact,
         postDuration: Number(postDuration),
+        notifyByEmail,
+        ownerEmail: currentUser?.email || "",
         postedAt: Date.now(),
       };
       setLoads([newLoad, ...loads]);
     }
     setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setPreview(null); }, 3000);
+    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null); }, 3000);
   };
 
   const handleEdit = (load) => {
@@ -831,15 +832,15 @@ function PostLoad({ loads, setLoads, truckerName }) {
     setTruckType(load.truckType || "");
     setContact(load.contact || "");
     setPostDuration(load.postDuration || 0);
+    setNotifyByEmail(load.notifyByEmail || false);
     setPreview(null);
     setSubmitted(false);
-    // Scroll to top of form
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setPreview(null);
+    setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null);
   };
 
   const handleDeleteFromEdit = () => {
@@ -961,6 +962,30 @@ function PostLoad({ loads, setLoads, truckerName }) {
         </div>
       </div>
 
+      {/* Email Notification Checkbox */}
+      <div style={{ marginBottom: 20, background: "#111827", border: `2px solid ${notifyByEmail ? "#f59e0b55" : "#1f2937"}`, borderRadius: 10, padding: "14px 16px", transition: "border-color .2s" }}>
+        <label style={{ display: "flex", alignItems: "flex-start", gap: 12, cursor: "pointer" }}>
+          <div style={{ position: "relative", flexShrink: 0, marginTop: 2 }}>
+            <input
+              type="checkbox"
+              checked={notifyByEmail}
+              onChange={e => setNotifyByEmail(e.target.checked)}
+              style={{ width: 18, height: 18, accentColor: "#f59e0b", cursor: "pointer" }}
+            />
+          </div>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: notifyByEmail ? "#f59e0b" : "#f9fafb" }}>
+              📧 Notify me by email when someone tries to contact me
+            </div>
+            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4, lineHeight: 1.5 }}>
+              {notifyByEmail
+                ? `You will receive an email at ${currentUser?.email || "your signup email"} whenever someone exceeds their daily reveal limit but still tries to view your contact number. Their name and mobile number will be included so you can call them back.`
+                : "Tick this box to receive an email alert with the caller's details when they exceed their daily contact reveal limit."}
+            </div>
+          </div>
+        </label>
+      </div>
+
       <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <button onClick={handlePreview} disabled={!from || !to || !date}
           style={{ flex: 1, padding: "12px 20px", background: "#1f2937", color: "#f9fafb", border: "2px solid #374151", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Barlow', sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
@@ -1074,8 +1099,8 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
             </div>
             <div style={{ fontSize: 12, background: revealCount >= revealLimit ? "#7f1d1d33" : "#1f2937", border: `1px solid ${revealCount >= revealLimit ? "#dc262644" : "#374151"}`, borderRadius: 6, padding: "5px 12px", color: revealCount >= revealLimit ? "#f87171" : "#9ca3af" }}>
               {revealCount >= revealLimit
-                ? `? Limit reached ? resets in ${formatTimeLeft(timeLeft)}`
-                : `? ${revealCount}/${revealLimit} reveals used today`}
+                ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
+                : `📞 ${revealCount}/${revealLimit} reveals used today`}
             </div>
           </div>
 
@@ -1125,7 +1150,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
 
   // -- Top routes --
   const routeCounts = loads.reduce((acc, l) => {
-    const key = `${l.from} ? ${l.to}`;
+    const key = `${l.from} → ${l.to}`;
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
@@ -1366,7 +1391,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                       <div style={{ fontSize: 16, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>{name}</div>
                       {latestLoad && (
                         <div style={{ fontSize: 12, color: "#6b7280", marginTop: 3 }}>
-                          Last route: {latestLoad.from} ? {latestLoad.to} on {latestLoad.date}
+                          Last route: {latestLoad.from} → {latestLoad.to} on {latestLoad.date}
                         </div>
                       )}
                       {truckTypes.length > 0 && (
@@ -1381,7 +1406,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     </div>
                     {latestLoad?.contact && (
                       <div style={{ fontSize: 13, color: "#6ee7b7", fontFamily: "monospace", background: "#065f4622", border: "1px solid #065f4644", borderRadius: 6, padding: "6px 10px" }}>
-                        ? {latestLoad.contact}
+                        📞 {latestLoad.contact}
                       </div>
                     )}
                   </div>
@@ -1527,8 +1552,8 @@ function LoginScreen({ onLogin }) {
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
 
-  const ADMIN_EMAIL    = "amitgala888@gmail.com";
-  const ADMIN_PASSWORD = "AdminAdmin444*";
+  const ADMIN_EMAIL    = "admin@truckroute.in";
+  const ADMIN_PASSWORD = "Admin@TruckRoute2024";
 
   const inputStyle = {
     width: "100%", background: "#0d1117", color: "#f9fafb",
@@ -1557,6 +1582,7 @@ function LoginScreen({ onLogin }) {
         name:    profile?.full_name || email,
         role:    "trucker",
         contact: profile?.contact   || "",
+        email,
       });
     } catch (e) { setError("Something went wrong. Please try again."); }
     setLoading(false);
@@ -1582,7 +1608,7 @@ function LoginScreen({ onLogin }) {
         contact:   contact,
         role:      "trucker",
       });
-      onLogin({ name: fullName, role: "trucker", contact });
+      onLogin({ name: fullName, role: "trucker", contact, email });
     } catch (e) { setError("Something went wrong. Please try again."); }
     setLoading(false);
   };
@@ -1779,7 +1805,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
-          ? ENQUIRIES
+          📬 ENQUIRIES
         </h2>
         <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>
           Users who tried to contact you after reaching their reveal limit. Call them back!
@@ -1813,7 +1839,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
                 {/* Inquirer info */}
                 <div>
                   <div style={{ fontSize: 17, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
-                    ? {e.inquirerName}
+                    👤 {e.inquirerName}
                   </div>
                   <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#065f4622", border: "1px solid #22c55e44", borderRadius: 7, padding: "6px 12px", width: "fit-content" }}>
@@ -1821,10 +1847,10 @@ function EnquiriesPanel({ enquiries, truckerName }) {
                       <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15 }}>{e.inquirerContact}</span>
                     </div>
                     <div style={{ fontSize: 13, color: "#9ca3af", marginTop: 2 }}>
-                      Interested in your load: <span style={{ color: "#f9fafb", fontWeight: 600 }}>{e.loadFrom} ? {e.loadTo}</span>
+                      Interested in your load: <span style={{ color: "#f9fafb", fontWeight: 600 }}>{e.loadFrom} → {e.loadTo}</span>
                     </div>
                     <div style={{ fontSize: 12, color: "#6b7280" }}>
-                      ? {e.truckType}
+                      🚛 {e.truckType}
                     </div>
                   </div>
                 </div>
@@ -1936,6 +1962,28 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Send email notification via Supabase Edge Function
+  const sendEmailNotification = async (load, inquirer, type) => {
+    if (!load.notifyByEmail || !load.ownerEmail) return;
+    try {
+      await supabase.functions.invoke("send-contact-email", {
+        body: {
+          ownerEmail: load.ownerEmail,
+          ownerName: load.truckerName,
+          loadFrom: load.from,
+          loadTo: load.to,
+          loadDate: load.date,
+          inquirerName: inquirer.name,
+          inquirerContact: inquirer.contact || "Not provided",
+          type, // "reveal" or "limit"
+          timestamp: new Date().toLocaleString("en-IN"),
+        },
+      });
+    } catch (e) {
+      console.warn("Email notification failed:", e);
+    }
+  };
+
   // Called by LoadCard when user taps "Contact Number"
   const handleRevealAttempt = (load) => {
     const q = getQuota();
@@ -1953,6 +2001,8 @@ export default function App() {
         date: now.toLocaleDateString("en-IN"),
         time: now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
       }]);
+      // Send email — limit exceeded case
+      sendEmailNotification(load, user, "limit");
       setLimitPopup(true);
       return false;
     }
@@ -2061,8 +2111,8 @@ export default function App() {
           {user.role === "trucker" && (
             <div className="tr-reveal-badge" style={{ background: "#1f2937", border: "1px solid #374151", borderRadius: 8, padding: "5px 12px", fontSize: 12, color: revealCount >= REVEAL_LIMIT ? "#f87171" : "#9ca3af" }}>
                 {revealCount >= REVEAL_LIMIT
-                  ? `? Limit reached ? resets in ${formatTimeLeft(timeLeft)}`
-                  : `? ${revealCount}/${REVEAL_LIMIT} reveals used today`}
+                  ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
+                  : `📞 ${revealCount}/${REVEAL_LIMIT} reveals used today`}
               </div>
           )}
           <div className="tr-user-info">
