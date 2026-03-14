@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://wkffzefvfolyjyrlwojd.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndrZmZ6ZWZ2Zm9seWp5cmx3b2pkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNTc2NDAsImV4cCI6MjA4ODYzMzY0MH0.bIA3h3h4ULjVksO1JDt_lhRiJMW-_OWBm-SX9RQ6cUs";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// --- Data --------------------------------------------------------------------
 // major = large city, minor = town/smaller city
 const ROUTE_MAP = {
   // Maharashtra
@@ -635,15 +640,15 @@ function getCitiesAlongRoute(from, to) {
   }).sort((x, y) => dist(a, ROUTE_MAP[x]) - dist(a, ROUTE_MAP[y]));
 }
 
-// ─── Seed data ────────────────────────────────────────────────────────────────
+// --- Seed data ----------------------------------------------------------------
 const SEED_LOADS = [
-  { id: 1, truckerName: "Rajan Yadav", truckType: "Heavy Truck (10–20 Ton)", from: "Mumbai", to: "Delhi", date: "2026-03-10", via: getCitiesAlongRoute("Mumbai", "Delhi"), contact: "98765-43210" },
+  { id: 1, truckerName: "Rajan Yadav", truckType: "Heavy Truck (10-20 Ton)", from: "Mumbai", to: "Delhi", date: "2026-03-10", via: getCitiesAlongRoute("Mumbai", "Delhi"), contact: "98765-43210" },
   { id: 2, truckerName: "Suresh Kumar", truckType: "Trailer / Container (20+ Ton)", from: "Delhi", to: "Kolkata", date: "2026-03-09", via: getCitiesAlongRoute("Delhi", "Kolkata"), contact: "87654-32109" },
-  { id: 3, truckerName: "Amol Patil", truckType: "Medium Truck (5–10 Ton)", from: "Ahmedabad", to: "Chennai", date: "2026-03-11", via: getCitiesAlongRoute("Ahmedabad", "Chennai"), contact: "76543-21098" },
+  { id: 3, truckerName: "Amol Patil", truckType: "Medium Truck (5-10 Ton)", from: "Ahmedabad", to: "Chennai", date: "2026-03-11", via: getCitiesAlongRoute("Ahmedabad", "Chennai"), contact: "76543-21098" },
   { id: 4, truckerName: "Pradeep Singh", truckType: "Flatbed", from: "Jaipur", to: "Hyderabad", date: "2026-03-12", via: getCitiesAlongRoute("Jaipur", "Hyderabad"), contact: "65432-10987" },
 ];
 
-// ─── Components ───────────────────────────────────────────────────────────────
+// --- Components ---------------------------------------------------------------
 const CitySelect = ({ label, value, onChange, exclude }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
     <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>{label}</label>
@@ -665,7 +670,7 @@ const CitySelect = ({ label, value, onChange, exclude }) => (
       onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
       onBlur={(e) => (e.target.style.borderColor = "#374151")}
     >
-      <option value="">— Select City —</option>
+      <option value="">- Select City -</option>
       {CITY_NAMES.filter((c) => c !== exclude).map((c) => (
         <option key={c} value={c}>{c}</option>
       ))}
@@ -718,13 +723,13 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
         <Badge color="#a78bfa">YOUR POST</Badge>
       </div>
     )}
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>
+    <div className="tr-load-top">
       <div>
         <div style={{ fontSize: 18, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1 }}>
           {load.from} <span style={{ color: "#f59e0b" }}>→</span> {load.to}
         </div>
         <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}>
-          🚛 {load.truckType || load.truckNo || "—"} &nbsp;|&nbsp; 👤 {load.truckerName}
+          ? {load.truckType || load.truckNo || "-"} &nbsp;|&nbsp; ? {load.truckerName}
         </div>
       </div>
       <div style={{ textAlign: "right" }}>
@@ -737,7 +742,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
               borderRadius: 7, padding: "7px 14px",
             }}>
               <span style={{ fontSize: 16 }}>📞</span>
-              <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15, letterSpacing: 0.5 }}>{load.contact || "—"}</span>
+              <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15, letterSpacing: 0.5 }}>{load.contact || "-"}</span>
               <button onClick={() => setShowContact(false)} style={{
                 background: "none", border: "none", color: "#4b5563",
                 cursor: "pointer", fontSize: 14, padding: "0 2px", lineHeight: 1,
@@ -755,7 +760,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
               onMouseEnter={e => { e.currentTarget.style.background = "#22c55e"; e.currentTarget.style.color = "#111827"; e.currentTarget.style.borderColor = "#22c55e"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "#1f2937"; e.currentTarget.style.color = "#f9fafb"; e.currentTarget.style.borderColor = "#374151"; }}
             >
-              📞 Contact Number
+              ? Contact Number
             </button>
           )}
         </div>
@@ -777,50 +782,116 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
   );
 }
 
-// ─── Pages ────────────────────────────────────────────────────────────────────
+// --- Pages --------------------------------------------------------------------
 function PostLoad({ loads, setLoads, truckerName }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [truckType, setTruckType] = useState("");
   const [contact, setContact] = useState("");
+  const [postDuration, setPostDuration] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [editingId, setEditingId] = useState(null); // id of load being edited
 
   const handlePreview = () => {
     if (!from || !to || !date) return;
     const via = getCitiesAlongRoute(from, to);
-    setPreview({ from, to, date, via, truckerName, truckType, contact });
+    setPreview({ from, to, date, via, truckerName, truckType, contact, postDuration });
   };
 
   const handleSubmit = () => {
     const via = getCitiesAlongRoute(from, to);
-    const newLoad = { id: Date.now(), truckerName, truckType, from, to, date, via, contact };
-    setLoads([newLoad, ...loads]);
+    if (editingId) {
+      // Update existing load
+      setLoads(loads.map(l => l.id === editingId
+        ? { ...l, truckType, from, to, date, via, contact, postDuration: Number(postDuration) }
+        : l
+      ));
+      setEditingId(null);
+    } else {
+      // New load
+      const newLoad = {
+        id: Date.now(),
+        truckerName, truckType, from, to, date, via, contact,
+        postDuration: Number(postDuration),
+        postedAt: Date.now(),
+      };
+      setLoads([newLoad, ...loads]);
+    }
     setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPreview(null); }, 3000);
+    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setPreview(null); }, 3000);
+  };
+
+  const handleEdit = (load) => {
+    setEditingId(load.id);
+    setFrom(load.from);
+    setTo(load.to);
+    setDate(load.date);
+    setTruckType(load.truckType || "");
+    setContact(load.contact || "");
+    setPostDuration(load.postDuration || 0);
+    setPreview(null);
+    setSubmitted(false);
+    // Scroll to top of form
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setPreview(null);
+  };
+
+  const handleDeleteFromEdit = () => {
+    if (!window.confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
+    setLoads(loads.filter(l => l.id !== editingId));
+    handleCancelEdit();
   };
 
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
       <div style={{ fontSize: 56 }}>✅</div>
-      <div style={{ fontSize: 24, fontWeight: 800, color: "#22c55e", fontFamily: "'Barlow Condensed', sans-serif", marginTop: 12 }}>Load Posted Successfully!</div>
-      <div style={{ color: "#9ca3af", marginTop: 8 }}>Other truckers can now find your empty truck on this route.</div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: "#22c55e", fontFamily: "'Barlow Condensed', sans-serif", marginTop: 12 }}>
+        {editingId ? "Post Updated Successfully!" : "Load Posted Successfully!"}
+      </div>
+      <div style={{ color: "#9ca3af", marginTop: 8 }}>
+        {editingId ? "Your load post has been updated." : "Other truckers can now find your empty truck on this route."}
+      </div>
     </div>
   );
 
   return (
     <div style={{ maxWidth: 560, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: 0 }}>POST EMPTY LOAD</h2>
+        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: 0 }}>
+          {editingId ? "EDIT EMPTY LOAD" : "POST EMPTY LOAD"}
+        </h2>
         <p style={{ color: "#6b7280", marginTop: 6, fontSize: 14 }}>Share your empty truck details so others can book space on your route.</p>
+        {editingId && (
+          <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10, background: "#1c1408", border: "1px solid #f59e0b44", borderRadius: 8, padding: "10px 14px" }}>
+            <span style={{ fontSize: 16 }}>✏️</span>
+            <span style={{ fontSize: 13, color: "#f59e0b", fontWeight: 600 }}>Editing an existing post — make your changes and save.</span>
+            <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+              <button onClick={handleDeleteFromEdit}
+                style={{ background: "#7f1d1d33", border: "1px solid #dc262666", color: "#f87171", borderRadius: 6, padding: "4px 12px", fontSize: 12, cursor: "pointer", fontWeight: 700 }}
+                onMouseEnter={e => { e.currentTarget.style.background = "#dc2626"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "#7f1d1d33"; e.currentTarget.style.color = "#f87171"; }}>
+                🗑️ Delete
+              </button>
+              <button onClick={handleCancelEdit}
+                style={{ background: "none", border: "1px solid #374151", color: "#6b7280", borderRadius: 6, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="tr-grid-2" style={{ marginBottom: 16 }}>
         <CitySelect label="Start City" value={from} onChange={setFrom} exclude={to} />
         <CitySelect label="Drop City" value={to} onChange={setTo} exclude={from} />
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="tr-grid-2" style={{ marginBottom: 16 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Start Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
@@ -836,11 +907,11 @@ function PostLoad({ loads, setLoads, truckerName }) {
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
             onBlur={(e) => (e.target.style.borderColor = "#374151")}
           >
-            <option value="">— Select Type —</option>
-            <option value="Mini Truck (1–2 Ton)">Mini Truck (1–2 Ton)</option>
-            <option value="Light Commercial (2–5 Ton)">Light Commercial (2–5 Ton)</option>
-            <option value="Medium Truck (5–10 Ton)">Medium Truck (5–10 Ton)</option>
-            <option value="Heavy Truck (10–20 Ton)">Heavy Truck (10–20 Ton)</option>
+            <option value="">- Select Type -</option>
+            <option value="Mini Truck (1-2 Ton)">Mini Truck (1-2 Ton)</option>
+            <option value="Light Commercial (2-5 Ton)">Light Commercial (2-5 Ton)</option>
+            <option value="Medium Truck (5-10 Ton)">Medium Truck (5-10 Ton)</option>
+            <option value="Heavy Truck (10-20 Ton)">Heavy Truck (10-20 Ton)</option>
             <option value="Trailer / Container (20+ Ton)">Trailer / Container (20+ Ton)</option>
             <option value="Flatbed">Flatbed</option>
             <option value="Tanker">Tanker</option>
@@ -862,6 +933,34 @@ function PostLoad({ loads, setLoads, truckerName }) {
         </div>
       </div>
 
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>
+              Extra Days After Start Date (optional)
+            </label>
+            <span style={{
+              background: postDuration === 0 ? "#1f2937" : "#1c1408",
+              color: postDuration === 0 ? "#6b7280" : "#f59e0b",
+              border: `1px solid ${postDuration === 0 ? "#374151" : "#f59e0b55"}`,
+              borderRadius: 20, padding: "2px 12px", fontSize: 12, fontWeight: 700,
+            }}>
+              {postDuration === 0 ? "None — expires on Start Date" : `+${postDuration} day${postDuration > 1 ? "s" : ""} buffer`}
+            </span>
+          </div>
+          <input
+            type="range" min="0" max="20" value={postDuration}
+            onChange={(e) => setPostDuration(Number(e.target.value))}
+            style={{ width: "100%", accentColor: "#f59e0b", cursor: "pointer" }}
+          />
+          <div style={{ fontSize: 12, color: "#6b7280" }}>
+            {postDuration === 0
+              ? "Post will automatically disappear on the Start Date."
+              : `Post will stay visible for ${postDuration} extra day${postDuration > 1 ? "s" : ""} after the Start Date — useful if your travel may be delayed.`}
+          </div>
+        </div>
+      </div>
+
       <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <button onClick={handlePreview} disabled={!from || !to || !date}
           style={{ flex: 1, padding: "12px 20px", background: "#1f2937", color: "#f9fafb", border: "2px solid #374151", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Barlow', sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
@@ -869,7 +968,7 @@ function PostLoad({ loads, setLoads, truckerName }) {
         </button>
         <button onClick={handleSubmit} disabled={!from || !to || !date}
           style={{ flex: 2, padding: "12px 20px", background: from && to && date ? "#f59e0b" : "#374151", color: from && to && date ? "#111827" : "#6b7280", border: "none", borderRadius: 8, fontWeight: 800, fontSize: 15, cursor: from && to && date ? "pointer" : "not-allowed", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
-          🚛 Post Empty Load
+          {editingId ? "💾 Save Changes" : "🚛 Post Empty Load"}
         </button>
       </div>
 
@@ -888,7 +987,7 @@ function PostLoad({ loads, setLoads, truckerName }) {
                   CITIES ALONG ROUTE ({preview.via.length})
                 </div>
                 <span style={{ fontSize: 11, color: "#f59e0b" }}>★ Major city</span>
-                <span style={{ fontSize: 11, color: "#60a5fa" }}>● Minor city/town</span>
+                <span style={{ fontSize: 11, color: "#60a5fa" }}>• Minor city/town</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {preview.via.map((c) => {
@@ -903,6 +1002,10 @@ function PostLoad({ loads, setLoads, truckerName }) {
           )}
         </div>
       )}
+
+      {/* My Posts list at bottom */}
+      <MyPostsPanel loads={loads} truckerName={truckerName} onEdit={handleEdit} />
+
     </div>
   );
 }
@@ -917,6 +1020,7 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
   const handleSearch = () => {
     if (!from || !to) return;
     const matches = loads.filter((l) => {
+      if (!isLive(l)) return false; // hide expired posts
       const dateMatch = !date || l.date === date;
       const routeMatch =
         (l.from === from && l.to === to) ||
@@ -939,7 +1043,7 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
       </div>
 
       <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "20px", marginBottom: 24 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginBottom: 16 }}>
+        <div className="tr-grid-3" style={{ marginBottom: 16 }}>
           <CitySelect label="From" value={from} onChange={setFrom} exclude={to} />
           <CitySelect label="To" value={to} onChange={setTo} exclude={from} />
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -966,20 +1070,20 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
         <>
           <div style={{ marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <div style={{ fontSize: 14, color: "#9ca3af" }}>
-              Found <span style={{ color: results.length > 0 ? "#22c55e" : "#f87171", fontWeight: 700 }}>{results.length}</span> matching truck{results.length !== 1 ? "s" : ""} for <span style={{ color: "#f9fafb", fontWeight: 600 }}>{from} → {to}</span>
+              Found <span style={{ color: results.length > 0 ? "#22c55e" : "#f87171", fontWeight: 700 }}>{results.length}</span> matching truck{results.length !== 1 ? "s" : ""} for <span style={{ color: "#f9fafb", fontWeight: 600 }}>{from} ? {to}</span>
             </div>
             <div style={{ fontSize: 12, background: revealCount >= revealLimit ? "#7f1d1d33" : "#1f2937", border: `1px solid ${revealCount >= revealLimit ? "#dc262644" : "#374151"}`, borderRadius: 6, padding: "5px 12px", color: revealCount >= revealLimit ? "#f87171" : "#9ca3af" }}>
               {revealCount >= revealLimit
-                ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
-                : `📞 ${revealCount}/${revealLimit} reveals used today`}
+                ? `? Limit reached ? resets in ${formatTimeLeft(timeLeft)}`
+                : `? ${revealCount}/${revealLimit} reveals used today`}
             </div>
           </div>
 
           {results.length === 0 ? (
             <div style={{ textAlign: "center", padding: "56px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 12 }}>
-              <div style={{ fontSize: 48 }}>🚛</div>
+              <div style={{ fontSize: 48 }}>🔍</div>
               <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>No Empty Trucks Found</div>
-              <div style={{ marginTop: 8, fontSize: 14, color: "#6b7280" }}>No trucks are currently available on the <strong style={{ color: "#9ca3af" }}>{from} → {to}</strong> route{date ? ` on ${date}` : ""}.</div>
+              <div style={{ marginTop: 8, fontSize: 14, color: "#6b7280" }}>No trucks are currently available on the <strong style={{ color: "#9ca3af" }}>{from} ? {to}</strong> route{date ? ` on ${date}` : ""}.</div>
               <div style={{ marginTop: 6, fontSize: 13, color: "#4b5563" }}>Try searching without a date filter, or check back later.</div>
             </div>
           ) : (
@@ -1002,7 +1106,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // ── Stats ──
+  // -- Stats --
   const stats = {
     total: loads.length,
     today: loads.filter(l => l.date === today).length,
@@ -1012,29 +1116,29 @@ function AdminPanel({ loads, setLoads, currentUser }) {
     truckers: [...new Set(loads.map(l => l.truckerName))].length,
   };
 
-  // ── Truck type breakdown ──
+  // -- Truck type breakdown --
   const truckTypeCounts = loads.reduce((acc, l) => {
     const t = l.truckType || "Unknown";
     acc[t] = (acc[t] || 0) + 1;
     return acc;
   }, {});
 
-  // ── Top routes ──
+  // -- Top routes --
   const routeCounts = loads.reduce((acc, l) => {
-    const key = `${l.from} → ${l.to}`;
+    const key = `${l.from} ? ${l.to}`;
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
   const topRoutes = Object.entries(routeCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
-  // ── Top truckers ──
+  // -- Top truckers --
   const truckerCounts = loads.reduce((acc, l) => {
     acc[l.truckerName] = (acc[l.truckerName] || 0) + 1;
     return acc;
   }, {});
   const topTruckers = Object.entries(truckerCounts).sort((a, b) => b[1] - a[1]);
 
-  // ── Filtered loads ──
+  // -- Filtered loads --
   const filteredLoads = loads.filter(l => {
     const q = search.toLowerCase();
     const matchSearch = !q || l.truckerName.toLowerCase().includes(q) || l.from.toLowerCase().includes(q) || l.to.toLowerCase().includes(q) || (l.truckType || "").toLowerCase().includes(q);
@@ -1060,10 +1164,10 @@ function AdminPanel({ loads, setLoads, currentUser }) {
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
       {/* Admin Nav Tabs */}
-      <div style={{ display: "flex", gap: 4, marginBottom: 28, flexWrap: "wrap" }}>
+      <div className="tr-tabs" style={{ gap: 4, marginBottom: 28, paddingBottom: 4 }}>
         {ADMIN_TABS.map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
-            padding: "9px 18px", borderRadius: 8,
+            padding: "9px 16px", borderRadius: 8, whiteSpace: "nowrap",
             background: activeTab === t.key ? "#f59e0b" : "#111827",
             color: activeTab === t.key ? "#111827" : "#9ca3af",
             border: activeTab === t.key ? "none" : "2px solid #1f2937",
@@ -1073,7 +1177,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
         ))}
       </div>
 
-      {/* ── DASHBOARD ── */}
+      {/* -- DASHBOARD -- */}
       {activeTab === "dashboard" && (
         <div>
           <div style={{ marginBottom: 24 }}>
@@ -1082,12 +1186,12 @@ function AdminPanel({ loads, setLoads, currentUser }) {
           </div>
 
           {/* Stat Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
+          <div className="tr-grid-stats" style={{ marginBottom: 24 }}>
             {[
-              { label: "Total Loads", value: stats.total, icon: "📦", color: "#f59e0b" },
+              { label: "Total Loads", value: stats.total, icon: "🚛", color: "#f59e0b" },
               { label: "Posted Today", value: stats.today, icon: "📅", color: "#22c55e" },
-              { label: "Upcoming", value: stats.upcoming, icon: "🔜", color: "#60a5fa" },
-              { label: "Past Loads", value: stats.past, icon: "🕒", color: "#6b7280" },
+              { label: "Upcoming", value: stats.upcoming, icon: "🕐", color: "#60a5fa" },
+              { label: "Past Loads", value: stats.past, icon: "📦", color: "#6b7280" },
               { label: "Active Cities", value: stats.cities, icon: "🏙️", color: "#a78bfa" },
               { label: "Truckers", value: stats.truckers, icon: "👤", color: "#f472b6" },
             ].map(s => (
@@ -1107,7 +1211,8 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             {loads.length === 0 ? (
               <div style={{ color: "#4b5563", textAlign: "center", padding: "24px 0" }}>No loads posted yet.</div>
             ) : (
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <div style={{ overflowX: "auto", margin: "0 -4px" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 480 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #1f2937" }}>
                     {["Trucker", "Route", "Truck Type", "Date", "Status"].map(h => (
@@ -1123,7 +1228,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                       <tr key={l.id} style={{ borderBottom: "1px solid #0d1117" }}>
                         <td style={{ padding: "10px", color: "#f9fafb", fontWeight: 600 }}>{l.truckerName}</td>
                         <td style={{ padding: "10px", color: "#f9fafb" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</td>
-                        <td style={{ padding: "10px", color: "#9ca3af" }}>{l.truckType || "—"}</td>
+                        <td style={{ padding: "10px", color: "#9ca3af" }}>{l.truckType || "-"}</td>
                         <td style={{ padding: "10px", color: "#9ca3af" }}>{l.date}</td>
                         <td style={{ padding: "10px" }}>
                           <span style={{ background: statusColor + "22", color: statusColor, border: `1px solid ${statusColor}44`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{status}</span>
@@ -1133,12 +1238,13 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                   })}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
         </div>
       )}
 
-      {/* ── ALL LOADS ── */}
+      {/* -- ALL LOADS -- */}
       {activeTab === "loads" && (
         <div>
           <div style={{ marginBottom: 20 }}>
@@ -1147,7 +1253,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
           </div>
 
           {/* Filters */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, marginBottom: 20 }}>
+          <div className="tr-grid-3" style={{ marginBottom: 20 }}>
             <input type="text" placeholder="🔍  Search by trucker, city, truck type..." value={search} onChange={e => setSearch(e.target.value)}
               style={{ background: "#111827", color: "#f9fafb", border: "2px solid #1f2937", borderRadius: 8, padding: "10px 14px", fontSize: 14, fontFamily: "'Barlow', sans-serif", outline: "none" }}
               onFocus={e => e.target.style.borderColor = "#f59e0b"} onBlur={e => e.target.style.borderColor = "#1f2937"}
@@ -1155,7 +1261,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <select value={filterType} onChange={e => setFilterType(e.target.value)}
               style={{ background: "#111827", color: filterType ? "#f9fafb" : "#6b7280", border: "2px solid #1f2937", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'Barlow', sans-serif", outline: "none", cursor: "pointer" }}>
               <option value="">All Types</option>
-              {["Mini Truck (1–2 Ton)", "Light Commercial (2–5 Ton)", "Medium Truck (5–10 Ton)", "Heavy Truck (10–20 Ton)", "Trailer / Container (20+ Ton)", "Flatbed", "Tanker", "Refrigerated / Reefer", "Open Body", "Single Car Carrier", "Tipper / Dumper"].map(t => (
+              {["Mini Truck (1-2 Ton)", "Light Commercial (2-5 Ton)", "Medium Truck (5-10 Ton)", "Heavy Truck (10-20 Ton)", "Trailer / Container (20+ Ton)", "Flatbed", "Tanker", "Refrigerated / Reefer", "Open Body", "Single Car Carrier", "Tipper / Dumper"].map(t => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
@@ -1169,32 +1275,31 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             {(search || filterType || filterDate) && (
               <button onClick={() => { setSearch(""); setFilterType(""); setFilterDate(""); }}
                 style={{ marginLeft: 12, color: "#f59e0b", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontFamily: "'Barlow', sans-serif", fontWeight: 600 }}>
-                ✕ Clear filters
+                ? Clear filters
               </button>
             )}
           </div>
 
           {filteredLoads.length === 0 ? (
             <div style={{ textAlign: "center", padding: "48px", background: "#111827", borderRadius: 12, color: "#4b5563" }}>
-              <div style={{ fontSize: 40 }}>📭</div>
+              <div style={{ fontSize: 40 }}>📦</div>
               <div style={{ marginTop: 12 }}>No loads match your filters.</div>
             </div>
           ) : (
-            <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, overflow: "hidden" }}>
+            <div className="tr-table-wrap" style={{ background: "#111827" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: "#0d1117", borderBottom: "2px solid #1f2937" }}>
-                    {["Trucker", "Route", "Via (count)", "Truck Type", "Date", "Contact", "Action"].map(h => (
+                    {["Trucker", "Route", "Via (count)", "Truck Type", "Date", "Status", "Contact", "Action"].map(h => (
                       <th key={h} style={{ padding: "12px 14px", textAlign: "left", color: "#6b7280", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredLoads.map((l, i) => {
-                    const status = l.date === today ? "today" : l.date > today ? "upcoming" : "past";
-                    const statusColor = status === "today" ? "#22c55e" : status === "upcoming" ? "#60a5fa" : "#6b7280";
+                  {[...filteredLoads].sort((a, b) => (b.postedAt || 0) - (a.postedAt || 0)).map((l, i) => {
+                    const { text: liveText, color: liveColor, expired } = expiryLabel(l);
                     return (
-                      <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: i % 2 === 0 ? "transparent" : "#0d111766" }}>
+                      <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: i % 2 === 0 ? "transparent" : "#0d111766", opacity: expired ? 0.7 : 1 }}>
                         <td style={{ padding: "12px 14px", color: "#f9fafb", fontWeight: 600 }}>{l.truckerName}</td>
                         <td style={{ padding: "12px 14px" }}>
                           <span style={{ color: "#f9fafb" }}>{l.from}</span>
@@ -1202,11 +1307,17 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                           <span style={{ color: "#f9fafb" }}>{l.to}</span>
                         </td>
                         <td style={{ padding: "12px 14px", color: "#60a5fa" }}>{l.via.length} cities</td>
-                        <td style={{ padding: "12px 14px", color: "#9ca3af" }}>{l.truckType || "—"}</td>
+                        <td style={{ padding: "12px 14px", color: "#9ca3af" }}>{l.truckType || "-"}</td>
+                        <td style={{ padding: "12px 14px", color: "#d1d5db" }}>{l.date}</td>
                         <td style={{ padding: "12px 14px" }}>
-                          <span style={{ color: statusColor, fontWeight: 600 }}>{l.date}</span>
+                          <span style={{
+                            display: "inline-block", padding: "3px 10px", borderRadius: 20,
+                            fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
+                            background: expired ? "#1f293799" : "#14532d55",
+                            color: liveColor, border: `1px solid ${liveColor}44`,
+                          }}>{expired ? "Expired" : "Live"}</span>
                         </td>
-                        <td style={{ padding: "12px 14px", color: "#6ee7b7", fontFamily: "monospace", fontSize: 12 }}>{l.contact || "—"}</td>
+                        <td style={{ padding: "12px 14px", color: "#6ee7b7", fontFamily: "monospace", fontSize: 12 }}>{l.contact || "-"}</td>
                         <td style={{ padding: "12px 14px" }}>
                           {confirmDelete === l.id ? (
                             <div style={{ display: "flex", gap: 6 }}>
@@ -1214,7 +1325,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                               <button onClick={() => setConfirmDelete(null)} style={{ padding: "4px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
                             </div>
                           ) : (
-                            <button onClick={() => setConfirmDelete(l.id)} style={{ padding: "4px 12px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>🗑 Delete</button>
+                            <button onClick={() => setConfirmDelete(l.id)} style={{ padding: "4px 12px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>✕ Delete</button>
                           )}
                         </td>
                       </tr>
@@ -1227,7 +1338,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
         </div>
       )}
 
-      {/* ── TRUCKERS ── */}
+      {/* -- TRUCKERS -- */}
       {activeTab === "truckers" && (
         <div>
           <div style={{ marginBottom: 20 }}>
@@ -1237,7 +1348,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
 
           {topTruckers.length === 0 ? (
             <div style={{ textAlign: "center", padding: "48px", background: "#111827", borderRadius: 12, color: "#4b5563" }}>
-              <div style={{ fontSize: 40 }}>👤</div>
+              <div style={{ fontSize: 40 }}>📦</div>
               <div style={{ marginTop: 12 }}>No truckers have posted loads yet.</div>
             </div>
           ) : (
@@ -1249,13 +1360,13 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                 return (
                   <div key={name} style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "18px 20px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
                     <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f59e0b22", border: "2px solid #f59e0b44", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                      {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "👤"}
+                      {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🚛"}
                     </div>
                     <div style={{ flex: 1, minWidth: 140 }}>
                       <div style={{ fontSize: 16, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>{name}</div>
                       {latestLoad && (
                         <div style={{ fontSize: 12, color: "#6b7280", marginTop: 3 }}>
-                          Last route: {latestLoad.from} → {latestLoad.to} on {latestLoad.date}
+                          Last route: {latestLoad.from} ? {latestLoad.to} on {latestLoad.date}
                         </div>
                       )}
                       {truckTypes.length > 0 && (
@@ -1270,7 +1381,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     </div>
                     {latestLoad?.contact && (
                       <div style={{ fontSize: 13, color: "#6ee7b7", fontFamily: "monospace", background: "#065f4622", border: "1px solid #065f4644", borderRadius: 6, padding: "6px 10px" }}>
-                        📞 {latestLoad.contact}
+                        ? {latestLoad.contact}
                       </div>
                     )}
                   </div>
@@ -1281,7 +1392,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
         </div>
       )}
 
-      {/* ── ANALYTICS ── */}
+      {/* -- ANALYTICS -- */}
       {activeTab === "analytics" && (
         <div>
           <div style={{ marginBottom: 20 }}>
@@ -1289,7 +1400,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>Insights into routes, truck types, and network activity.</p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div className="tr-analytics-grid" style={{ gap: 20 }}>
             {/* Truck Type Breakdown */}
             <div style={{ ...s }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 16 }}>Truck Type Breakdown</div>
@@ -1386,7 +1497,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     {topCities.map(([city, count]) => (
                       <div key={city}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontSize: 12, color: "#d1d5db" }}>🏙️ {city}</span>
+                          <span style={{ fontSize: 12, color: "#d1d5db" }}>📍 {city}</span>
                           <span style={{ fontSize: 12, color: "#a78bfa", fontWeight: 700 }}>{count} loads</span>
                         </div>
                         <div style={{ height: 6, background: "#1f2937", borderRadius: 3 }}>
@@ -1405,39 +1516,79 @@ function AdminPanel({ loads, setLoads, currentUser }) {
   );
 }
 
-// ─── Auth Screen ──────────────────────────────────────────────────────────────
+// --- Auth Screen --------------------------------------------------------------
 function LoginScreen({ onLogin }) {
-  const [mode, setMode] = useState("trucker");
-  const [username, setUsername] = useState("");
+  const [authType, setAuthType] = useState("trucker"); // trucker | admin
+  const [mode, setMode]         = useState("login");   // login | signup
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail]       = useState("");
+  const [contact, setContact]   = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
 
-  const USERS = {
-    admin: { password: "admin123", role: "admin", name: "Admin", contact: "—" },
-    rajan: { password: "truck123", role: "trucker", name: "Rajan Yadav", contact: "98765-43210" },
-    suresh: { password: "truck123", role: "trucker", name: "Suresh Kumar", contact: "87654-32109" },
-    amol: { password: "truck123", role: "trucker", name: "Amol Patil", contact: "76543-21098" },
-    demo: { password: "demo123", role: "trucker", name: "Demo Trucker", contact: "99999-00000" },
+  const ADMIN_EMAIL    = "admin@truckroute.in";
+  const ADMIN_PASSWORD = "Admin@TruckRoute2024";
+
+  const inputStyle = {
+    width: "100%", background: "#0d1117", color: "#f9fafb",
+    border: "2px solid #374151", borderRadius: 8,
+    padding: "12px 14px", fontSize: 15,
+    fontFamily: "'Barlow', sans-serif", outline: "none",
+    boxSizing: "border-box", marginBottom: 14,
   };
 
-  const handleLogin = () => {
-    const user = USERS[username.toLowerCase()];
-    if (!user || user.password !== password) { setError("Invalid credentials. Try demo/demo123"); return; }
-    if (mode === "admin" && user.role !== "admin") { setError("Not an admin account."); return; }
-    if (mode === "trucker" && user.role !== "trucker") { setError("Not a trucker account."); return; }
-    onLogin({ username, name: user.name, role: user.role, contact: user.contact });
+  const handleLogin = async () => {
+    setError(""); setLoading(true);
+    try {
+      if (authType === "admin") {
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+          onLogin({ name: "Admin", role: "admin", contact: "" });
+        } else {
+          setError("Invalid admin credentials.");
+        }
+        setLoading(false); return;
+      }
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      if (authError) { setError(authError.message); setLoading(false); return; }
+      const { data: profile } = await supabase
+        .from("profiles").select("*").eq("user_id", data.user.id).single();
+      onLogin({
+        name:    profile?.full_name || email,
+        role:    "trucker",
+        contact: profile?.contact   || "",
+      });
+    } catch (e) { setError("Something went wrong. Please try again."); }
+    setLoading(false);
+  };
+
+  const handleSignup = async () => {
+    setError(""); setLoading(true);
+    if (!fullName || !email || !password || !contact) {
+      setError("Please fill in all fields."); setLoading(false); return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters."); setLoading(false); return;
+    }
+    try {
+      const { data, error: authError } = await supabase.auth.signUp({
+        email, password,
+        options: { data: { full_name: fullName } },
+      });
+      if (authError) { setError(authError.message); setLoading(false); return; }
+      await supabase.from("profiles").insert({
+        user_id:   data.user.id,
+        full_name: fullName,
+        contact:   contact,
+        role:      "trucker",
+      });
+      onLogin({ name: fullName, role: "trucker", contact });
+    } catch (e) { setError("Something went wrong. Please try again."); }
+    setLoading(false);
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#030712",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: "'Barlow', sans-serif",
-      padding: 20,
-    }}>
+    <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Barlow', sans-serif", padding: 20 }}>
       {/* Decorative bg */}
       <div style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0 }}>
         <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, #f59e0b08 0%, transparent 70%)", top: -200, left: -200 }} />
@@ -1447,7 +1598,7 @@ function LoginScreen({ onLogin }) {
 
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 440 }}>
         {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
           <div style={{ fontSize: 52, marginBottom: 8 }}>🚛</div>
           <div style={{ fontSize: 38, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 4, textTransform: "uppercase" }}>
             TRUCK<span style={{ color: "#f59e0b" }}>ROUTE</span>
@@ -1455,51 +1606,180 @@ function LoginScreen({ onLogin }) {
           <div style={{ fontSize: 12, color: "#6b7280", letterSpacing: 3, textTransform: "uppercase", marginTop: 4 }}>Empty Load Network</div>
         </div>
 
-        {/* Toggle */}
-        <div style={{ display: "flex", background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: 4, marginBottom: 28 }}>
-          {["trucker", "admin"].map((m) => (
-            <button key={m} onClick={() => { setMode(m); setError(""); }}
-              style={{ flex: 1, padding: "10px", background: mode === m ? "#f59e0b" : "transparent", color: mode === m ? "#111827" : "#9ca3af", border: "none", borderRadius: 7, fontWeight: 800, fontSize: 13, cursor: "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase", transition: "all .2s" }}>
-              {m === "trucker" ? "🚛 Trucker" : "⚙️ Admin"}
+        {/* Trucker / Admin toggle */}
+        <div style={{ display: "flex", background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: 4, marginBottom: 16 }}>
+          {["trucker", "admin"].map(t => (
+            <button key={t} onClick={() => { setAuthType(t); setError(""); setMode("login"); }}
+              style={{ flex: 1, padding: "10px", background: authType === t ? "#f59e0b" : "transparent", color: authType === t ? "#111827" : "#9ca3af", border: "none", borderRadius: 7, fontWeight: 800, fontSize: 13, cursor: "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase", transition: "all .2s" }}>
+              {t === "trucker" ? "🚛 Trucker" : "⚙️ Admin"}
             </button>
           ))}
         </div>
 
+        {/* Login / Sign Up toggle ? truckers only */}
+        {authType === "trucker" && (
+          <div style={{ display: "flex", background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: 4, marginBottom: 24 }}>
+            {["login", "signup"].map(m => (
+              <button key={m} onClick={() => { setMode(m); setError(""); }}
+                style={{ flex: 1, padding: "9px", background: mode === m ? "#1f2937" : "transparent", color: mode === m ? "#f9fafb" : "#6b7280", border: "none", borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Barlow', sans-serif", transition: "all .2s" }}>
+                {m === "login" ? "Login" : "Sign Up"}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Form */}
         <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 14, padding: "28px 24px" }}>
-          {[
-            { label: "Username", value: username, setter: setUsername, placeholder: mode === "admin" ? "admin" : "demo" },
-            { label: "Password", value: password, setter: setPassword, placeholder: mode === "admin" ? "admin123" : "demo123", type: "password" },
-          ].map((f) => (
-            <div key={f.label} style={{ marginBottom: 18 }}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>{f.label}</label>
-              <input type={f.type || "text"} value={f.value} onChange={(e) => f.setter(e.target.value)} placeholder={f.placeholder}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "2px solid #374151", borderRadius: 8, padding: "12px 14px", fontSize: 15, fontFamily: "'Barlow', sans-serif", outline: "none", boxSizing: "border-box" }}
-              />
-            </div>
-          ))}
-          {error && <div style={{ color: "#f87171", fontSize: 13, marginBottom: 14, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{error}</div>}
-          <button onClick={handleLogin}
-            style={{ width: "100%", padding: "14px", background: "#f59e0b", color: "#111827", border: "none", borderRadius: 8, fontWeight: 900, fontSize: 16, cursor: "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 3, textTransform: "uppercase" }}>
-            Login →
+
+          {/* Sign Up extra fields */}
+          {mode === "signup" && authType === "trucker" && (
+            <>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Full Name</label>
+              <input style={inputStyle} placeholder="e.g. Rajan Yadav"
+                value={fullName} onChange={e => setFullName(e.target.value)} />
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Mobile Number</label>
+              <input style={inputStyle} placeholder="e.g. 98765-43210"
+                value={contact} onChange={e => setContact(e.target.value)} />
+            </>
+          )}
+
+          {/* Email */}
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Email Address</label>
+          <input style={inputStyle} type="email"
+            placeholder={authType === "admin" ? "admin@truckroute.in" : "you@email.com"}
+            value={email} onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())} />
+
+          {/* Password */}
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Password</label>
+          <input style={inputStyle} type="password"
+            placeholder={mode === "signup" ? "Min 6 characters" : "Your password"}
+            value={password} onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())} />
+
+          {/* Error */}
+          {error && (
+            <div style={{ color: "#f87171", fontSize: 13, marginBottom: 14, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{error}</div>
+          )}
+
+          {/* Submit */}
+          <button
+            onClick={mode === "signup" && authType === "trucker" ? handleSignup : handleLogin}
+            disabled={loading}
+            style={{ width: "100%", padding: "14px", background: loading ? "#374151" : "#f59e0b", color: loading ? "#6b7280" : "#111827", border: "none", borderRadius: 8, fontWeight: 900, fontSize: 16, cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 3, textTransform: "uppercase" }}>
+            {loading ? "Please wait..." : mode === "signup" ? "Create Account ->" : "Login ->"}
           </button>
-          <div style={{ marginTop: 16, color: "#4b5563", fontSize: 12, textAlign: "center" }}>
-            Trucker: demo / demo123 &nbsp;|&nbsp; Admin: admin / admin123
-          </div>
+
+          {authType === "trucker" && mode === "login" && (
+            <div style={{ marginTop: 14, color: "#4b5563", fontSize: 12, textAlign: "center" }}>
+              New trucker? Click <span style={{ color: "#f59e0b", cursor: "pointer" }} onClick={() => setMode("signup")}>Sign Up</span> to create an account.
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Enquiries Panel ──────────────────────────────────────────────────────────
+// --- My Posts Panel -----------------------------------------------------------
+function MyPostsPanel({ loads, truckerName, onEdit }) {
+  const myLoads = loads
+    .filter(l => l.truckerName === truckerName)
+    .sort((a, b) => (b.postedAt || 0) - (a.postedAt || 0));
+
+  return (
+    <div style={{ marginTop: 40 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1 }}>MY POSTS</div>
+          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>All your empty load posts - newest first</div>
+        </div>
+        {myLoads.length > 0 && (
+          <div style={{ display: "flex", gap: 8, fontSize: 12 }}>
+            <span style={{ background: "#14532d55", color: "#22c55e", border: "1px solid #22c55e44", borderRadius: 20, padding: "3px 12px", fontWeight: 700 }}>
+              {myLoads.filter(l => isLive(l)).length} Live
+            </span>
+            <span style={{ background: "#1f293799", color: "#6b7280", border: "1px solid #37415144", borderRadius: 20, padding: "3px 12px", fontWeight: 700 }}>
+              {myLoads.filter(l => !isLive(l)).length} Expired
+            </span>
+          </div>
+        )}
+      </div>
+
+      {myLoads.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "32px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 12, color: "#4b5563" }}>
+          <div style={{ fontSize: 36 }}>📋</div>
+          <div style={{ marginTop: 10, fontSize: 14 }}>You haven't posted any loads yet. Use the form above to post your first empty truck.</div>
+        </div>
+      ) : (
+        <div className="tr-table-wrap" style={{ background: "#111827" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 500 }}>
+            <thead>
+              <tr style={{ background: "#0d1117", borderBottom: "2px solid #1f2937" }}>
+                {["Route", "Truck Type", "Travel Date", "Buffer Days", "Status", "Posted On", "Action"].map(h => (
+                  <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "#6b7280", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {myLoads.map((l, i) => {
+                const { color: liveColor, expired } = expiryLabel(l);
+                return (
+                  <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: i % 2 === 0 ? "transparent" : "#0d111766", opacity: expired ? 0.6 : 1 }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <span style={{ color: "#f9fafb", fontWeight: 600 }}>{l.from}</span>
+                      <span style={{ color: "#f59e0b", margin: "0 5px" }}>→</span>
+                      <span style={{ color: "#f9fafb", fontWeight: 600 }}>{l.to}</span>
+                    </td>
+                    <td style={{ padding: "11px 14px", color: "#9ca3af", whiteSpace: "nowrap" }}>{l.truckType || "-"}</td>
+                    <td style={{ padding: "11px 14px", color: "#d1d5db", whiteSpace: "nowrap" }}>{l.date}</td>
+                    <td style={{ padding: "11px 14px", color: "#a78bfa", whiteSpace: "nowrap" }}>
+                      {l.postDuration > 0 ? `+${l.postDuration}d` : "None"}
+                    </td>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <span style={{
+                        display: "inline-block", padding: "3px 10px", borderRadius: 20,
+                        fontSize: 11, fontWeight: 700,
+                        background: expired ? "#1f293799" : "#14532d55",
+                        color: liveColor, border: `1px solid ${liveColor}44`,
+                      }}>{expired ? "Expired" : "Live"}</span>
+                    </td>
+                    <td style={{ padding: "11px 14px", color: "#6b7280", fontSize: 12, whiteSpace: "nowrap" }}>
+                      {l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}
+                    </td>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <button
+                        onClick={() => onEdit(l)}
+                        style={{
+                          padding: "5px 14px", background: "#1e3a5f", color: "#60a5fa",
+                          border: "1px solid #60a5fa55", borderRadius: 6,
+                          fontSize: 12, fontWeight: 700, cursor: "pointer",
+                          fontFamily: "'Barlow', sans-serif", transition: "all .15s",
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.color = "#fff"; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = "#1e3a5f"; e.currentTarget.style.color = "#60a5fa"; }}
+                      >
+                        ✏️ Edit
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// --- Enquiries Panel ----------------------------------------------------------
 function EnquiriesPanel({ enquiries, truckerName }) {
   return (
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
-          📬 ENQUIRIES
+          ? ENQUIRIES
         </h2>
         <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>
           Users who tried to contact you after reaching their reveal limit. Call them back!
@@ -1508,7 +1788,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
 
       {enquiries.length === 0 ? (
         <div style={{ textAlign: "center", padding: "64px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 14 }}>
-          <div style={{ fontSize: 48 }}>📭</div>
+          <div style={{ fontSize: 48 }}>🔍</div>
           <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>No Enquiries Yet</div>
           <div style={{ marginTop: 8, fontSize: 14, color: "#6b7280" }}>When someone tries to contact you after using their 2 free reveals, their details will appear here.</div>
         </div>
@@ -1533,7 +1813,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
                 {/* Inquirer info */}
                 <div>
                   <div style={{ fontSize: 17, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
-                    👤 {e.inquirerName}
+                    ? {e.inquirerName}
                   </div>
                   <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#065f4622", border: "1px solid #22c55e44", borderRadius: 7, padding: "6px 12px", width: "fit-content" }}>
@@ -1541,10 +1821,10 @@ function EnquiriesPanel({ enquiries, truckerName }) {
                       <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15 }}>{e.inquirerContact}</span>
                     </div>
                     <div style={{ fontSize: 13, color: "#9ca3af", marginTop: 2 }}>
-                      Interested in your load: <span style={{ color: "#f9fafb", fontWeight: 600 }}>{e.loadFrom} → {e.loadTo}</span>
+                      Interested in your load: <span style={{ color: "#f9fafb", fontWeight: 600 }}>{e.loadFrom} ? {e.loadTo}</span>
                     </div>
                     <div style={{ fontSize: 12, color: "#6b7280" }}>
-                      🚛 {e.truckType}
+                      ? {e.truckType}
                     </div>
                   </div>
                 </div>
@@ -1561,15 +1841,15 @@ function EnquiriesPanel({ enquiries, truckerName }) {
 
       {enquiries.length > 0 && (
         <div style={{ marginTop: 16, fontSize: 12, color: "#4b5563", textAlign: "center" }}>
-          Showing {enquiries.length} enquir{enquiries.length === 1 ? "y" : "ies"} — enquirer's reveal limit resets every 24 hours
+          Showing {enquiries.length} enquir{enquiries.length === 1 ? "y" : "ies"} - enquirer's reveal limit resets every 24 hours
         </div>
       )}
     </div>
   );
 }
 
-// ─── Main App ─────────────────────────────────────────────────────────────────
-// ─── Reveal quota helpers (24-hour reset via localStorage) ───────────────────
+// --- Main App -----------------------------------------------------------------
+// --- Reveal quota helpers (24-hour reset via localStorage) -------------------
 const QUOTA_KEY = "truckroute_reveal_quota";
 const REVEAL_LIMIT = 2;
 
@@ -1579,7 +1859,7 @@ function getQuota() {
     if (!raw) return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
     const q = JSON.parse(raw);
     if (Date.now() > q.resetAt) {
-      // 24 hours passed — reset
+      // 24 hours passed - reset
       const fresh = { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
       localStorage.setItem(QUOTA_KEY, JSON.stringify(fresh));
       return fresh;
@@ -1606,6 +1886,35 @@ function formatTimeLeft(ms) {
   const m = Math.floor((ms % 3600000) / 60000);
   if (h > 0) return `${h}h ${m}m`;
   return `${m}m`;
+}
+
+// Returns true if the load is still within its visibility window
+// Post expires at end of Start Date + optional buffer days
+function isLive(load) {
+  if (!load.date) return true;
+  const [y, m, d] = load.date.split("-").map(Number);
+  const buffer = load.postDuration || 0;
+  const expiresAt = new Date(y, m - 1, d + 1 + buffer).getTime();
+  return Date.now() < expiresAt;
+}
+
+// Returns label text and colour e.g. "Live - 3d left" or "Expired 1d ago"
+function expiryLabel(load) {
+  if (!load.date) return { text: "Live", color: "#22c55e" };
+  const [y, m, d] = load.date.split("-").map(Number);
+  const buffer = load.postDuration || 0;
+  const expiresAt = new Date(y, m - 1, d + 1 + buffer).getTime();
+  const diff = expiresAt - Date.now();
+  if (diff <= 0) {
+    const ago = Math.abs(diff);
+    const days = Math.floor(ago / 86400000);
+    const hrs  = Math.floor((ago % 86400000) / 3600000);
+    return { text: days > 0 ? `Expired ${days}d ago` : `Expired ${hrs}h ago`, color: "#6b7280", expired: true };
+  }
+  const days = Math.floor(diff / 86400000);
+  const hrs  = Math.floor((diff % 86400000) / 3600000);
+  const timeStr = days > 0 ? `${days}d ${hrs}h left` : `${hrs}h left`;
+  return { text: `Live - ${timeStr}`, color: "#22c55e" };
 }
 
 export default function App() {
@@ -1640,7 +1949,7 @@ export default function App() {
         loadFrom: load.from,
         loadTo: load.to,
         loadTruckerName: load.truckerName,
-        truckType: load.truckType || "—",
+        truckType: load.truckType || "-",
         date: now.toLocaleDateString("en-IN"),
         time: now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
       }]);
@@ -1665,8 +1974,51 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#030712", fontFamily: "'Barlow', sans-serif", color: "#f9fafb" }}>
-      {/* Google Fonts */}
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap');`}</style>
+      {/* Google Fonts + Responsive CSS */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap');
+        * { box-sizing: border-box; }
+        body { margin: 0; }
+
+        /* ── Responsive grid helpers ── */
+        .tr-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .tr-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        .tr-grid-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .tr-grid-analytics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* ── Header ── */
+        .tr-header-right { display: flex; align-items: center; gap: 16px; }
+        .tr-reveal-badge { display: block; }
+        .tr-user-info { display: block; text-align: right; }
+
+        /* ── Tabs ── */
+        .tr-tabs { display: flex; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tr-tabs::-webkit-scrollbar { display: none; }
+        .tr-tab-btn { white-space: nowrap; padding: 16px 20px !important; font-size: 13px !important; }
+
+        /* ── Tables ── */
+        .tr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 2px solid #1f2937; }
+        .tr-table-wrap table { min-width: 520px; }
+
+        /* ── LoadCard ── */
+        .tr-load-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+
+        /* ── Admin analytics grid ── */
+        .tr-analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* ── Mobile overrides ── */
+        @media (max-width: 640px) {
+          .tr-grid-2 { grid-template-columns: 1fr; }
+          .tr-grid-3 { grid-template-columns: 1fr; }
+          .tr-grid-stats { grid-template-columns: 1fr 1fr; }
+          .tr-grid-analytics { grid-template-columns: 1fr; }
+          .tr-analytics-grid { grid-template-columns: 1fr; }
+          .tr-reveal-badge { display: none; }
+          .tr-user-info { display: none; }
+          .tr-header-right { gap: 8px; }
+          .tr-tab-btn { padding: 14px 12px !important; font-size: 11px !important; }
+        }
+      `}</style>
 
       {/* Subtle grid bg */}
       <div style={{ position: "fixed", inset: 0, backgroundImage: "linear-gradient(#ffffff03 1px, transparent 1px), linear-gradient(90deg, #ffffff03 1px, transparent 1px)", backgroundSize: "40px 40px", zIndex: 0 }} />
@@ -1697,23 +2049,23 @@ export default function App() {
       )}
 
       {/* Header */}
-      <header style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
+      <header style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 26 }}>🚛</span>
           <span style={{ fontSize: 24, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 3 }}>
             TRUCK<span style={{ color: "#f59e0b" }}>ROUTE</span>
           </span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div className="tr-header-right">
           {/* Reveal counter badge */}
           {user.role === "trucker" && (
-            <div style={{ background: "#1f2937", border: "1px solid #374151", borderRadius: 8, padding: "5px 12px", fontSize: 12, color: revealCount >= REVEAL_LIMIT ? "#f87171" : "#9ca3af" }}>
+            <div className="tr-reveal-badge" style={{ background: "#1f2937", border: "1px solid #374151", borderRadius: 8, padding: "5px 12px", fontSize: 12, color: revealCount >= REVEAL_LIMIT ? "#f87171" : "#9ca3af" }}>
                 {revealCount >= REVEAL_LIMIT
-                  ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
-                  : `📞 ${revealCount}/${REVEAL_LIMIT} reveals used today`}
+                  ? `? Limit reached ? resets in ${formatTimeLeft(timeLeft)}`
+                  : `? ${revealCount}/${REVEAL_LIMIT} reveals used today`}
               </div>
           )}
-          <div style={{ textAlign: "right" }}>
+          <div className="tr-user-info">
             <div style={{ fontSize: 13, fontWeight: 700, color: "#f9fafb" }}>{user.name}</div>
             <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 2, textTransform: "uppercase" }}>{user.role}</div>
           </div>
@@ -1726,18 +2078,19 @@ export default function App() {
 
       {/* Trucker tabs */}
       {user.role === "trucker" && (
-        <div style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 24px", display: "flex", gap: 0 }}>
+        <div className="tr-tabs" style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 16px" }}>
           {[
             { key: "post", label: "📤 Post Empty Load" },
             { key: "find", label: "🔍 Find Empty Load" },
             { key: "enquiries", label: `📬 Enquiries${myEnquiries.length > 0 ? ` (${myEnquiries.length})` : ""}` },
           ].map((t) => (
             <button key={t.key} onClick={() => setActiveTab(t.key)}
+              className="tr-tab-btn"
               style={{
-                padding: "16px 24px", background: "transparent",
+                background: "transparent",
                 color: activeTab === t.key ? "#f59e0b" : t.key === "enquiries" && myEnquiries.length > 0 ? "#22c55e" : "#6b7280",
                 border: "none", borderBottom: activeTab === t.key ? "3px solid #f59e0b" : "3px solid transparent",
-                fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Barlow', sans-serif", transition: "all .2s", letterSpacing: 0.5,
+                fontWeight: 700, cursor: "pointer", fontFamily: "'Barlow', sans-serif", transition: "all .2s", letterSpacing: 0.5,
               }}>
               {t.label}
             </button>
@@ -1746,7 +2099,7 @@ export default function App() {
       )}
 
       {/* Content */}
-      <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "32px 20px" }}>
+      <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "24px 16px" }}>
         {user.role === "admin" && <AdminPanel loads={loads} setLoads={setLoads} currentUser={user} />}
         {user.role === "trucker" && activeTab === "post" && <PostLoad loads={loads} setLoads={setLoads} truckerName={user.name} currentUser={user} />}
         {user.role === "trucker" && activeTab === "find" && <FindLoad loads={loads} currentUser={user} onRevealAttempt={handleRevealAttempt} revealCount={revealCount} revealLimit={REVEAL_LIMIT} timeLeft={timeLeft} />}
