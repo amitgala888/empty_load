@@ -1527,8 +1527,8 @@ function LoginScreen({ onLogin }) {
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
 
-  const ADMIN_EMAIL    = "admin@truckroute.in";
-  const ADMIN_PASSWORD = "Admin@TruckRoute2024";
+  const ADMIN_EMAIL    = "amitgala888@gmail.com";
+  const ADMIN_PASSWORD = "AdminAdmin444*";
 
   const inputStyle = {
     width: "100%", background: "#0d1117", color: "#f9fafb",
