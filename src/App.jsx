@@ -1946,7 +1946,19 @@ function expiryLabel(load) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
-  const [loads, setLoads] = useState(SEED_LOADS);
+  // Persist loads in localStorage so they survive logout and re-login
+  const [loads, setLoadsState] = useState(() => {
+    try {
+      const saved = localStorage.getItem("truckroute_loads");
+      return saved ? JSON.parse(saved) : SEED_LOADS;
+    } catch { return SEED_LOADS; }
+  });
+
+  const setLoads = (newLoads) => {
+    const resolved = typeof newLoads === "function" ? newLoads(loads) : newLoads;
+    setLoadsState(resolved);
+    try { localStorage.setItem("truckroute_loads", JSON.stringify(resolved)); } catch {}
+  };
   const [revealCount, setRevealCount] = useState(() => getQuota().count);
   const [enquiries, setEnquiries] = useState([]);
   const [limitPopup, setLimitPopup] = useState(false);
@@ -1964,9 +1976,14 @@ export default function App() {
 
   // Send email notification via Supabase Edge Function
   const sendEmailNotification = async (load, inquirer, type) => {
-    if (!load.notifyByEmail || !load.ownerEmail) return;
+    console.log("sendEmailNotification called:", { notifyByEmail: load.notifyByEmail, ownerEmail: load.ownerEmail, type });
+    if (!load.notifyByEmail || !load.ownerEmail) {
+      console.log("Email skipped — notifyByEmail:", load.notifyByEmail, "ownerEmail:", load.ownerEmail);
+      return;
+    }
     try {
-      await supabase.functions.invoke("send-contact-email", {
+      console.log("Calling Supabase Edge Function...");
+      const result = await supabase.functions.invoke("send-contact-email", {
         body: {
           ownerEmail: load.ownerEmail,
           ownerName: load.truckerName,
@@ -1979,6 +1996,7 @@ export default function App() {
           timestamp: new Date().toLocaleString("en-IN"),
         },
       });
+      console.log("Edge Function result:", result);
     } catch (e) {
       console.warn("Email notification failed:", e);
     }
