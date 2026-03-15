@@ -801,28 +801,31 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     setPreview({ from, to, date, via, truckerName, truckType, contact, postDuration });
   };
 
-  const handleSubmit = () => {
-    const via = getCitiesAlongRoute(from, to);
-    if (editingId) {
-      setLoads(loads.map(l => l.id === editingId
-        ? { ...l, truckType, from, to, date, via, contact, postDuration: Number(postDuration), notifyByEmail, ownerEmail: currentUser?.email || "" }
-        : l
-      ));
-      setEditingId(null);
-    } else {
-      const newLoad = {
-        id: Date.now(),
-        truckerName, truckType, from, to, date, via, contact,
-        postDuration: Number(postDuration),
-        notifyByEmail,
-        ownerEmail: currentUser?.email || "",
-        postedAt: Date.now(),
-      };
-      setLoads([newLoad, ...loads]);
-    }
-    setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null); }, 3000);
+  const handleSubmit = async () => {
+  const via = getCitiesAlongRoute(from, to);
+  const newLoad = {
+    trucker_name: truckerName,
+    truck_type: truckType,
+    from_city: from,
+    to_city: to,
+    via_cities: via.join(','),
+    contact,
+    date,
+    post_duration: Number(postDuration),
+    notify_by_email: notifyByEmail,
+    owner_email: currentUser?.email || '',
+    posted_at: Date.now(),
   };
+  const { data } = await supabase.from('loads').insert(newLoad).select().single();
+  if (data) setLoads(prev => [{ ...data,
+    truckerName: data.trucker_name, truckType: data.truck_type,
+    from: data.from_city, to: data.to_city,
+    via: data.via_cities ? data.via_cities.split(',') : [],
+    postDuration: data.post_duration,
+    notifyByEmail: data.notify_by_email,
+    ownerEmail: data.owner_email,
+  }, ...prev]);
+};
 
   const handleEdit = (load) => {
     setEditingId(load.id);
@@ -843,11 +846,12 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null);
   };
 
-  const handleDeleteFromEdit = () => {
-    if (!window.confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
-    setLoads(loads.filter(l => l.id !== editingId));
-    handleCancelEdit();
-  };
+  const handleDeleteFromEdit = async () => {
+  if (!window.confirm('Delete this post?')) return;
+  await supabase.from('loads').delete().eq('id', editingId);
+  setLoads(loads.filter(l => l.id !== editingId));
+  handleCancelEdit();
+};
 
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
@@ -1953,12 +1957,32 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
   // Persist loads in localStorage so they survive logout and re-login
-  const [loads, setLoadsState] = useState(() => {
-    try {
-      const saved = localStorage.getItem("truckroute_loads");
-      return saved ? JSON.parse(saved) : SEED_LOADS;
-    } catch { return SEED_LOADS; }
-  });
+  const [loads, setLoads] = useState([]);
+   // Load all loads from Supabase on startup
+useEffect(() => {
+  async function fetchLoads() {
+    const { data } = await supabase
+      .from('loads')
+      .select('*')
+      .order('posted_at', { ascending: false });
+    if (data) setLoads(data.map(l => ({
+      id: l.id,
+      truckerName: l.trucker_name,
+      truckType: l.truck_type,
+      from: l.from_city,
+      to: l.to_city,
+      via: l.via_cities ? l.via_cities.split(',') : [],
+      contact: l.contact,
+      date: l.date,
+      postDuration: l.post_duration,
+      notifyByEmail: l.notify_by_email,
+      ownerEmail: l.owner_email,
+      postedAt: l.posted_at,
+    })));
+  }
+  fetchLoads();
+}, []);
+
 
   const setLoads = (newLoads) => {
     const resolved = typeof newLoads === "function" ? newLoads(loads) : newLoads;

@@ -66,7 +66,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'TruckRoute <onboarding@resend.dev>',
+        from: 'TruckRoute <noreply@truckroute.in>',
         to: [ownerEmail],
         subject,
         html,
