@@ -817,7 +817,8 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     } else {
       // Insert into Supabase
       const { data } = await supabase.from("loads").insert({
-        trucker_name: truckerName,
+        trucker_name:    truckerName,
+        trucker_company: currentUser?.companyName || "",
         truck_type: truckType,
         from_city: from,
         to_city: to,
@@ -829,7 +830,9 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
         posted_at: Date.now(),
       }).select().single();
       if (data) setLoads(prev => [{
-        id: data.id, truckerName, truckType, from, to, via, contact, date,
+        id: data.id, truckerName,
+        truckerCompany: currentUser?.companyName || "",
+        truckType, from, to, via, contact, date,
         postDuration: Number(postDuration), notifyByEmail,
         ownerEmail: currentUser?.email || "",
         postedAt: data.posted_at,
@@ -1764,7 +1767,7 @@ function MyPostsPanel({ loads, truckerName, onEdit }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {myLoads.map((l) => {
             const { color: liveColor, expired } = expiryLabel(l);
-            const waMsg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
+            const waMsg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n*Company Name:* ${l.truckerCompany || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
             return (
               <div key={l.id} style={{
                 background: "#111827",
@@ -2015,6 +2018,7 @@ export default function App() {
   const rowToLoad = (l) => ({
     id: l.id,
     truckerName: l.trucker_name,
+    truckerCompany: l.trucker_company || "",
     truckType: l.truck_type,
     from: l.from_city,
     to: l.to_city,
