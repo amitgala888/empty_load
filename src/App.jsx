@@ -1755,83 +1755,90 @@ function MyPostsPanel({ loads, truckerName, onEdit }) {
           <div style={{ marginTop: 10, fontSize: 14 }}>You haven't posted any loads yet. Use the form above to post your first empty truck.</div>
         </div>
       ) : (
-        <div className="tr-table-wrap" style={{ background: "#111827" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 500 }}>
-            <thead>
-              <tr style={{ background: "#0d1117", borderBottom: "2px solid #1f2937" }}>
-                {["Route", "Truck Type", "Travel Date", "Buffer Days", "Status", "Posted On", "Action"].map(h => (
-                  <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "#6b7280", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {myLoads.map((l, i) => {
-                const { color: liveColor, expired } = expiryLabel(l);
-                return (
-                  <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: i % 2 === 0 ? "transparent" : "#0d111766", opacity: expired ? 0.6 : 1 }}>
-                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
-                      <span style={{ color: "#f9fafb", fontWeight: 600 }}>{l.from}</span>
-                      <span style={{ color: "#f59e0b", margin: "0 5px" }}>→</span>
-                      <span style={{ color: "#f9fafb", fontWeight: 600 }}>{l.to}</span>
-                    </td>
-                    <td style={{ padding: "11px 14px", color: "#9ca3af", whiteSpace: "nowrap" }}>{l.truckType || "-"}</td>
-                    <td style={{ padding: "11px 14px", color: "#d1d5db", whiteSpace: "nowrap" }}>{l.date}</td>
-                    <td style={{ padding: "11px 14px", color: "#a78bfa", whiteSpace: "nowrap" }}>
-                      {l.postDuration > 0 ? `+${l.postDuration}d` : "None"}
-                    </td>
-                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
-                      <span style={{
-                        display: "inline-block", padding: "3px 10px", borderRadius: 20,
-                        fontSize: 11, fontWeight: 700,
-                        background: expired ? "#1f293799" : "#14532d55",
-                        color: liveColor, border: `1px solid ${liveColor}44`,
-                      }}>{expired ? "Expired" : "Live"}</span>
-                    </td>
-                    <td style={{ padding: "11px 14px", color: "#6b7280", fontSize: 12, whiteSpace: "nowrap" }}>
-                      {l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}
-                    </td>
-                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
-                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                        <button
-                          onClick={() => onEdit(l)}
-                          style={{
-                            padding: "5px 14px", background: "#1e3a5f", color: "#60a5fa",
-                            border: "1px solid #60a5fa55", borderRadius: 6,
-                            fontSize: 12, fontWeight: 700, cursor: "pointer",
-                            fontFamily: "'Barlow', sans-serif", transition: "all .15s",
-                          }}
-                          onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.color = "#fff"; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = "#1e3a5f"; e.currentTarget.style.color = "#60a5fa"; }}
-                        >
-                          ✏️ Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            const msg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
-                            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
-                          }}
-                          style={{
-                            padding: "5px 12px", background: "#14432155", color: "#25D366",
-                            border: "1px solid #25D36655", borderRadius: 6,
-                            fontSize: 15, cursor: "pointer", transition: "all .15s",
-                            display: "flex", alignItems: "center", gap: 4,
-                          }}
-                          onMouseEnter={e => { e.currentTarget.style.background = "#25D366"; e.currentTarget.style.color = "#fff"; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = "#14432155"; e.currentTarget.style.color = "#25D366"; }}
-                          title="Share on WhatsApp"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                          </svg>
-                          Share
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {myLoads.map((l) => {
+            const { color: liveColor, expired } = expiryLabel(l);
+            const waMsg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
+            return (
+              <div key={l.id} style={{
+                background: "#111827",
+                border: `2px solid ${expired ? "#1f2937" : "#22c55e22"}`,
+                borderRadius: 12,
+                padding: "16px 18px",
+                opacity: expired ? 0.7 : 1,
+                transition: "all .2s",
+              }}>
+                {/* Top row — route + status badge */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 0.5 }}>
+                    {l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}
+                  </div>
+                  <span style={{
+                    display: "inline-block", padding: "3px 12px", borderRadius: 20,
+                    fontSize: 11, fontWeight: 700,
+                    background: expired ? "#1f293799" : "#14532d55",
+                    color: liveColor, border: `1px solid ${liveColor}44`,
+                  }}>{expired ? "Expired" : "Live"}</span>
+                </div>
+
+                {/* Details grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px", marginBottom: 14 }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Truck Type</div>
+                    <div style={{ fontSize: 13, color: "#d1d5db" }}>{l.truckType || "-"}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Travel Start Date</div>
+                    <div style={{ fontSize: 13, color: "#d1d5db" }}>📅 {l.date}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Buffer Days</div>
+                    <div style={{ fontSize: 13, color: "#a78bfa" }}>{l.postDuration > 0 ? `+${l.postDuration} day${l.postDuration > 1 ? "s" : ""}` : "None"}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Posted On</div>
+                    <div style={{ fontSize: 13, color: "#6b7280" }}>{l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}</div>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => onEdit(l)}
+                    style={{
+                      flex: 1, minWidth: 80, padding: "8px 14px",
+                      background: "#1e3a5f", color: "#60a5fa",
+                      border: "1px solid #60a5fa55", borderRadius: 8,
+                      fontSize: 13, fontWeight: 700, cursor: "pointer",
+                      fontFamily: "'Barlow', sans-serif", transition: "all .15s",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.color = "#fff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "#1e3a5f"; e.currentTarget.style.color = "#60a5fa"; }}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(waMsg)}`, "_blank")}
+                    style={{
+                      flex: 1, minWidth: 80, padding: "8px 14px",
+                      background: "#14432155", color: "#25D366",
+                      border: "1px solid #25D36655", borderRadius: 8,
+                      fontSize: 13, fontWeight: 700, cursor: "pointer",
+                      fontFamily: "'Barlow', sans-serif", transition: "all .15s",
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#25D366"; e.currentTarget.style.color = "#fff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "#14432155"; e.currentTarget.style.color = "#25D366"; }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                    WhatsApp
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
