@@ -649,34 +649,101 @@ const SEED_LOADS = [
 ];
 
 // --- Components ---------------------------------------------------------------
-const CitySelect = ({ label, value, onChange, exclude }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-    <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>{label}</label>
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{
-        background: "#ffffff",
-        color: "#1e293b",
-        border: "2px solid #cbd5e1",
-        borderRadius: 6,
-        padding: "10px 14px",
-        fontSize: 15,
-        fontFamily: "'DM Sans', sans-serif",
-        cursor: "pointer",
-        outline: "none",
-        transition: "border-color .2s",
-      }}
-      onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
-      onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
-    >
-      <option value="">- Select City -</option>
-      {CITY_NAMES.filter((c) => c !== exclude).map((c) => (
-        <option key={c} value={c}>{c}</option>
-      ))}
-    </select>
-  </div>
-);
+const CitySelect = ({ label, value, onChange, exclude }) => {
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [highlighted, setHighlighted] = useState(0);
+  const containerRef = { current: null };
+
+  const filtered = CITY_NAMES.filter(
+    (c) => c !== exclude && c.toLowerCase().includes(query.toLowerCase())
+  ).slice(0, 80);
+
+  const handleSelect = (city) => {
+    onChange(city);
+    setQuery("");
+    setOpen(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!open) { setOpen(true); return; }
+    if (e.key === "ArrowDown") { e.preventDefault(); setHighlighted(h => Math.min(h + 1, filtered.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setHighlighted(h => Math.max(h - 1, 0)); }
+    else if (e.key === "Enter") { e.preventDefault(); if (filtered[highlighted]) handleSelect(filtered[highlighted]); }
+    else if (e.key === "Escape") { setOpen(false); setQuery(""); }
+  };
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false); setQuery("");
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, position: "relative" }}
+      ref={el => containerRef.current = el}>
+      <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>{label}</label>
+      <div style={{ position: "relative" }}>
+        <input
+          type="text"
+          value={open ? query : value}
+          placeholder={value || "Type to search city..."}
+          onFocus={() => { setOpen(true); setHighlighted(0); }}
+          onChange={e => { setQuery(e.target.value); setHighlighted(0); setOpen(true); }}
+          onKeyDown={handleKeyDown}
+          style={{
+            width: "100%", background: "#ffffff", color: "#1e293b",
+            border: `2px solid ${open ? "#f59e0b" : "#cbd5e1"}`,
+            borderRadius: open ? "8px 8px 0 0" : "8px",
+            padding: "10px 36px 10px 14px", fontSize: 15,
+            fontFamily: "'DM Sans', sans-serif", outline: "none",
+            transition: "border-color .2s", boxSizing: "border-box",
+            boxShadow: open ? "0 0 0 3px #f59e0b22" : "none",
+          }}
+        />
+        <span
+          onClick={() => { if (value) { onChange(""); setQuery(""); } else { setOpen(o => !o); } }}
+          style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", cursor: "pointer", fontSize: 14, color: "#94a3b8", userSelect: "none" }}>
+          {value ? "✕" : "▾"}
+        </span>
+      </div>
+      {open && (
+        <div style={{
+          position: "absolute", top: "100%", left: 0, right: 0, zIndex: 999,
+          background: "#ffffff", border: "2px solid #f59e0b", borderTop: "none",
+          borderRadius: "0 0 10px 10px", maxHeight: 240, overflowY: "auto",
+          boxShadow: "0 8px 24px #0000001a",
+        }}>
+          {filtered.length === 0 ? (
+            <div style={{ padding: "12px 14px", color: "#94a3b8", fontSize: 14 }}>No cities found</div>
+          ) : (
+            filtered.map((city, i) => (
+              <div
+                key={city}
+                onMouseDown={() => handleSelect(city)}
+                onMouseEnter={() => setHighlighted(i)}
+                style={{
+                  padding: "10px 14px", fontSize: 14, cursor: "pointer",
+                  background: i === highlighted ? "#fff7ed" : "transparent",
+                  color: i === highlighted ? "#f59e0b" : "#1e293b",
+                  fontWeight: i === highlighted ? 600 : 400,
+                  fontFamily: "'DM Sans', sans-serif",
+                  borderBottom: i < filtered.length - 1 ? "1px solid #f1f5f9" : "none",
+                  transition: "background .1s",
+                }}>
+                {city}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Badge = ({ children, color = "#f59e0b" }) => (
   <span style={{
