@@ -658,7 +658,7 @@ const CitySelect = ({ label, value, onChange, exclude }) => (
       style={{
         background: "#ffffff",
         color: "#1e293b",
-        border: "1.5px solid #e2e8f0",
+        border: "2px solid #cbd5e1",
         borderRadius: 6,
         padding: "10px 14px",
         fontSize: 15,
@@ -739,7 +739,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
           {showContact ? (
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              background: "#f0fdf4", border: "1px solid #86efac",
+              background: "#f0fdf4", border: "2px solid #4ade80",
               borderRadius: 8, padding: "7px 14px",
             }}>
               <span style={{ fontSize: 16 }}>📞</span>
@@ -753,7 +753,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
             <button onClick={handleContactClick} style={{
               display: "inline-flex", alignItems: "center", gap: 7,
               background: "#f0fdf4", color: "#16a34a",
-              border: "1px solid #86efac", borderRadius: 8,
+              border: "2px solid #4ade80", borderRadius: 8,
               padding: "7px 16px", fontSize: 13, fontWeight: 700,
               cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
               transition: "all .15s",
@@ -882,7 +882,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
   );
 
   return (
-    <div style={{ maxWidth: 560, margin: "0 auto" }}>
+    <div style={{ maxWidth: 620, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
         <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: 0 }}>
           {editingId ? "EDIT EMPTY LOAD" : "POST EMPTY LOAD"}
@@ -900,7 +900,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
                 🗑️ Delete
               </button>
               <button onClick={handleCancelEdit}
-                style={{ background: "none", border: "1px solid #e2e8f0", color: "#94a3b8", borderRadius: 6, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>
+                style={{ background: "none", border: "1.5px solid #cbd5e1", color: "#94a3b8", borderRadius: 6, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>
                 Cancel
               </button>
             </div>
@@ -916,7 +916,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Start Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+            style={{ background: "#ffffff", color: "#1e293b", border: "2px solid #cbd5e1", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
             onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
           />
@@ -924,7 +924,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Truck Type</label>
           <select value={truckType} onChange={(e) => setTruckType(e.target.value)}
-            style={{ background: "#ffffff", color: truckType ? "#1e293b" : "#94a3b8", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none", cursor: "pointer" }}
+            style={{ background: "#ffffff", color: truckType ? "#1e293b" : "#94a3b8", border: "2px solid #cbd5e1", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none", cursor: "pointer" }}
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
             onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
           >
@@ -947,7 +947,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Contact Number</label>
           <input type="text" placeholder="e.g. 98765-43210" value={contact} onChange={(e) => setContact(e.target.value)}
-            style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+            style={{ background: "#ffffff", color: "#1e293b", border: "2px solid #cbd5e1", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
             onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
           />
@@ -1008,7 +1008,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
 
       <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <button onClick={handlePreview} disabled={!from || !to || !date}
-          style={{ flex: 1, padding: "12px 20px", background: "#e2e8f0", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
+          style={{ flex: 1, padding: "12px 20px", background: "#e2e8f0", color: "#1e293b", border: "2px solid #cbd5e1", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
           Preview Route
         </button>
         <button onClick={handleSubmit} disabled={!from || !to || !date}
@@ -1081,20 +1081,20 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
   const allLoads = searched ? loads.map((l) => ({ ...l, isMatch: results.some((r) => r.id === l.id) })) : [];
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto" }}>
+    <div style={{ maxWidth: 760, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
         <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: 0 }}>FIND EMPTY LOAD</h2>
         <p style={{ color: "#94a3b8", marginTop: 6, fontSize: 14 }}>Search for empty trucks passing through your route.</p>
       </div>
 
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "20px", marginBottom: 24 }}>
+      <div style={{ background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 12, padding: "20px", marginBottom: 24 }}>
         <div className="tr-grid-3" style={{ marginBottom: 16 }}>
           <CitySelect label="From" value={from} onChange={setFrom} exclude={to} />
           <CitySelect label="To" value={to} onChange={setTo} exclude={from} />
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Date (optional)</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+              style={{ background: "#ffffff", color: "#1e293b", border: "2px solid #cbd5e1", borderRadius: 6, padding: "10px 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             />
           </div>
         </div>
@@ -1263,7 +1263,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
     { key: "analytics", label: "📈 Analytics" },
   ];
 
-  const s = { background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 14, padding: "20px 18px", boxShadow: "0 1px 6px #00000008" };
+  const s = { background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 14, padding: "20px 18px", boxShadow: "0 1px 6px #00000008" };
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -1274,7 +1274,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             padding: "9px 16px", borderRadius: 8, whiteSpace: "nowrap",
             background: activeTab === t.key ? "#f59e0b" : "#ffffff",
             color: activeTab === t.key ? "#ffffff" : "#64748b",
-            border: activeTab === t.key ? "none" : "1px solid #e2e8f0",
+            border: activeTab === t.key ? "none" : "1.5px solid #cbd5e1",
             fontWeight: 700, fontSize: 13, cursor: "pointer",
             fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5, transition: "all .2s",
           }}>{t.label}</button>
@@ -1329,7 +1329,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     const status = l.date === today ? "today" : l.date > today ? "upcoming" : "past";
                     const statusColor = status === "today" ? "#22c55e" : status === "upcoming" ? "#60a5fa" : "#94a3b8";
                     return (
-                      <tr key={l.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <tr key={l.id} style={{ borderBottom: "2px solid #cbd5e1" }}>
                         <td style={{ padding: "10px", color: "#1e293b", fontWeight: 600 }}>{l.truckerName}</td>
                         <td style={{ padding: "10px", color: "#1e293b" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</td>
                         <td style={{ padding: "10px", color: "#64748b" }}>{l.truckType || "-"}</td>
@@ -1359,18 +1359,18 @@ function AdminPanel({ loads, setLoads, currentUser }) {
           {/* Filters */}
           <div className="tr-grid-3" style={{ marginBottom: 20 }}>
             <input type="text" placeholder="🔍  Search by trucker, city, truck type..." value={search} onChange={e => setSearch(e.target.value)}
-              style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+              style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #cbd5e1", borderRadius: 8, padding: "10px 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
               onFocus={e => e.target.style.borderColor = "#f59e0b"} onBlur={e => e.target.style.borderColor = "#e2e8f0"}
             />
             <select value={filterType} onChange={e => setFilterType(e.target.value)}
-              style={{ background: "#ffffff", color: filterType ? "#1e293b" : "#94a3b8", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none", cursor: "pointer" }}>
+              style={{ background: "#ffffff", color: filterType ? "#1e293b" : "#94a3b8", border: "1.5px solid #cbd5e1", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none", cursor: "pointer" }}>
               <option value="">All Types</option>
               {["Mini Truck (1-2 Ton)", "Light Commercial (2-5 Ton)", "Medium Truck (5-10 Ton)", "Heavy Truck (10-20 Ton)", "Trailer / Container (20+ Ton)", "Flatbed", "Tanker", "Refrigerated / Reefer", "Open Body", "Single Car Carrier", "Tipper / Dumper"].map(t => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
             <input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)}
-              style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+              style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #cbd5e1", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             />
           </div>
 
@@ -1393,7 +1393,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <div className="tr-table-wrap" style={{ background: "#ffffff" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                  <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #cbd5e1" }}>
                     {["Trucker", "Route", "Via (count)", "Truck Type", "Date", "Status", "Contact", "Action"].map(h => (
                       <th key={h} style={{ padding: "12px 14px", textAlign: "left", color: "#94a3b8", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
                     ))}
@@ -1403,7 +1403,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                   {[...filteredLoads].sort((a, b) => (b.postedAt || 0) - (a.postedAt || 0)).map((l, i) => {
                     const { text: liveText, color: liveColor, expired } = expiryLabel(l);
                     return (
-                      <tr key={l.id} style={{ borderBottom: "1px solid #f1f5f9", background: editLoad === l.id ? "#fffbeb" : i % 2 === 0 ? "transparent" : "#f8fafc", opacity: expired ? 0.7 : 1 }}>
+                      <tr key={l.id} style={{ borderBottom: "2px solid #cbd5e1", background: editLoad === l.id ? "#fffbeb" : i % 2 === 0 ? "transparent" : "#f8fafc", opacity: expired ? 0.7 : 1 }}>
                         <td style={{ padding: "12px 14px", color: "#1e293b", fontWeight: 600 }}>{l.truckerName}</td>
                         <td style={{ padding: "12px 14px" }}>
                           {editLoad === l.id ? (
@@ -1480,7 +1480,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
               <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 4px" }}>TRUCKERS</h2>
               <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>All registered truckers — view, edit or delete accounts.</p>
             </div>
-            <button onClick={fetchProfiles} style={{ padding: "8px 18px", background: "#e2e8f0", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+            <button onClick={fetchProfiles} style={{ padding: "8px 18px", background: "#e2e8f0", color: "#1e293b", border: "2px solid #cbd5e1", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
               🔄 Load Trucker List
             </button>
           </div>
@@ -1874,7 +1874,7 @@ function LoginScreen({ onLogin }) {
             ))}
           </div>
         )}
-        <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 20, padding: "32px 28px", boxShadow: "0 8px 40px #0000000f" }}>
+        <div style={{ background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 20, padding: "32px 28px", boxShadow: "0 8px 40px #0000000f" }}>
           {mode === "signup" && authType === "trucker" && (
             <>
               <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Full Name</label>
@@ -1904,7 +1904,7 @@ function LoginScreen({ onLogin }) {
             onFocus={e => { e.target.style.borderColor = "#f59e0b"; e.target.style.boxShadow = "0 0 0 3px #f59e0b22"; }}
             onBlur={e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }} />
           {error && (
-            <div style={{ color: "#dc2626", fontSize: 13, marginBottom: 14, background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, padding: "10px 14px" }}>{error}</div>
+            <div style={{ color: "#dc2626", fontSize: 13, marginBottom: 14, background: "#fef2f2", border: "2px solid #fca5a5", borderRadius: 8, padding: "10px 14px" }}>{error}</div>
           )}
           <button onClick={mode === "signup" && authType === "trucker" ? handleSignup : handleLogin} disabled={loading}
             style={{ width: "100%", padding: "14px", background: loading ? "#e2e8f0" : "#f59e0b", color: loading ? "#94a3b8" : "#ffffff", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: loading ? "not-allowed" : "pointer", fontFamily: "'DM Sans', sans-serif", boxShadow: loading ? "none" : "0 4px 14px #f59e0b44", transition: "all .2s" }}>
@@ -2059,7 +2059,7 @@ function ProfilePanel({ user, setUser }) {
 
   const inputStyle = {
     width: "100%", background: "#ffffff", color: "#1e293b",
-    border: "1.5px solid #e2e8f0", borderRadius: 8,
+    border: "2px solid #cbd5e1", borderRadius: 8,
     padding: "11px 14px", fontSize: 14,
     fontFamily: "'DM Sans', sans-serif", outline: "none",
     boxSizing: "border-box",
@@ -2097,7 +2097,7 @@ function ProfilePanel({ user, setUser }) {
   };
 
   return (
-    <div style={{ maxWidth: 520, margin: "0 auto" }}>
+    <div style={{ maxWidth: 580, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
         <h2 style={{ fontSize: 26, fontWeight: 900, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
           👤 MY PROFILE
@@ -2106,14 +2106,14 @@ function ProfilePanel({ user, setUser }) {
       </div>
 
       {/* Email — read only */}
-      <div style={{ marginBottom: 16, background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px 16px" }}>
+      <div style={{ marginBottom: 16, background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 10, padding: "14px 16px" }}>
         <div style={{ fontSize: 11, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Email Address</div>
         <div style={{ fontSize: 15, color: "#94a3b8", fontFamily: "monospace" }}>{user.email || "—"}</div>
         <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 4 }}>Email cannot be changed.</div>
       </div>
 
       {/* Editable fields */}
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "22px 20px", marginBottom: 16 }}>
+      <div style={{ background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 12, padding: "22px 20px", marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", marginBottom: 18, letterSpacing: 0.5 }}>PERSONAL DETAILS</div>
 
         {[
@@ -2148,11 +2148,11 @@ function ProfilePanel({ user, setUser }) {
       </div>
 
       {/* Change Password */}
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "22px 20px" }}>
+      <div style={{ background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 12, padding: "22px 20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: changingPw ? 16 : 0 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", letterSpacing: 0.5 }}>CHANGE PASSWORD</div>
           <button onClick={() => { setChangingPw(!changingPw); setPwError(""); }}
-            style={{ background: "none", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
+            style={{ background: "none", border: "1.5px solid #cbd5e1", color: "#64748b", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
             {changingPw ? "Cancel" : "Change"}
           </button>
         </div>
@@ -2169,7 +2169,7 @@ function ProfilePanel({ user, setUser }) {
             {pwError && <div style={{ color: "#f87171", fontSize: 13, marginBottom: 10, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{pwError}</div>}
             <button onClick={handleChangePw} style={{
               width: "100%", padding: "11px", background: "#e2e8f0", color: "#1e293b",
-              border: "1.5px solid #e2e8f0", borderRadius: 8, fontWeight: 700, fontSize: 14,
+              border: "2px solid #cbd5e1", borderRadius: 8, fontWeight: 700, fontSize: 14,
               cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
             }}>
               🔐 Update Password
@@ -2185,7 +2185,7 @@ function ProfilePanel({ user, setUser }) {
 // --- Enquiries Panel ----------------------------------------------------------
 function EnquiriesPanel({ enquiries, truckerName }) {
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto" }}>
+    <div style={{ maxWidth: 760, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 26, fontWeight: 900, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
           📬 ENQUIRIES
@@ -2460,11 +2460,16 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'DM Sans', sans-serif", color: "#1e293b" }}>
+      {/* Desktop centering wrapper */}
+      <style>{`.tr-desktop-wrap { max-width: 900px; margin: 0 auto; } @media (max-width: 900px) { .tr-desktop-wrap { max-width: 100%; } }`}</style>
       {/* Google Fonts + Responsive CSS */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap');
         * { box-sizing: border-box; }
         body { margin: 0; background: #f8fafc; }
+
+        /* ── Desktop centering ── */
+        .tr-center-wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
 
         /* ── Responsive grid helpers ── */
         .tr-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -2483,7 +2488,7 @@ export default function App() {
         .tr-tab-btn { white-space: nowrap; padding: 14px 20px !important; font-size: 13px !important; }
 
         /* ── Tables ── */
-        .tr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .tr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 2px solid #cbd5e1; }
         .tr-table-wrap table { min-width: 520px; }
 
         /* ── LoadCard ── */
@@ -2509,7 +2514,7 @@ export default function App() {
       {/* Limit Popup */}
       {limitPopup && (
         <div style={{ position: "fixed", inset: 0, background: "#00000066", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(4px)" }}>
-          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 20, padding: "36px 32px", maxWidth: 380, width: "100%", textAlign: "center", boxShadow: "0 20px 60px #00000020" }}>
+          <div style={{ background: "#ffffff", border: "1.5px solid #cbd5e1", borderRadius: 20, padding: "36px 32px", maxWidth: 380, width: "100%", textAlign: "center", boxShadow: "0 20px 60px #00000020" }}>
             <div style={{ fontSize: 52, marginBottom: 12 }}>🚛</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
               Truck Owner will Call You
@@ -2532,7 +2537,8 @@ export default function App() {
       )}
 
       {/* Header */}
-      <header style={{ position: "relative", zIndex: 10, background: "#ffffff", borderBottom: "1px solid #e2e8f0", padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64, boxShadow: "0 1px 8px #00000008" }}>
+      <header style={{ position: "relative", zIndex: 10, background: "#ffffff", borderBottom: "1.5px solid #cbd5e1", boxShadow: "0 1px 8px #00000008" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64, width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 28 }}>🚛</span>
           <span style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
@@ -2552,17 +2558,19 @@ export default function App() {
             <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1.5, textTransform: "uppercase" }}>{user.role}</div>
           </div>
           <button onClick={handleLogout}
-            style={{ padding: "7px 16px", background: "#f1f5f9", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, transition: "all .15s" }}
+            style={{ padding: "7px 16px", background: "#f1f5f9", color: "#64748b", border: "1.5px solid #cbd5e1", borderRadius: 8, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, transition: "all .15s" }}
             onMouseEnter={e => { e.currentTarget.style.background = "#fee2e2"; e.currentTarget.style.color = "#dc2626"; e.currentTarget.style.borderColor = "#fecaca"; }}
             onMouseLeave={e => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#64748b"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             Logout
           </button>
         </div>
+        </div>
       </header>
 
       {/* Trucker tabs */}
       {user.role === "trucker" && (
-        <div className="tr-tabs" style={{ position: "relative", zIndex: 10, background: "#ffffff", borderBottom: "1px solid #e2e8f0", padding: "0 20px" }}>
+        <div style={{ background: "#ffffff", borderBottom: "1.5px solid #cbd5e1" }}>
+        <div className="tr-tabs" style={{ position: "relative", zIndex: 10, maxWidth: 1100, margin: "0 auto", padding: "0 32px", width: "100%" }}>
           {[
             { key: "post", label: "📤 Post Empty Load" },
             { key: "find", label: "🔍 Find Empty Load" },
@@ -2581,10 +2589,11 @@ export default function App() {
             </button>
           ))}
         </div>
+        </div>
       )}
 
       {/* Content */}
-      <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "28px 16px" }}>
+      <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1100 : 860, margin: "0 auto", padding: "36px 32px" }}>
         {loadsLoading && (
           <div style={{ textAlign: "center", padding: "60px 20px", color: "#94a3b8" }}>
             <div style={{ fontSize: 36, marginBottom: 12 }}>🚛</div>
