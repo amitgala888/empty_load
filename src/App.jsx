@@ -2044,6 +2044,146 @@ function MyPostsPanel({ loads, truckerName, onEdit }) {
   );
 }
 
+// --- Profile Panel ------------------------------------------------------------
+function ProfilePanel({ user, setUser }) {
+  const [fields, setFields] = useState({
+    full_name:    user.name        || "",
+    contact:      user.contact     || "",
+    company_name: user.companyName || "",
+  });
+  const [saving, setSaving]   = useState(false);
+  const [saved, setSaved]     = useState(false);
+  const [error, setError]     = useState("");
+  const [changingPw, setChangingPw] = useState(false);
+  const [newPw, setNewPw]     = useState("");
+  const [pwSaved, setPwSaved] = useState(false);
+  const [pwError, setPwError] = useState("");
+
+  const inputStyle = {
+    width: "100%", background: "#0d1117", color: "#f9fafb",
+    border: "2px solid #374151", borderRadius: 8,
+    padding: "11px 14px", fontSize: 14,
+    fontFamily: "'Barlow', sans-serif", outline: "none",
+    boxSizing: "border-box",
+  };
+
+  const handleSave = async () => {
+    setSaving(true); setError(""); setSaved(false);
+    try {
+      // Find profile by email
+      const { data: profile } = await supabase
+        .from("profiles").select("id").eq("user_id", (await supabase.auth.getUser()).data.user?.id).single();
+      if (!profile) { setError("Could not find your profile."); setSaving(false); return; }
+      await supabase.from("profiles").update({
+        full_name:    fields.full_name,
+        contact:      fields.contact,
+        company_name: fields.company_name,
+      }).eq("id", profile.id);
+      // Update local user state
+      setUser(prev => ({ ...prev, name: fields.full_name, contact: fields.contact, companyName: fields.company_name }));
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (e) { setError("Something went wrong. Please try again."); }
+    setSaving(false);
+  };
+
+  const handleChangePw = async () => {
+    setPwError(""); setPwSaved(false);
+    if (newPw.length < 6) { setPwError("Password must be at least 6 characters."); return; }
+    const { error } = await supabase.auth.updateUser({ password: newPw });
+    if (error) { setPwError(error.message); return; }
+    setPwSaved(true);
+    setNewPw("");
+    setChangingPw(false);
+    setTimeout(() => setPwSaved(false), 3000);
+  };
+
+  return (
+    <div style={{ maxWidth: 520, margin: "0 auto" }}>
+      <div style={{ marginBottom: 28 }}>
+        <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
+          👤 MY PROFILE
+        </h2>
+        <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>View and update your account details.</p>
+      </div>
+
+      {/* Email — read only */}
+      <div style={{ marginBottom: 16, background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: "14px 16px" }}>
+        <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Email Address</div>
+        <div style={{ fontSize: 15, color: "#6b7280", fontFamily: "monospace" }}>{user.email || "—"}</div>
+        <div style={{ fontSize: 11, color: "#4b5563", marginTop: 4 }}>Email cannot be changed.</div>
+      </div>
+
+      {/* Editable fields */}
+      <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "22px 20px", marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", marginBottom: 18, letterSpacing: 0.5 }}>PERSONAL DETAILS</div>
+
+        {[
+          { label: "Full Name", key: "full_name", placeholder: "e.g. Rajan Yadav" },
+          { label: "Mobile Number", key: "contact", placeholder: "e.g. 98765-43210" },
+          { label: "Company Name (optional)", key: "company_name", placeholder: "e.g. Yadav Transport Co." },
+        ].map(({ label, key, placeholder }) => (
+          <div key={key} style={{ marginBottom: 16 }}>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>{label}</label>
+            <input
+              style={inputStyle}
+              value={fields[key]}
+              placeholder={placeholder}
+              onChange={e => setFields(f => ({ ...f, [key]: e.target.value }))}
+              onFocus={e => e.target.style.borderColor = "#f59e0b"}
+              onBlur={e => e.target.style.borderColor = "#374151"}
+            />
+          </div>
+        ))}
+
+        {error && <div style={{ color: "#f87171", fontSize: 13, marginBottom: 12, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{error}</div>}
+        {saved && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, background: "#14532d22", border: "1px solid #22c55e44", borderRadius: 6, padding: "8px 12px" }}>✅ Profile saved successfully!</div>}
+
+        <button onClick={handleSave} disabled={saving} style={{
+          width: "100%", padding: "12px", background: saving ? "#374151" : "#f59e0b",
+          color: saving ? "#6b7280" : "#111827", border: "none", borderRadius: 8,
+          fontWeight: 900, fontSize: 15, cursor: saving ? "not-allowed" : "pointer",
+          fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase",
+        }}>
+          {saving ? "Saving..." : "💾 Save Changes"}
+        </button>
+      </div>
+
+      {/* Change Password */}
+      <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "22px 20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: changingPw ? 16 : 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", letterSpacing: 0.5 }}>CHANGE PASSWORD</div>
+          <button onClick={() => { setChangingPw(!changingPw); setPwError(""); }}
+            style={{ background: "none", border: "1px solid #374151", color: "#9ca3af", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
+            {changingPw ? "Cancel" : "Change"}
+          </button>
+        </div>
+        {changingPw && (
+          <div>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>New Password</label>
+            <input
+              type="password" value={newPw} placeholder="Min 6 characters"
+              onChange={e => setNewPw(e.target.value)}
+              style={{ ...inputStyle, marginBottom: 12 }}
+              onFocus={e => e.target.style.borderColor = "#f59e0b"}
+              onBlur={e => e.target.style.borderColor = "#374151"}
+            />
+            {pwError && <div style={{ color: "#f87171", fontSize: 13, marginBottom: 10, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{pwError}</div>}
+            <button onClick={handleChangePw} style={{
+              width: "100%", padding: "11px", background: "#1f2937", color: "#f9fafb",
+              border: "2px solid #374151", borderRadius: 8, fontWeight: 700, fontSize: 14,
+              cursor: "pointer", fontFamily: "'Barlow', sans-serif",
+            }}>
+              🔐 Update Password
+            </button>
+          </div>
+        )}
+        {pwSaved && <div style={{ color: "#22c55e", fontSize: 13, marginTop: 10, background: "#14532d22", border: "1px solid #22c55e44", borderRadius: 6, padding: "8px 12px" }}>✅ Password updated successfully!</div>}
+      </div>
+    </div>
+  );
+}
+
 // --- Enquiries Panel ----------------------------------------------------------
 function EnquiriesPanel({ enquiries, truckerName }) {
   return (
@@ -2428,6 +2568,7 @@ export default function App() {
             { key: "post", label: "📤 Post Empty Load" },
             { key: "find", label: "🔍 Find Empty Load" },
             { key: "enquiries", label: `📬 Enquiries${myEnquiries.length > 0 ? ` (${myEnquiries.length})` : ""}` },
+            { key: "profile", label: "👤 Profile" },
           ].map((t) => (
             <button key={t.key} onClick={() => setActiveTab(t.key)}
               className="tr-tab-btn"
@@ -2455,6 +2596,7 @@ export default function App() {
         {!loadsLoading && user.role === "trucker" && activeTab === "post" && <PostLoad loads={loads} setLoads={setLoads} truckerName={user.name} currentUser={user} />}
         {!loadsLoading && user.role === "trucker" && activeTab === "find" && <FindLoad loads={loads} currentUser={user} onRevealAttempt={handleRevealAttempt} revealCount={revealCount} revealLimit={REVEAL_LIMIT} timeLeft={timeLeft} />}
         {user.role === "trucker" && activeTab === "enquiries" && <EnquiriesPanel enquiries={myEnquiries} truckerName={user.name} />}
+        {user.role === "trucker" && activeTab === "profile" && <ProfilePanel user={user} setUser={setUser} />}
       </main>
     </div>
   );
