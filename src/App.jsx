@@ -656,19 +656,19 @@ const CitySelect = ({ label, value, onChange, exclude }) => (
       value={value}
       onChange={(e) => onChange(e.target.value)}
       style={{
-        background: "#111827",
-        color: "#f9fafb",
-        border: "2px solid #374151",
+        background: "#ffffff",
+        color: "#1e293b",
+        border: "1.5px solid #e2e8f0",
         borderRadius: 6,
         padding: "10px 14px",
         fontSize: 15,
-        fontFamily: "'Barlow', sans-serif",
+        fontFamily: "'DM Sans', sans-serif",
         cursor: "pointer",
         outline: "none",
         transition: "border-color .2s",
       }}
       onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
-      onBlur={(e) => (e.target.style.borderColor = "#374151")}
+      onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
     >
       <option value="">- Select City -</option>
       {CITY_NAMES.filter((c) => c !== exclude).map((c) => (
@@ -680,15 +680,16 @@ const CitySelect = ({ label, value, onChange, exclude }) => (
 
 const Badge = ({ children, color = "#f59e0b" }) => (
   <span style={{
-    background: color + "22",
+    background: color + "18",
     color,
-    border: `1px solid ${color}55`,
-    borderRadius: 4,
-    padding: "2px 8px",
+    border: `1px solid ${color}44`,
+    borderRadius: 20,
+    padding: "3px 10px",
     fontSize: 11,
     fontWeight: 700,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     textTransform: "uppercase",
+    fontFamily: "'DM Sans', sans-serif",
   }}>{children}</span>
 );
 
@@ -704,14 +705,14 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
 
   return (
   <div style={{
-    background: highlight ? "#1c1408" : "#111827",
-    border: `2px solid ${highlight ? "#f59e0b" : "#1f2937"}`,
-    borderRadius: 12,
+    background: highlight ? "#fffbeb" : "#ffffff",
+    border: `1px solid ${highlight ? "#fcd34d" : "#e2e8f0"}`,
+    borderRadius: 14,
     padding: "18px 20px",
     marginBottom: 14,
     position: "relative",
     transition: "all .2s",
-    boxShadow: highlight ? "0 0 20px #f59e0b33" : "none",
+    boxShadow: highlight ? "0 4px 20px #f59e0b18" : "0 1px 6px #00000008",
   }}>
     {highlight && (
       <div style={{ position: "absolute", top: -10, right: 14 }}>
@@ -725,40 +726,40 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
     )}
     <div className="tr-load-top">
       <div>
-        <div style={{ fontSize: 18, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1 }}>
+        <div style={{ fontSize: 18, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
           {load.from} <span style={{ color: "#f59e0b" }}>→</span> {load.to}
         </div>
-        <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}>
+        <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>
           🚛 {load.truckType || load.truckNo || "-"}
         </div>
       </div>
       <div style={{ textAlign: "right" }}>
-        <div style={{ color: "#f59e0b", fontWeight: 700, fontSize: 14 }}>📅 {load.date}</div>
+        <div style={{ color: "#f59e0b", fontWeight: 600, fontSize: 14 }}>📅 {load.date}</div>
         <div style={{ marginTop: 8 }}>
           {showContact ? (
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              background: "#065f4633", border: "1px solid #22c55e55",
-              borderRadius: 7, padding: "7px 14px",
+              background: "#f0fdf4", border: "1px solid #86efac",
+              borderRadius: 8, padding: "7px 14px",
             }}>
               <span style={{ fontSize: 16 }}>📞</span>
-              <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15, letterSpacing: 0.5 }}>{load.contact || "-"}</span>
+              <span style={{ color: "#16a34a", fontWeight: 700, fontSize: 15 }}>{load.contact || "-"}</span>
               <button onClick={() => setShowContact(false)} style={{
-                background: "none", border: "none", color: "#4b5563",
+                background: "none", border: "none", color: "#94a3b8",
                 cursor: "pointer", fontSize: 14, padding: "0 2px", lineHeight: 1,
               }}>✕</button>
             </div>
           ) : (
             <button onClick={handleContactClick} style={{
               display: "inline-flex", alignItems: "center", gap: 7,
-              background: "#1f2937", color: "#f9fafb",
-              border: "2px solid #374151", borderRadius: 7,
+              background: "#f0fdf4", color: "#16a34a",
+              border: "1px solid #86efac", borderRadius: 8,
               padding: "7px 16px", fontSize: 13, fontWeight: 700,
-              cursor: "pointer", fontFamily: "'Barlow', sans-serif",
+              cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
               transition: "all .15s",
             }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#22c55e"; e.currentTarget.style.color = "#111827"; e.currentTarget.style.borderColor = "#22c55e"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "#1f2937"; e.currentTarget.style.color = "#f9fafb"; e.currentTarget.style.borderColor = "#374151"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#16a34a"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "#16a34a"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#f0fdf4"; e.currentTarget.style.color = "#16a34a"; e.currentTarget.style.borderColor = "#86efac"; }}
             >
               📞 Contact Number
             </button>
@@ -768,7 +769,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
     </div>
     {load.via.length > 0 && (
       <div style={{ marginTop: 12 }}>
-        <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 6, letterSpacing: 1 }}>VIA ({load.via.length} cities):</div>
+        <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 6, letterSpacing: 1, fontWeight: 600, textTransform: "uppercase" }}>Via ({load.via.length} cities):</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
           {load.via.map((c) => {
             const cityData = ROUTE_MAP[c];
@@ -871,10 +872,10 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
       <div style={{ fontSize: 56 }}>✅</div>
-      <div style={{ fontSize: 24, fontWeight: 800, color: "#22c55e", fontFamily: "'Barlow Condensed', sans-serif", marginTop: 12 }}>
+      <div style={{ fontSize: 24, fontWeight: 800, color: "#22c55e", fontFamily: "'DM Sans', sans-serif", marginTop: 12 }}>
         {editingId ? "Post Updated Successfully!" : "Load Posted Successfully!"}
       </div>
-      <div style={{ color: "#9ca3af", marginTop: 8 }}>
+      <div style={{ color: "#64748b", marginTop: 8 }}>
         {editingId ? "Your load post has been updated." : "Other truckers can now find your empty truck on this route."}
       </div>
     </div>
@@ -883,12 +884,12 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
   return (
     <div style={{ maxWidth: 560, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: 0 }}>
+        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: 0 }}>
           {editingId ? "EDIT EMPTY LOAD" : "POST EMPTY LOAD"}
         </h2>
-        <p style={{ color: "#6b7280", marginTop: 6, fontSize: 14 }}>Share your empty truck details so others can book space on your route.</p>
+        <p style={{ color: "#94a3b8", marginTop: 6, fontSize: 14 }}>Share your empty truck details so others can book space on your route.</p>
         {editingId && (
-          <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10, background: "#1c1408", border: "1px solid #f59e0b44", borderRadius: 8, padding: "10px 14px" }}>
+          <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 10, background: "#fffbeb", border: "1px solid #f59e0b44", borderRadius: 8, padding: "10px 14px" }}>
             <span style={{ fontSize: 16 }}>✏️</span>
             <span style={{ fontSize: 13, color: "#f59e0b", fontWeight: 600 }}>Editing an existing post — make your changes and save.</span>
             <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
@@ -899,7 +900,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
                 🗑️ Delete
               </button>
               <button onClick={handleCancelEdit}
-                style={{ background: "none", border: "1px solid #374151", color: "#6b7280", borderRadius: 6, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>
+                style={{ background: "none", border: "1px solid #e2e8f0", color: "#94a3b8", borderRadius: 6, padding: "4px 10px", fontSize: 12, cursor: "pointer" }}>
                 Cancel
               </button>
             </div>
@@ -915,17 +916,17 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Start Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            style={{ background: "#111827", color: "#f9fafb", border: "2px solid #374151", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'Barlow', sans-serif", outline: "none" }}
+            style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
-            onBlur={(e) => (e.target.style.borderColor = "#374151")}
+            onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
           />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Truck Type</label>
           <select value={truckType} onChange={(e) => setTruckType(e.target.value)}
-            style={{ background: "#111827", color: truckType ? "#f9fafb" : "#6b7280", border: "2px solid #374151", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'Barlow', sans-serif", outline: "none", cursor: "pointer" }}
+            style={{ background: "#ffffff", color: truckType ? "#1e293b" : "#94a3b8", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none", cursor: "pointer" }}
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
-            onBlur={(e) => (e.target.style.borderColor = "#374151")}
+            onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
           >
             <option value="">- Select Type -</option>
             <option value="Mini Truck (1-2 Ton)">Mini Truck (1-2 Ton)</option>
@@ -946,9 +947,9 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Contact Number</label>
           <input type="text" placeholder="e.g. 98765-43210" value={contact} onChange={(e) => setContact(e.target.value)}
-            style={{ background: "#111827", color: "#f9fafb", border: "2px solid #374151", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'Barlow', sans-serif", outline: "none" }}
+            style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             onFocus={(e) => (e.target.style.borderColor = "#f59e0b")}
-            onBlur={(e) => (e.target.style.borderColor = "#374151")}
+            onBlur={(e) => (e.target.style.borderColor = "#cbd5e1")}
           />
         </div>
       </div>
@@ -960,9 +961,9 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
               Extra Days After Start Date (optional)
             </label>
             <span style={{
-              background: postDuration === 0 ? "#1f2937" : "#1c1408",
-              color: postDuration === 0 ? "#6b7280" : "#f59e0b",
-              border: `1px solid ${postDuration === 0 ? "#374151" : "#f59e0b55"}`,
+              background: postDuration === 0 ? "#e2e8f0" : "#fffbeb",
+              color: postDuration === 0 ? "#94a3b8" : "#f59e0b",
+              border: `1px solid ${postDuration === 0 ? "#cbd5e1" : "#f59e0b55"}`,
               borderRadius: 20, padding: "2px 12px", fontSize: 12, fontWeight: 700,
             }}>
               {postDuration === 0 ? "None — expires on Start Date" : `+${postDuration} day${postDuration > 1 ? "s" : ""} buffer`}
@@ -973,7 +974,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
             onChange={(e) => setPostDuration(Number(e.target.value))}
             style={{ width: "100%", accentColor: "#f59e0b", cursor: "pointer" }}
           />
-          <div style={{ fontSize: 12, color: "#6b7280" }}>
+          <div style={{ fontSize: 12, color: "#94a3b8" }}>
             {postDuration === 0
               ? "Post will automatically disappear on the Start Date."
               : `Post will stay visible for ${postDuration} extra day${postDuration > 1 ? "s" : ""} after the Start Date — useful if your travel may be delayed.`}
@@ -982,7 +983,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
       </div>
 
       {/* Email Notification Checkbox */}
-      <div style={{ marginBottom: 20, background: "#111827", border: `2px solid ${notifyByEmail ? "#f59e0b55" : "#1f2937"}`, borderRadius: 10, padding: "14px 16px", transition: "border-color .2s" }}>
+      <div style={{ marginBottom: 20, background: "#ffffff", border: `2px solid ${notifyByEmail ? "#f59e0b55" : "#e2e8f0"}`, borderRadius: 10, padding: "14px 16px", transition: "border-color .2s" }}>
         <label style={{ display: "flex", alignItems: "flex-start", gap: 12, cursor: "pointer" }}>
           <div style={{ position: "relative", flexShrink: 0, marginTop: 2 }}>
             <input
@@ -993,10 +994,10 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
             />
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: notifyByEmail ? "#f59e0b" : "#f9fafb" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: notifyByEmail ? "#f59e0b" : "#1e293b" }}>
               📧 Notify me by email when someone tries to contact me
             </div>
-            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 4, lineHeight: 1.5 }}>
               {notifyByEmail
                 ? `You will receive an email at ${currentUser?.email || "your signup email"} whenever someone exceeds their daily reveal limit but still tries to view your contact number. Their name and mobile number will be included so you can call them back.`
                 : "Tick this box to receive an email alert with the caller's details when they exceed their daily contact reveal limit."}
@@ -1007,11 +1008,11 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
 
       <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <button onClick={handlePreview} disabled={!from || !to || !date}
-          style={{ flex: 1, padding: "12px 20px", background: "#1f2937", color: "#f9fafb", border: "2px solid #374151", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Barlow', sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
+          style={{ flex: 1, padding: "12px 20px", background: "#e2e8f0", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1, textTransform: "uppercase" }}>
           Preview Route
         </button>
         <button onClick={handleSubmit} disabled={!from || !to || !date}
-          style={{ flex: 2, padding: "12px 20px", background: from && to && date ? "#f59e0b" : "#374151", color: from && to && date ? "#111827" : "#6b7280", border: "none", borderRadius: 8, fontWeight: 800, fontSize: 15, cursor: from && to && date ? "pointer" : "not-allowed", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
+          style={{ flex: 2, padding: "12px 20px", background: from && to && date ? "#f59e0b" : "#cbd5e1", color: from && to && date ? "#ffffff" : "#94a3b8", border: "none", borderRadius: 8, fontWeight: 800, fontSize: 15, cursor: from && to && date ? "pointer" : "not-allowed", fontFamily: "'DM Sans', sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
           {editingId ? "💾 Save Changes" : "🚛 Post Empty Load"}
         </button>
       </div>
@@ -1019,15 +1020,15 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
       {preview && (
         <div style={{ background: "#0f172a", border: "2px solid #f59e0b44", borderRadius: 12, padding: "18px 20px" }}>
           <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", marginBottom: 12, textTransform: "uppercase" }}>Route Preview</div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
             {preview.from} <span style={{ color: "#f59e0b" }}>→</span> {preview.to}
           </div>
-          <div style={{ color: "#9ca3af", fontSize: 13, marginTop: 4 }}>📅 {preview.date}</div>
+          <div style={{ color: "#64748b", fontSize: 13, marginTop: 4 }}>📅 {preview.date}</div>
           {preview.truckType && <div style={{ color: "#a78bfa", fontSize: 13, marginTop: 4 }}>🚛 {preview.truckType}</div>}
           {preview.via.length > 0 ? (
             <div style={{ marginTop: 14 }}>
               <div style={{ display: "flex", gap: 14, marginBottom: 10, flexWrap: "wrap" }}>
-                <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 1 }}>
+                <div style={{ fontSize: 11, color: "#94a3b8", letterSpacing: 1 }}>
                   CITIES ALONG ROUTE ({preview.via.length})
                 </div>
                 <span style={{ fontSize: 11, color: "#f59e0b" }}>★ Major city</span>
@@ -1042,7 +1043,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
               </div>
             </div>
           ) : (
-            <div style={{ color: "#6b7280", marginTop: 10, fontSize: 13 }}>No major intermediate cities detected for this route.</div>
+            <div style={{ color: "#94a3b8", marginTop: 10, fontSize: 13 }}>No major intermediate cities detected for this route.</div>
           )}
         </div>
       )}
@@ -1082,41 +1083,41 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
   return (
     <div style={{ maxWidth: 640, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: 0 }}>FIND EMPTY LOAD</h2>
-        <p style={{ color: "#6b7280", marginTop: 6, fontSize: 14 }}>Search for empty trucks passing through your route.</p>
+        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: 0 }}>FIND EMPTY LOAD</h2>
+        <p style={{ color: "#94a3b8", marginTop: 6, fontSize: 14 }}>Search for empty trucks passing through your route.</p>
       </div>
 
-      <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "20px", marginBottom: 24 }}>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "20px", marginBottom: 24 }}>
         <div className="tr-grid-3" style={{ marginBottom: 16 }}>
           <CitySelect label="From" value={from} onChange={setFrom} exclude={to} />
           <CitySelect label="To" value={to} onChange={setTo} exclude={from} />
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase" }}>Date (optional)</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              style={{ background: "#0d1117", color: "#f9fafb", border: "2px solid #374151", borderRadius: 6, padding: "10px 14px", fontSize: 14, fontFamily: "'Barlow', sans-serif", outline: "none" }}
+              style={{ background: "#ffffff", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 6, padding: "10px 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             />
           </div>
         </div>
         <button onClick={handleSearch} disabled={!from || !to}
-          style={{ width: "100%", padding: "13px", background: from && to ? "#f59e0b" : "#374151", color: from && to ? "#111827" : "#6b7280", border: "none", borderRadius: 8, fontWeight: 800, fontSize: 15, cursor: from && to ? "pointer" : "not-allowed", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
+          style={{ width: "100%", padding: "13px", background: from && to ? "#f59e0b" : "#cbd5e1", color: from && to ? "#ffffff" : "#94a3b8", border: "none", borderRadius: 8, fontWeight: 800, fontSize: 15, cursor: from && to ? "pointer" : "not-allowed", fontFamily: "'DM Sans', sans-serif", letterSpacing: 2, textTransform: "uppercase" }}>
           🔍 Search Empty Trucks
         </button>
       </div>
 
       {!searched && (
-        <div style={{ textAlign: "center", padding: "48px 20px", color: "#4b5563" }}>
+        <div style={{ textAlign: "center", padding: "48px 20px", color: "#94a3b8" }}>
           <div style={{ fontSize: 48 }}>🔍</div>
-          <div style={{ marginTop: 12, fontSize: 16, color: "#6b7280" }}>Select your route above to find available empty trucks.</div>
+          <div style={{ marginTop: 12, fontSize: 16, color: "#94a3b8" }}>Select your route above to find available empty trucks.</div>
         </div>
       )}
 
       {searched && (
         <>
           <div style={{ marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-            <div style={{ fontSize: 14, color: "#9ca3af" }}>
-              Found <span style={{ color: results.length > 0 ? "#22c55e" : "#f87171", fontWeight: 700 }}>{results.length}</span> matching truck{results.length !== 1 ? "s" : ""} for <span style={{ color: "#f9fafb", fontWeight: 600 }}>{from} ? {to}</span>
+            <div style={{ fontSize: 14, color: "#64748b" }}>
+              Found <span style={{ color: results.length > 0 ? "#22c55e" : "#f87171", fontWeight: 700 }}>{results.length}</span> matching truck{results.length !== 1 ? "s" : ""} for <span style={{ color: "#1e293b", fontWeight: 600 }}>{from} ? {to}</span>
             </div>
-            <div style={{ fontSize: 12, background: revealCount >= revealLimit ? "#7f1d1d33" : "#1f2937", border: `1px solid ${revealCount >= revealLimit ? "#dc262644" : "#374151"}`, borderRadius: 6, padding: "5px 12px", color: revealCount >= revealLimit ? "#f87171" : "#9ca3af" }}>
+            <div style={{ fontSize: 12, background: revealCount >= revealLimit ? "#7f1d1d33" : "#e2e8f0", border: `1px solid ${revealCount >= revealLimit ? "#dc262644" : "#cbd5e1"}`, borderRadius: 6, padding: "5px 12px", color: revealCount >= revealLimit ? "#f87171" : "#64748b" }}>
               {revealCount >= revealLimit
                 ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
                 : `📞 ${revealCount}/${revealLimit} reveals used today`}
@@ -1124,11 +1125,11 @@ function FindLoad({ loads, currentUser, onRevealAttempt, revealCount, revealLimi
           </div>
 
           {results.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "56px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 12 }}>
+            <div style={{ textAlign: "center", padding: "56px 20px", background: "#ffffff", border: "2px dashed #1f2937", borderRadius: 12 }}>
               <div style={{ fontSize: 48 }}>🔍</div>
-              <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>No Empty Trucks Found</div>
-              <div style={{ marginTop: 8, fontSize: 14, color: "#6b7280" }}>No trucks are currently available on the <strong style={{ color: "#9ca3af" }}>{from} ? {to}</strong> route{date ? ` on ${date}` : ""}.</div>
-              <div style={{ marginTop: 6, fontSize: 13, color: "#4b5563" }}>Try searching without a date filter, or check back later.</div>
+              <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>No Empty Trucks Found</div>
+              <div style={{ marginTop: 8, fontSize: 14, color: "#94a3b8" }}>No trucks are currently available on the <strong style={{ color: "#64748b" }}>{from} ? {to}</strong> route{date ? ` on ${date}` : ""}.</div>
+              <div style={{ marginTop: 6, fontSize: 13, color: "#94a3b8" }}>Try searching without a date filter, or check back later.</div>
             </div>
           ) : (
             results.map((l) => (
@@ -1262,7 +1263,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
     { key: "analytics", label: "📈 Analytics" },
   ];
 
-  const s = { background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "20px 18px" };
+  const s = { background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 14, padding: "20px 18px", boxShadow: "0 1px 6px #00000008" };
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -1271,11 +1272,11 @@ function AdminPanel({ loads, setLoads, currentUser }) {
         {ADMIN_TABS.map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)} style={{
             padding: "9px 16px", borderRadius: 8, whiteSpace: "nowrap",
-            background: activeTab === t.key ? "#f59e0b" : "#111827",
-            color: activeTab === t.key ? "#111827" : "#9ca3af",
-            border: activeTab === t.key ? "none" : "2px solid #1f2937",
+            background: activeTab === t.key ? "#f59e0b" : "#ffffff",
+            color: activeTab === t.key ? "#ffffff" : "#64748b",
+            border: activeTab === t.key ? "none" : "1px solid #e2e8f0",
             fontWeight: 700, fontSize: 13, cursor: "pointer",
-            fontFamily: "'Barlow', sans-serif", letterSpacing: 0.5, transition: "all .2s",
+            fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5, transition: "all .2s",
           }}>{t.label}</button>
         ))}
       </div>
@@ -1284,8 +1285,8 @@ function AdminPanel({ loads, setLoads, currentUser }) {
       {activeTab === "dashboard" && (
         <div>
           <div style={{ marginBottom: 24 }}>
-            <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 4px", letterSpacing: 1 }}>ADMIN DASHBOARD</h2>
-            <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>Overview of all activity on TruckRoute network.</p>
+            <h2 style={{ fontSize: 26, fontWeight: 900, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 4px", letterSpacing: 1 }}>ADMIN DASHBOARD</h2>
+            <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>Overview of all activity on TruckRoute network.</p>
           </div>
 
           {/* Stat Cards */}
@@ -1294,15 +1295,15 @@ function AdminPanel({ loads, setLoads, currentUser }) {
               { label: "Total Loads", value: stats.total, icon: "🚛", color: "#f59e0b" },
               { label: "Posted Today", value: stats.today, icon: "📅", color: "#22c55e" },
               { label: "Upcoming", value: stats.upcoming, icon: "🕐", color: "#60a5fa" },
-              { label: "Past Loads", value: stats.past, icon: "📦", color: "#6b7280" },
+              { label: "Past Loads", value: stats.past, icon: "📦", color: "#94a3b8" },
               { label: "Active Cities", value: stats.cities, icon: "🏙️", color: "#a78bfa" },
               { label: "Truckers", value: stats.truckers, icon: "👤", color: "#f472b6" },
             ].map(s => (
-              <div key={s.label} style={{ background: "#111827", border: `2px solid ${s.color}28`, borderRadius: 12, padding: "18px 16px", display: "flex", alignItems: "center", gap: 14 }}>
+              <div key={s.label} style={{ background: "#ffffff", border: `2px solid ${s.color}28`, borderRadius: 12, padding: "18px 16px", display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ fontSize: 28, lineHeight: 1 }}>{s.icon}</div>
                 <div>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: s.color, fontFamily: "'Barlow Condensed', sans-serif", lineHeight: 1 }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 1.5, textTransform: "uppercase", marginTop: 3 }}>{s.label}</div>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: s.color, fontFamily: "'DM Sans', sans-serif", lineHeight: 1 }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#94a3b8", letterSpacing: 1.5, textTransform: "uppercase", marginTop: 3 }}>{s.label}</div>
                 </div>
               </div>
             ))}
@@ -1312,27 +1313,27 @@ function AdminPanel({ loads, setLoads, currentUser }) {
           <div style={{ ...s, marginBottom: 20 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 16 }}>Recent Loads</div>
             {loads.length === 0 ? (
-              <div style={{ color: "#4b5563", textAlign: "center", padding: "24px 0" }}>No loads posted yet.</div>
+              <div style={{ color: "#94a3b8", textAlign: "center", padding: "24px 0" }}>No loads posted yet.</div>
             ) : (
               <div style={{ overflowX: "auto", margin: "0 -4px" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 480 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #1f2937" }}>
                     {["Trucker", "Route", "Truck Type", "Date", "Status"].map(h => (
-                      <th key={h} style={{ padding: "8px 10px", textAlign: "left", color: "#6b7280", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
+                      <th key={h} style={{ padding: "8px 10px", textAlign: "left", color: "#94a3b8", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {loads.slice(0, 8).map(l => {
                     const status = l.date === today ? "today" : l.date > today ? "upcoming" : "past";
-                    const statusColor = status === "today" ? "#22c55e" : status === "upcoming" ? "#60a5fa" : "#6b7280";
+                    const statusColor = status === "today" ? "#22c55e" : status === "upcoming" ? "#60a5fa" : "#94a3b8";
                     return (
-                      <tr key={l.id} style={{ borderBottom: "1px solid #0d1117" }}>
-                        <td style={{ padding: "10px", color: "#f9fafb", fontWeight: 600 }}>{l.truckerName}</td>
-                        <td style={{ padding: "10px", color: "#f9fafb" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</td>
-                        <td style={{ padding: "10px", color: "#9ca3af" }}>{l.truckType || "-"}</td>
-                        <td style={{ padding: "10px", color: "#9ca3af" }}>{l.date}</td>
+                      <tr key={l.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "10px", color: "#1e293b", fontWeight: 600 }}>{l.truckerName}</td>
+                        <td style={{ padding: "10px", color: "#1e293b" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</td>
+                        <td style={{ padding: "10px", color: "#64748b" }}>{l.truckType || "-"}</td>
+                        <td style={{ padding: "10px", color: "#64748b" }}>{l.date}</td>
                         <td style={{ padding: "10px" }}>
                           <span style={{ background: statusColor + "22", color: statusColor, border: `1px solid ${statusColor}44`, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{status}</span>
                         </td>
@@ -1351,50 +1352,50 @@ function AdminPanel({ loads, setLoads, currentUser }) {
       {activeTab === "loads" && (
         <div>
           <div style={{ marginBottom: 20 }}>
-            <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 4px" }}>ALL LOADS</h2>
-            <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>Manage and monitor all posted empty loads.</p>
+            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 4px" }}>ALL LOADS</h2>
+            <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>Manage and monitor all posted empty loads.</p>
           </div>
 
           {/* Filters */}
           <div className="tr-grid-3" style={{ marginBottom: 20 }}>
             <input type="text" placeholder="🔍  Search by trucker, city, truck type..." value={search} onChange={e => setSearch(e.target.value)}
-              style={{ background: "#111827", color: "#f9fafb", border: "2px solid #1f2937", borderRadius: 8, padding: "10px 14px", fontSize: 14, fontFamily: "'Barlow', sans-serif", outline: "none" }}
-              onFocus={e => e.target.style.borderColor = "#f59e0b"} onBlur={e => e.target.style.borderColor = "#1f2937"}
+              style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+              onFocus={e => e.target.style.borderColor = "#f59e0b"} onBlur={e => e.target.style.borderColor = "#e2e8f0"}
             />
             <select value={filterType} onChange={e => setFilterType(e.target.value)}
-              style={{ background: "#111827", color: filterType ? "#f9fafb" : "#6b7280", border: "2px solid #1f2937", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'Barlow', sans-serif", outline: "none", cursor: "pointer" }}>
+              style={{ background: "#ffffff", color: filterType ? "#1e293b" : "#94a3b8", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none", cursor: "pointer" }}>
               <option value="">All Types</option>
               {["Mini Truck (1-2 Ton)", "Light Commercial (2-5 Ton)", "Medium Truck (5-10 Ton)", "Heavy Truck (10-20 Ton)", "Trailer / Container (20+ Ton)", "Flatbed", "Tanker", "Refrigerated / Reefer", "Open Body", "Single Car Carrier", "Tipper / Dumper"].map(t => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
             <input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)}
-              style={{ background: "#111827", color: "#f9fafb", border: "2px solid #1f2937", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'Barlow', sans-serif", outline: "none" }}
+              style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
             />
           </div>
 
-          <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 14 }}>
-            Showing <span style={{ color: "#f9fafb", fontWeight: 700 }}>{filteredLoads.length}</span> of {loads.length} loads
+          <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 14 }}>
+            Showing <span style={{ color: "#1e293b", fontWeight: 700 }}>{filteredLoads.length}</span> of {loads.length} loads
             {(search || filterType || filterDate) && (
               <button onClick={() => { setSearch(""); setFilterType(""); setFilterDate(""); }}
-                style={{ marginLeft: 12, color: "#f59e0b", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontFamily: "'Barlow', sans-serif", fontWeight: 600 }}>
+                style={{ marginLeft: 12, color: "#f59e0b", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontFamily: "'DM Sans', sans-serif", fontWeight: 600 }}>
                 ? Clear filters
               </button>
             )}
           </div>
 
           {filteredLoads.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "48px", background: "#111827", borderRadius: 12, color: "#4b5563" }}>
+            <div style={{ textAlign: "center", padding: "48px", background: "#ffffff", borderRadius: 12, color: "#94a3b8" }}>
               <div style={{ fontSize: 40 }}>📦</div>
               <div style={{ marginTop: 12 }}>No loads match your filters.</div>
             </div>
           ) : (
-            <div className="tr-table-wrap" style={{ background: "#111827" }}>
+            <div className="tr-table-wrap" style={{ background: "#ffffff" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: "#0d1117", borderBottom: "2px solid #1f2937" }}>
+                  <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
                     {["Trucker", "Route", "Via (count)", "Truck Type", "Date", "Status", "Contact", "Action"].map(h => (
-                      <th key={h} style={{ padding: "12px 14px", textAlign: "left", color: "#6b7280", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
+                      <th key={h} style={{ padding: "12px 14px", textAlign: "left", color: "#94a3b8", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -1402,32 +1403,32 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                   {[...filteredLoads].sort((a, b) => (b.postedAt || 0) - (a.postedAt || 0)).map((l, i) => {
                     const { text: liveText, color: liveColor, expired } = expiryLabel(l);
                     return (
-                      <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: editLoad === l.id ? "#1c1408" : i % 2 === 0 ? "transparent" : "#0d111766", opacity: expired ? 0.7 : 1 }}>
-                        <td style={{ padding: "12px 14px", color: "#f9fafb", fontWeight: 600 }}>{l.truckerName}</td>
+                      <tr key={l.id} style={{ borderBottom: "1px solid #f1f5f9", background: editLoad === l.id ? "#fffbeb" : i % 2 === 0 ? "transparent" : "#f8fafc", opacity: expired ? 0.7 : 1 }}>
+                        <td style={{ padding: "12px 14px", color: "#1e293b", fontWeight: 600 }}>{l.truckerName}</td>
                         <td style={{ padding: "12px 14px" }}>
                           {editLoad === l.id ? (
                             <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                              <select value={editFields.from} onChange={e => setEditFields(f => ({...f, from: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }}>
+                              <select value={editFields.from} onChange={e => setEditFields(f => ({...f, from: e.target.value}))} style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }}>
                                 {Object.keys(ROUTE_MAP).map(c => <option key={c}>{c}</option>)}
                               </select>
                               <span style={{ color: "#f59e0b" }}>→</span>
-                              <select value={editFields.to} onChange={e => setEditFields(f => ({...f, to: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }}>
+                              <select value={editFields.to} onChange={e => setEditFields(f => ({...f, to: e.target.value}))} style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }}>
                                 {Object.keys(ROUTE_MAP).map(c => <option key={c}>{c}</option>)}
                               </select>
                             </div>
                           ) : (
-                            <><span style={{ color: "#f9fafb" }}>{l.from}</span><span style={{ color: "#f59e0b", margin: "0 4px" }}>→</span><span style={{ color: "#f9fafb" }}>{l.to}</span></>
+                            <><span style={{ color: "#1e293b" }}>{l.from}</span><span style={{ color: "#f59e0b", margin: "0 4px" }}>→</span><span style={{ color: "#1e293b" }}>{l.to}</span></>
                           )}
                         </td>
                         <td style={{ padding: "12px 14px", color: "#60a5fa" }}>{l.via.length} cities</td>
-                        <td style={{ padding: "12px 14px", color: "#9ca3af" }}>
+                        <td style={{ padding: "12px 14px", color: "#64748b" }}>
                           {editLoad === l.id ? (
-                            <input value={editFields.truckType} onChange={e => setEditFields(f => ({...f, truckType: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12, width: 140 }} />
+                            <input value={editFields.truckType} onChange={e => setEditFields(f => ({...f, truckType: e.target.value}))} style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12, width: 140 }} />
                           ) : l.truckType || "-"}
                         </td>
-                        <td style={{ padding: "12px 14px", color: "#d1d5db" }}>
+                        <td style={{ padding: "12px 14px", color: "#374151" }}>
                           {editLoad === l.id ? (
-                            <input type="date" value={editFields.date} onChange={e => setEditFields(f => ({...f, date: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }} />
+                            <input type="date" value={editFields.date} onChange={e => setEditFields(f => ({...f, date: e.target.value}))} style={{ background: "#ffffff", color: "#1e293b", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }} />
                           ) : l.date}
                         </td>
                         <td style={{ padding: "12px 14px" }}>
@@ -1440,19 +1441,19 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                         </td>
                         <td style={{ padding: "12px 14px", color: "#6ee7b7", fontFamily: "monospace", fontSize: 12 }}>
                           {editLoad === l.id ? (
-                            <input value={editFields.contact} onChange={e => setEditFields(f => ({...f, contact: e.target.value}))} style={{ background: "#0d1117", color: "#6ee7b7", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12, width: 120, fontFamily: "monospace" }} />
+                            <input value={editFields.contact} onChange={e => setEditFields(f => ({...f, contact: e.target.value}))} style={{ background: "#f8fafc", color: "#6ee7b7", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12, width: 120, fontFamily: "monospace" }} />
                           ) : l.contact || "-"}
                         </td>
                         <td style={{ padding: "12px 14px" }}>
                           {editLoad === l.id ? (
                             <div style={{ display: "flex", gap: 6 }}>
                               <button onClick={saveEditLoad} style={{ padding: "4px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>Save</button>
-                              <button onClick={() => setEditLoad(null)} style={{ padding: "4px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
+                              <button onClick={() => setEditLoad(null)} style={{ padding: "4px 10px", background: "#cbd5e1", color: "#64748b", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
                             </div>
                           ) : confirmDelete === l.id ? (
                             <div style={{ display: "flex", gap: 6 }}>
                               <button onClick={() => handleDelete(l.id)} style={{ padding: "4px 10px", background: "#dc2626", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>Confirm</button>
-                              <button onClick={() => setConfirmDelete(null)} style={{ padding: "4px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
+                              <button onClick={() => setConfirmDelete(null)} style={{ padding: "4px 10px", background: "#cbd5e1", color: "#64748b", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
                             </div>
                           ) : (
                             <div style={{ display: "flex", gap: 6 }}>
@@ -1476,18 +1477,18 @@ function AdminPanel({ loads, setLoads, currentUser }) {
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
             <div>
-              <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 4px" }}>TRUCKERS</h2>
-              <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>All registered truckers — view, edit or delete accounts.</p>
+              <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 4px" }}>TRUCKERS</h2>
+              <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>All registered truckers — view, edit or delete accounts.</p>
             </div>
-            <button onClick={fetchProfiles} style={{ padding: "8px 18px", background: "#1f2937", color: "#f9fafb", border: "2px solid #374151", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'Barlow', sans-serif" }}>
+            <button onClick={fetchProfiles} style={{ padding: "8px 18px", background: "#e2e8f0", color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
               🔄 Load Trucker List
             </button>
           </div>
 
           {profilesLoading ? (
-            <div style={{ textAlign: "center", padding: "48px", color: "#6b7280" }}>Loading...</div>
+            <div style={{ textAlign: "center", padding: "48px", color: "#94a3b8" }}>Loading...</div>
           ) : profiles.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "48px", background: "#111827", borderRadius: 12, color: "#4b5563" }}>
+            <div style={{ textAlign: "center", padding: "48px", background: "#ffffff", borderRadius: 12, color: "#94a3b8" }}>
               <div style={{ fontSize: 40 }}>👤</div>
               <div style={{ marginTop: 12 }}>Click "Load Trucker List" to view registered truckers.</div>
             </div>
@@ -1500,8 +1501,8 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                 const isDisabled = p.is_disabled;
                 return (
                   <div key={p.id} style={{
-                    background: "#111827",
-                    border: `2px solid ${isDisabled ? "#7f1d1d55" : isExpanded ? "#f59e0b44" : "#1f2937"}`,
+                    background: "#ffffff",
+                    border: `2px solid ${isDisabled ? "#7f1d1d55" : isExpanded ? "#f59e0b44" : "#e2e8f0"}`,
                     borderRadius: 12,
                     overflow: "hidden",
                     transition: "border-color .2s",
@@ -1516,7 +1517,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                           {isDisabled ? "🔒" : "🚛"}
                         </div>
                         <div>
-                          <div style={{ fontSize: 15, fontWeight: 800, color: isDisabled ? "#6b7280" : "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                          <div style={{ fontSize: 15, fontWeight: 800, color: isDisabled ? "#94a3b8" : "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
                             {p.full_name || "—"}
                             {isDisabled && <span style={{ marginLeft: 8, fontSize: 10, background: "#7f1d1d", color: "#f87171", borderRadius: 4, padding: "1px 6px", fontWeight: 700, letterSpacing: 1 }}>DISABLED</span>}
                           </div>
@@ -1524,8 +1525,8 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                         </div>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                        <span style={{ fontSize: 12, color: "#6b7280" }}>{truckerLoads.length} load{truckerLoads.length !== 1 ? "s" : ""}</span>
-                        <span style={{ fontSize: 18, color: "#6b7280", transition: "transform .2s", display: "inline-block", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                        <span style={{ fontSize: 12, color: "#94a3b8" }}>{truckerLoads.length} load{truckerLoads.length !== 1 ? "s" : ""}</span>
+                        <span style={{ fontSize: 18, color: "#94a3b8", transition: "transform .2s", display: "inline-block", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                       </div>
                     </div>
 
@@ -1540,16 +1541,16 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                             <div className="tr-grid-2" style={{ marginBottom: 14 }}>
                               {[["Full Name", "full_name", "e.g. Rajan Yadav"], ["Mobile Number", "contact", "e.g. 98765-43210"], ["Company Name", "company_name", "e.g. Yadav Transport"]].map(([label, key, ph]) => (
                                 <div key={key}>
-                                  <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4, letterSpacing: 1, textTransform: "uppercase" }}>{label}</label>
+                                  <label style={{ fontSize: 11, color: "#94a3b8", display: "block", marginBottom: 4, letterSpacing: 1, textTransform: "uppercase" }}>{label}</label>
                                   <input value={editTruckerFields[key] || ""} placeholder={ph}
                                     onChange={e => setEditTruckerFields(f => ({...f, [key]: e.target.value}))}
-                                    style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "9px 12px", fontSize: 13, boxSizing: "border-box", fontFamily: "'Barlow', sans-serif" }} />
+                                    style={{ width: "100%", background: "#ffffff", color: "#1e293b", border: "1px solid #f59e0b", borderRadius: 6, padding: "9px 12px", fontSize: 13, boxSizing: "border-box", fontFamily: "'DM Sans', sans-serif" }} />
                                 </div>
                               ))}
                             </div>
                             <div style={{ display: "flex", gap: 8 }}>
                               <button onClick={saveEditTrucker} style={{ padding: "8px 20px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💾 Save Changes</button>
-                              <button onClick={() => setEditTrucker(null)} style={{ padding: "8px 14px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                              <button onClick={() => setEditTrucker(null)} style={{ padding: "8px 14px", background: "#cbd5e1", color: "#64748b", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
                             </div>
                           </div>
                         ) : (
@@ -1558,15 +1559,15 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                             {/* Profile details */}
                             <div className="tr-grid-2" style={{ marginBottom: 16 }}>
                               {[
-                                ["Full Name", p.full_name || "—", "#f9fafb"],
+                                ["Full Name", p.full_name || "—", "#1e293b"],
                                 ["Mobile Number", p.contact || "—", "#6ee7b7"],
                                 ["Company Name", p.company_name || "—", "#a78bfa"],
                                 ["Loads Posted", truckerLoads.length, "#f59e0b"],
-                                ["Joined On", p.created_at ? new Date(p.created_at).toLocaleDateString("en-IN") : "—", "#6b7280"],
+                                ["Joined On", p.created_at ? new Date(p.created_at).toLocaleDateString("en-IN") : "—", "#94a3b8"],
                                 ["Account Status", isDisabled ? "Disabled" : "Active", isDisabled ? "#f87171" : "#22c55e"],
                               ].map(([label, val, color]) => (
-                                <div key={label} style={{ background: "#0d1117", borderRadius: 8, padding: "10px 14px" }}>
-                                  <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
+                                <div key={label} style={{ background: "#f8fafc", borderRadius: 8, padding: "10px 14px" }}>
+                                  <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
                                   <div style={{ fontSize: 14, fontWeight: 700, color }}>{val}</div>
                                 </div>
                               ))}
@@ -1575,12 +1576,12 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                             {/* Recent loads */}
                             {truckerLoads.length > 0 && (
                               <div style={{ marginBottom: 16 }}>
-                                <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Recent Loads</div>
+                                <div style={{ fontSize: 11, color: "#94a3b8", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Recent Loads</div>
                                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                                   {truckerLoads.slice(0, 3).map(l => (
-                                    <div key={l.id} style={{ background: "#0d1117", borderRadius: 6, padding: "8px 12px", display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                                      <span style={{ color: "#f9fafb" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</span>
-                                      <span style={{ color: "#6b7280" }}>{l.date}</span>
+                                    <div key={l.id} style={{ background: "#f8fafc", borderRadius: 6, padding: "8px 12px", display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+                                      <span style={{ color: "#1e293b" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</span>
+                                      <span style={{ color: "#94a3b8" }}>{l.date}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -1603,7 +1604,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                               {confirmDeleteTrucker === p.id ? (
                                 <>
                                   <button onClick={() => deleteTrucker(p.id)} style={{ padding: "8px 14px", background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Confirm Delete</button>
-                                  <button onClick={() => setConfirmDeleteTrucker(null)} style={{ padding: "8px 12px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                                  <button onClick={() => setConfirmDeleteTrucker(null)} style={{ padding: "8px 12px", background: "#cbd5e1", color: "#64748b", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
                                 </>
                               ) : (
                                 <button onClick={() => setConfirmDeleteTrucker(p.id)} style={{ padding: "8px 16px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🗑️ Delete</button>
@@ -1625,8 +1626,8 @@ function AdminPanel({ loads, setLoads, currentUser }) {
       {activeTab === "analytics" && (
         <div>
           <div style={{ marginBottom: 20 }}>
-            <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 4px" }}>ANALYTICS</h2>
-            <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>Insights into routes, truck types, and network activity.</p>
+            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 4px" }}>ANALYTICS</h2>
+            <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>Insights into routes, truck types, and network activity.</p>
           </div>
 
           <div className="tr-analytics-grid" style={{ gap: 20 }}>
@@ -1634,7 +1635,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <div style={{ ...s }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 16 }}>Truck Type Breakdown</div>
               {Object.keys(truckTypeCounts).length === 0 ? (
-                <div style={{ color: "#4b5563", fontSize: 13 }}>No data yet.</div>
+                <div style={{ color: "#94a3b8", fontSize: 13 }}>No data yet.</div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {Object.entries(truckTypeCounts).sort((a, b) => b[1] - a[1]).map(([type, count]) => {
@@ -1642,10 +1643,10 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     return (
                       <div key={type}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontSize: 12, color: "#d1d5db" }}>{type}</span>
+                          <span style={{ fontSize: 12, color: "#374151" }}>{type}</span>
                           <span style={{ fontSize: 12, color: "#f59e0b", fontWeight: 700 }}>{count} ({pct}%)</span>
                         </div>
-                        <div style={{ height: 6, background: "#1f2937", borderRadius: 3, overflow: "hidden" }}>
+                        <div style={{ height: 6, background: "#e2e8f0", borderRadius: 3, overflow: "hidden" }}>
                           <div style={{ height: "100%", width: `${pct}%`, background: "linear-gradient(90deg, #f59e0b, #fbbf24)", borderRadius: 3, transition: "width .5s ease" }} />
                         </div>
                       </div>
@@ -1659,7 +1660,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <div style={{ ...s }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#60a5fa", textTransform: "uppercase", marginBottom: 16 }}>Top Routes</div>
               {topRoutes.length === 0 ? (
-                <div style={{ color: "#4b5563", fontSize: 13 }}>No data yet.</div>
+                <div style={{ color: "#94a3b8", fontSize: 13 }}>No data yet.</div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {topRoutes.map(([route, count], i) => {
@@ -1668,12 +1669,12 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     return (
                       <div key={route}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontSize: 12, color: "#d1d5db" }}>
+                          <span style={{ fontSize: 12, color: "#374151" }}>
                             <span style={{ color: colors[i], fontWeight: 700, marginRight: 6 }}>#{i + 1}</span>{route}
                           </span>
                           <span style={{ fontSize: 12, color: colors[i], fontWeight: 700 }}>{count}x</span>
                         </div>
-                        <div style={{ height: 6, background: "#1f2937", borderRadius: 3, overflow: "hidden" }}>
+                        <div style={{ height: 6, background: "#e2e8f0", borderRadius: 3, overflow: "hidden" }}>
                           <div style={{ height: "100%", width: `${pct}%`, background: colors[i], borderRadius: 3 }} />
                         </div>
                       </div>
@@ -1687,22 +1688,22 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <div style={{ ...s }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#22c55e", textTransform: "uppercase", marginBottom: 16 }}>Load Status Split</div>
               {loads.length === 0 ? (
-                <div style={{ color: "#4b5563", fontSize: 13 }}>No data yet.</div>
+                <div style={{ color: "#94a3b8", fontSize: 13 }}>No data yet.</div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {[
                     { label: "Posted Today", value: stats.today, color: "#22c55e" },
                     { label: "Upcoming", value: stats.upcoming, color: "#60a5fa" },
-                    { label: "Past", value: stats.past, color: "#6b7280" },
+                    { label: "Past", value: stats.past, color: "#94a3b8" },
                   ].map(item => {
                     const pct = loads.length ? Math.round((item.value / loads.length) * 100) : 0;
                     return (
                       <div key={item.label}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontSize: 12, color: "#d1d5db" }}>{item.label}</span>
+                          <span style={{ fontSize: 12, color: "#374151" }}>{item.label}</span>
                           <span style={{ fontSize: 12, color: item.color, fontWeight: 700 }}>{item.value} ({pct}%)</span>
                         </div>
-                        <div style={{ height: 6, background: "#1f2937", borderRadius: 3 }}>
+                        <div style={{ height: 6, background: "#e2e8f0", borderRadius: 3 }}>
                           <div style={{ height: "100%", width: `${pct}%`, background: item.color, borderRadius: 3 }} />
                         </div>
                       </div>
@@ -1716,7 +1717,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
             <div style={{ ...s }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#a78bfa", textTransform: "uppercase", marginBottom: 16 }}>Most Active Cities</div>
               {loads.length === 0 ? (
-                <div style={{ color: "#4b5563", fontSize: 13 }}>No data yet.</div>
+                <div style={{ color: "#94a3b8", fontSize: 13 }}>No data yet.</div>
               ) : (() => {
                 const cityCount = loads.flatMap(l => [l.from, l.to]).reduce((acc, c) => { acc[c] = (acc[c] || 0) + 1; return acc; }, {});
                 const topCities = Object.entries(cityCount).sort((a, b) => b[1] - a[1]).slice(0, 6);
@@ -1726,10 +1727,10 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                     {topCities.map(([city, count]) => (
                       <div key={city}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontSize: 12, color: "#d1d5db" }}>📍 {city}</span>
+                          <span style={{ fontSize: 12, color: "#374151" }}>📍 {city}</span>
                           <span style={{ fontSize: 12, color: "#a78bfa", fontWeight: 700 }}>{count} loads</span>
                         </div>
-                        <div style={{ height: 6, background: "#1f2937", borderRadius: 3 }}>
+                        <div style={{ height: 6, background: "#e2e8f0", borderRadius: 3 }}>
                           <div style={{ height: "100%", width: `${Math.round((count / max) * 100)}%`, background: "linear-gradient(90deg, #7c3aed, #a78bfa)", borderRadius: 3 }} />
                         </div>
                       </div>
@@ -1758,11 +1759,12 @@ function LoginScreen({ onLogin }) {
   const [error, setError]       = useState("");
 
   const inputStyle = {
-    width: "100%", background: "#0d1117", color: "#f9fafb",
-    border: "2px solid #374151", borderRadius: 8,
+    width: "100%", background: "#ffffff", color: "#1e293b",
+    border: "2px solid #e2e8f0", borderRadius: 10,
     padding: "12px 14px", fontSize: 15,
-    fontFamily: "'Barlow', sans-serif", outline: "none",
+    fontFamily: "'DM Sans', sans-serif", outline: "none",
     boxSizing: "border-box", marginBottom: 14,
+    transition: "border-color .2s, box-shadow .2s",
   };
 
   const handleLogin = async () => {
@@ -1775,11 +1777,8 @@ function LoginScreen({ onLogin }) {
       const { data: profileRows } = await supabase
         .from("profiles").select("*").eq("user_id", data.user.id);
 
-      // Safely grab first matching profile row (avoids .single() crash on duplicates)
       const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
-      console.log("Profile found:", profile);
 
-      // No profile row found at all
       if (!profile) {
         await supabase.auth.signOut();
         setError("Account profile not found. Please contact support.");
@@ -1844,94 +1843,76 @@ function LoginScreen({ onLogin }) {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Barlow', sans-serif", padding: 20 }}>
-      {/* Decorative bg */}
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #f0f7ff 0%, #fef9f0 50%, #f0fff4 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: 20 }}>
       <div style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0 }}>
-        <div style={{ position: "absolute", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, #f59e0b08 0%, transparent 70%)", top: -200, left: -200 }} />
-        <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, #1d4ed808 0%, transparent 70%)", bottom: -100, right: -100 }} />
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(#ffffff04 1px, transparent 1px), linear-gradient(90deg, #ffffff04 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+        <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, #f59e0b14 0%, transparent 70%)", top: -150, right: -100 }} />
+        <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, #3b82f614 0%, transparent 70%)", bottom: -100, left: -100 }} />
       </div>
-
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 440 }}>
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ fontSize: 52, marginBottom: 8 }}>🚛</div>
-          <div style={{ fontSize: 38, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 4, textTransform: "uppercase" }}>
-            TRUCK<span style={{ color: "#f59e0b" }}>ROUTE</span>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 56, marginBottom: 10 }}>🚛</div>
+          <div style={{ fontSize: 36, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
+            Truck<span style={{ color: "#f59e0b" }}>Route</span>
           </div>
-          <div style={{ fontSize: 12, color: "#6b7280", letterSpacing: 3, textTransform: "uppercase", marginTop: 4 }}>Empty Load Network</div>
+          <div style={{ fontSize: 12, color: "#64748b", letterSpacing: 3, textTransform: "uppercase", marginTop: 6, fontWeight: 500 }}>Empty Load Network</div>
         </div>
-
-        {/* Trucker / Admin toggle */}
-        <div style={{ display: "flex", background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: 4, marginBottom: 16 }}>
+        <div style={{ display: "flex", background: "#e2e8f0", borderRadius: 12, padding: 4, marginBottom: 16 }}>
           {["trucker", "admin"].map(t => (
             <button key={t} onClick={() => { setAuthType(t); setError(""); setMode("login"); }}
-              style={{ flex: 1, padding: "10px", background: authType === t ? "#f59e0b" : "transparent", color: authType === t ? "#111827" : "#9ca3af", border: "none", borderRadius: 7, fontWeight: 800, fontSize: 13, cursor: "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase", transition: "all .2s" }}>
+              style={{ flex: 1, padding: "10px", background: authType === t ? "#ffffff" : "transparent", color: authType === t ? "#1e293b" : "#94a3b8", border: "none", borderRadius: 9, fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all .2s", boxShadow: authType === t ? "0 2px 8px #0000001a" : "none" }}>
               {t === "trucker" ? "🚛 Trucker" : "⚙️ Admin"}
             </button>
           ))}
         </div>
-
-        {/* Login / Sign Up toggle ? truckers only */}
         {authType === "trucker" && (
-          <div style={{ display: "flex", background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: 4, marginBottom: 24 }}>
+          <div style={{ display: "flex", background: "#e2e8f0", borderRadius: 12, padding: 4, marginBottom: 20 }}>
             {["login", "signup"].map(m => (
               <button key={m} onClick={() => { setMode(m); setError(""); }}
-                style={{ flex: 1, padding: "9px", background: mode === m ? "#1f2937" : "transparent", color: mode === m ? "#f9fafb" : "#6b7280", border: "none", borderRadius: 7, fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Barlow', sans-serif", transition: "all .2s" }}>
+                style={{ flex: 1, padding: "9px", background: mode === m ? "#ffffff" : "transparent", color: mode === m ? "#1e293b" : "#94a3b8", border: "none", borderRadius: 9, fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all .2s", boxShadow: mode === m ? "0 2px 8px #0000001a" : "none" }}>
                 {m === "login" ? "Login" : "Sign Up"}
               </button>
             ))}
           </div>
         )}
-
-        {/* Form */}
-        <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 14, padding: "28px 24px" }}>
-
-          {/* Sign Up extra fields */}
+        <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 20, padding: "32px 28px", boxShadow: "0 8px 40px #0000000f" }}>
           {mode === "signup" && authType === "trucker" && (
             <>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Full Name</label>
-              <input style={inputStyle} placeholder="e.g. Rajan Yadav"
-                value={fullName} onChange={e => setFullName(e.target.value)} />
-              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Mobile Number</label>
-              <input style={inputStyle} placeholder="e.g. 98765-43210"
-                value={contact} onChange={e => setContact(e.target.value)} />
-              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Company Name <span style={{ color: "#4b5563", fontWeight: 400, letterSpacing: 0, textTransform: "none", fontSize: 11 }}>(optional)</span></label>
-              <input style={inputStyle} placeholder="e.g. Yadav Transport Co."
-                value={companyName} onChange={e => setCompanyName(e.target.value)} />
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Full Name</label>
+              <input style={inputStyle} placeholder="e.g. Rajan Yadav" value={fullName} onChange={e => setFullName(e.target.value)}
+                onFocus={e => { e.target.style.borderColor = "#f59e0b"; e.target.style.boxShadow = "0 0 0 3px #f59e0b22"; }}
+                onBlur={e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }} />
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Mobile Number</label>
+              <input style={inputStyle} placeholder="e.g. 98765-43210" value={contact} onChange={e => setContact(e.target.value)}
+                onFocus={e => { e.target.style.borderColor = "#f59e0b"; e.target.style.boxShadow = "0 0 0 3px #f59e0b22"; }}
+                onBlur={e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }} />
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Company Name <span style={{ color: "#94a3b8", fontWeight: 400, letterSpacing: 0, textTransform: "none", fontSize: 11 }}>(optional)</span></label>
+              <input style={inputStyle} placeholder="e.g. Yadav Transport Co." value={companyName} onChange={e => setCompanyName(e.target.value)}
+                onFocus={e => { e.target.style.borderColor = "#f59e0b"; e.target.style.boxShadow = "0 0 0 3px #f59e0b22"; }}
+                onBlur={e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }} />
             </>
           )}
-
-          {/* Email */}
-          <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Email Address</label>
-          <input style={inputStyle} type="email"
-            placeholder={authType === "admin" ? "your admin email" : "you@email.com"}
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#64748b", textTransform: "uppercase", marginBottom: 6 }}>Email Address</label>
+          <input style={inputStyle} type="email" placeholder={authType === "admin" ? "your admin email" : "you@email.com"}
             value={email} onChange={e => setEmail(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())} />
-
-          {/* Password */}
-          <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Password</label>
-          <input style={inputStyle} type="password"
-            placeholder={mode === "signup" ? "Min 6 characters" : "Your password"}
+            onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())}
+            onFocus={e => { e.target.style.borderColor = "#f59e0b"; e.target.style.boxShadow = "0 0 0 3px #f59e0b22"; }}
+            onBlur={e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }} />
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#64748b", textTransform: "uppercase", marginBottom: 6 }}>Password</label>
+          <input style={inputStyle} type="password" placeholder={mode === "signup" ? "Min 6 characters" : "Your password"}
             value={password} onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())} />
-
-          {/* Error */}
+            onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())}
+            onFocus={e => { e.target.style.borderColor = "#f59e0b"; e.target.style.boxShadow = "0 0 0 3px #f59e0b22"; }}
+            onBlur={e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.boxShadow = "none"; }} />
           {error && (
-            <div style={{ color: "#f87171", fontSize: 13, marginBottom: 14, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{error}</div>
+            <div style={{ color: "#dc2626", fontSize: 13, marginBottom: 14, background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, padding: "10px 14px" }}>{error}</div>
           )}
-
-          {/* Submit */}
-          <button
-            onClick={mode === "signup" && authType === "trucker" ? handleSignup : handleLogin}
-            disabled={loading}
-            style={{ width: "100%", padding: "14px", background: loading ? "#374151" : "#f59e0b", color: loading ? "#6b7280" : "#111827", border: "none", borderRadius: 8, fontWeight: 900, fontSize: 16, cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 3, textTransform: "uppercase" }}>
-            {loading ? "Please wait..." : mode === "signup" ? "Create Account ->" : "Login ->"}
+          <button onClick={mode === "signup" && authType === "trucker" ? handleSignup : handleLogin} disabled={loading}
+            style={{ width: "100%", padding: "14px", background: loading ? "#e2e8f0" : "#f59e0b", color: loading ? "#94a3b8" : "#ffffff", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 16, cursor: loading ? "not-allowed" : "pointer", fontFamily: "'DM Sans', sans-serif", boxShadow: loading ? "none" : "0 4px 14px #f59e0b44", transition: "all .2s" }}>
+            {loading ? "Please wait..." : mode === "signup" ? "Create Account →" : "Login →"}
           </button>
-
           {authType === "trucker" && mode === "login" && (
-            <div style={{ marginTop: 14, color: "#4b5563", fontSize: 12, textAlign: "center" }}>
-              New trucker? Click <span style={{ color: "#f59e0b", cursor: "pointer" }} onClick={() => setMode("signup")}>Sign Up</span> to create an account.
+            <div style={{ marginTop: 16, color: "#94a3b8", fontSize: 13, textAlign: "center" }}>
+              New trucker? <span style={{ color: "#f59e0b", cursor: "pointer", fontWeight: 600 }} onClick={() => setMode("signup")}>Sign Up</span>
             </div>
           )}
         </div>
@@ -1950,15 +1931,15 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
     <div style={{ marginTop: 40 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
         <div>
-          <div style={{ fontSize: 20, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1 }}>MY POSTS</div>
-          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>All your empty load posts - newest first</div>
+          <div style={{ fontSize: 20, fontWeight: 900, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", letterSpacing: 1 }}>MY POSTS</div>
+          <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>All your empty load posts - newest first</div>
         </div>
         {myLoads.length > 0 && (
           <div style={{ display: "flex", gap: 8, fontSize: 12 }}>
             <span style={{ background: "#14532d55", color: "#22c55e", border: "1px solid #22c55e44", borderRadius: 20, padding: "3px 12px", fontWeight: 700 }}>
               {myLoads.filter(l => isLive(l)).length} Live
             </span>
-            <span style={{ background: "#1f293799", color: "#6b7280", border: "1px solid #37415144", borderRadius: 20, padding: "3px 12px", fontWeight: 700 }}>
+            <span style={{ background: "#1f293799", color: "#94a3b8", border: "1px solid #37415144", borderRadius: 20, padding: "3px 12px", fontWeight: 700 }}>
               {myLoads.filter(l => !isLive(l)).length} Expired
             </span>
           </div>
@@ -1966,7 +1947,7 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
       </div>
 
       {myLoads.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "32px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 12, color: "#4b5563" }}>
+        <div style={{ textAlign: "center", padding: "32px 20px", background: "#ffffff", border: "2px dashed #1f2937", borderRadius: 12, color: "#94a3b8" }}>
           <div style={{ fontSize: 36 }}>📋</div>
           <div style={{ marginTop: 10, fontSize: 14 }}>You haven't posted any loads yet. Use the form above to post your first empty truck.</div>
         </div>
@@ -1977,8 +1958,8 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
             const waMsg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n*Company Name:* ${currentUser?.companyName || l.truckerCompany || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
             return (
               <div key={l.id} style={{
-                background: "#111827",
-                border: `2px solid ${expired ? "#1f2937" : "#22c55e22"}`,
+                background: "#ffffff",
+                border: `1px solid ${expired ? "#f1f5f9" : "#bbf7d0"}`,
                 borderRadius: 12,
                 padding: "16px 18px",
                 opacity: expired ? 0.7 : 1,
@@ -1986,7 +1967,7 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
               }}>
                 {/* Top row — route + status badge */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 0.5 }}>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", letterSpacing: 0.5 }}>
                     {l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}
                   </div>
                   <span style={{
@@ -2000,20 +1981,20 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
                 {/* Details grid */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px", marginBottom: 14 }}>
                   <div>
-                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Truck Type</div>
-                    <div style={{ fontSize: 13, color: "#d1d5db" }}>{l.truckType || "-"}</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Truck Type</div>
+                    <div style={{ fontSize: 13, color: "#374151" }}>{l.truckType || "-"}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Travel Start Date</div>
-                    <div style={{ fontSize: 13, color: "#d1d5db" }}>📅 {l.date}</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Travel Start Date</div>
+                    <div style={{ fontSize: 13, color: "#374151" }}>📅 {l.date}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Buffer Days</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Buffer Days</div>
                     <div style={{ fontSize: 13, color: "#a78bfa" }}>{l.postDuration > 0 ? `+${l.postDuration} day${l.postDuration > 1 ? "s" : ""}` : "None"}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Posted On</div>
-                    <div style={{ fontSize: 13, color: "#6b7280", fontWeight: 700 }}>{l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}</div>
+                    <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Posted On</div>
+                    <div style={{ fontSize: 13, color: "#94a3b8", fontWeight: 700 }}>{l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}</div>
                   </div>
                 </div>
 
@@ -2026,7 +2007,7 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
                       background: "#1e3a5f", color: "#60a5fa",
                       border: "1px solid #60a5fa55", borderRadius: 8,
                       fontSize: 13, fontWeight: 700, cursor: "pointer",
-                      fontFamily: "'Barlow', sans-serif", transition: "all .15s",
+                      fontFamily: "'DM Sans', sans-serif", transition: "all .15s",
                     }}
                     onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.color = "#fff"; }}
                     onMouseLeave={e => { e.currentTarget.style.background = "#1e3a5f"; e.currentTarget.style.color = "#60a5fa"; }}
@@ -2040,7 +2021,7 @@ function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
                       background: "#14432155", color: "#25D366",
                       border: "1px solid #25D36655", borderRadius: 8,
                       fontSize: 13, fontWeight: 700, cursor: "pointer",
-                      fontFamily: "'Barlow', sans-serif", transition: "all .15s",
+                      fontFamily: "'DM Sans', sans-serif", transition: "all .15s",
                       display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                     }}
                     onMouseEnter={e => { e.currentTarget.style.background = "#25D366"; e.currentTarget.style.color = "#fff"; }}
@@ -2077,10 +2058,10 @@ function ProfilePanel({ user, setUser }) {
   const [pwError, setPwError] = useState("");
 
   const inputStyle = {
-    width: "100%", background: "#0d1117", color: "#f9fafb",
-    border: "2px solid #374151", borderRadius: 8,
+    width: "100%", background: "#ffffff", color: "#1e293b",
+    border: "1.5px solid #e2e8f0", borderRadius: 8,
     padding: "11px 14px", fontSize: 14,
-    fontFamily: "'Barlow', sans-serif", outline: "none",
+    fontFamily: "'DM Sans', sans-serif", outline: "none",
     boxSizing: "border-box",
   };
 
@@ -2118,21 +2099,21 @@ function ProfilePanel({ user, setUser }) {
   return (
     <div style={{ maxWidth: 520, margin: "0 auto" }}>
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
+        <h2 style={{ fontSize: 26, fontWeight: 900, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
           👤 MY PROFILE
         </h2>
-        <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>View and update your account details.</p>
+        <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>View and update your account details.</p>
       </div>
 
       {/* Email — read only */}
-      <div style={{ marginBottom: 16, background: "#111827", border: "2px solid #1f2937", borderRadius: 10, padding: "14px 16px" }}>
-        <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Email Address</div>
-        <div style={{ fontSize: 15, color: "#6b7280", fontFamily: "monospace" }}>{user.email || "—"}</div>
-        <div style={{ fontSize: 11, color: "#4b5563", marginTop: 4 }}>Email cannot be changed.</div>
+      <div style={{ marginBottom: 16, background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px 16px" }}>
+        <div style={{ fontSize: 11, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Email Address</div>
+        <div style={{ fontSize: 15, color: "#94a3b8", fontFamily: "monospace" }}>{user.email || "—"}</div>
+        <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 4 }}>Email cannot be changed.</div>
       </div>
 
       {/* Editable fields */}
-      <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "22px 20px", marginBottom: 16 }}>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "22px 20px", marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", marginBottom: 18, letterSpacing: 0.5 }}>PERSONAL DETAILS</div>
 
         {[
@@ -2148,7 +2129,7 @@ function ProfilePanel({ user, setUser }) {
               placeholder={placeholder}
               onChange={e => setFields(f => ({ ...f, [key]: e.target.value }))}
               onFocus={e => e.target.style.borderColor = "#f59e0b"}
-              onBlur={e => e.target.style.borderColor = "#374151"}
+              onBlur={e => e.target.style.borderColor = "#cbd5e1"}
             />
           </div>
         ))}
@@ -2157,21 +2138,21 @@ function ProfilePanel({ user, setUser }) {
         {saved && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, background: "#14532d22", border: "1px solid #22c55e44", borderRadius: 6, padding: "8px 12px" }}>✅ Profile saved successfully!</div>}
 
         <button onClick={handleSave} disabled={saving} style={{
-          width: "100%", padding: "12px", background: saving ? "#374151" : "#f59e0b",
-          color: saving ? "#6b7280" : "#111827", border: "none", borderRadius: 8,
+          width: "100%", padding: "12px", background: saving ? "#cbd5e1" : "#f59e0b",
+          color: saving ? "#94a3b8" : "#ffffff", border: "none", borderRadius: 8,
           fontWeight: 900, fontSize: 15, cursor: saving ? "not-allowed" : "pointer",
-          fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase",
+          fontFamily: "'DM Sans', sans-serif", letterSpacing: 2, textTransform: "uppercase",
         }}>
           {saving ? "Saving..." : "💾 Save Changes"}
         </button>
       </div>
 
       {/* Change Password */}
-      <div style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "22px 20px" }}>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "22px 20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: changingPw ? 16 : 0 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", letterSpacing: 0.5 }}>CHANGE PASSWORD</div>
           <button onClick={() => { setChangingPw(!changingPw); setPwError(""); }}
-            style={{ background: "none", border: "1px solid #374151", color: "#9ca3af", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
+            style={{ background: "none", border: "1px solid #e2e8f0", color: "#64748b", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
             {changingPw ? "Cancel" : "Change"}
           </button>
         </div>
@@ -2183,13 +2164,13 @@ function ProfilePanel({ user, setUser }) {
               onChange={e => setNewPw(e.target.value)}
               style={{ ...inputStyle, marginBottom: 12 }}
               onFocus={e => e.target.style.borderColor = "#f59e0b"}
-              onBlur={e => e.target.style.borderColor = "#374151"}
+              onBlur={e => e.target.style.borderColor = "#cbd5e1"}
             />
             {pwError && <div style={{ color: "#f87171", fontSize: 13, marginBottom: 10, background: "#7f1d1d22", border: "1px solid #7f1d1d", borderRadius: 6, padding: "8px 12px" }}>{pwError}</div>}
             <button onClick={handleChangePw} style={{
-              width: "100%", padding: "11px", background: "#1f2937", color: "#f9fafb",
-              border: "2px solid #374151", borderRadius: 8, fontWeight: 700, fontSize: 14,
-              cursor: "pointer", fontFamily: "'Barlow', sans-serif",
+              width: "100%", padding: "11px", background: "#e2e8f0", color: "#1e293b",
+              border: "1.5px solid #e2e8f0", borderRadius: 8, fontWeight: 700, fontSize: 14,
+              cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
             }}>
               🔐 Update Password
             </button>
@@ -2206,25 +2187,25 @@ function EnquiriesPanel({ enquiries, truckerName }) {
   return (
     <div style={{ maxWidth: 700, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
+        <h2 style={{ fontSize: 26, fontWeight: 900, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", margin: "0 0 6px", letterSpacing: 1 }}>
           📬 ENQUIRIES
         </h2>
-        <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>
+        <p style={{ color: "#94a3b8", fontSize: 13, margin: 0 }}>
           Users who tried to contact you after reaching their reveal limit. Call them back!
         </p>
       </div>
 
       {enquiries.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "64px 20px", background: "#111827", border: "2px dashed #1f2937", borderRadius: 14 }}>
+        <div style={{ textAlign: "center", padding: "64px 20px", background: "#ffffff", border: "2px dashed #1f2937", borderRadius: 14 }}>
           <div style={{ fontSize: 48 }}>🔍</div>
-          <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>No Enquiries Yet</div>
-          <div style={{ marginTop: 8, fontSize: 14, color: "#6b7280" }}>When someone tries to contact you after using their 2 free reveals, their details will appear here.</div>
+          <div style={{ marginTop: 14, fontSize: 18, fontWeight: 700, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>No Enquiries Yet</div>
+          <div style={{ marginTop: 8, fontSize: 14, color: "#94a3b8" }}>When someone tries to contact you after using their 2 free reveals, their details will appear here.</div>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {[...enquiries].reverse().map((e, i) => (
             <div key={e.id} style={{
-              background: "#111827",
+              background: "#ffffff",
               border: "2px solid #22c55e33",
               borderRadius: 12,
               padding: "18px 20px",
@@ -2240,7 +2221,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
                 {/* Inquirer info */}
                 <div>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
                     👤 {e.inquirerName}
                   </div>
                   <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 5 }}>
@@ -2248,10 +2229,10 @@ function EnquiriesPanel({ enquiries, truckerName }) {
                       <span style={{ fontSize: 15 }}>📞</span>
                       <span style={{ color: "#6ee7b7", fontWeight: 700, fontSize: 15 }}>{e.inquirerContact}</span>
                     </div>
-                    <div style={{ fontSize: 13, color: "#9ca3af", marginTop: 2 }}>
-                      Interested in your load: <span style={{ color: "#f9fafb", fontWeight: 600 }}>{e.loadFrom} → {e.loadTo}</span>
+                    <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>
+                      Interested in your load: <span style={{ color: "#1e293b", fontWeight: 600 }}>{e.loadFrom} → {e.loadTo}</span>
                     </div>
-                    <div style={{ fontSize: 12, color: "#6b7280" }}>
+                    <div style={{ fontSize: 12, color: "#94a3b8" }}>
                       🚛 {e.truckType}
                     </div>
                   </div>
@@ -2259,7 +2240,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
                 {/* Date / time */}
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontSize: 13, color: "#f59e0b", fontWeight: 700 }}>📅 {e.date}</div>
-                  <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>🕐 {e.time}</div>
+                  <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 4 }}>🕐 {e.time}</div>
                 </div>
               </div>
             </div>
@@ -2268,7 +2249,7 @@ function EnquiriesPanel({ enquiries, truckerName }) {
       )}
 
       {enquiries.length > 0 && (
-        <div style={{ marginTop: 16, fontSize: 12, color: "#4b5563", textAlign: "center" }}>
+        <div style={{ marginTop: 16, fontSize: 12, color: "#94a3b8", textAlign: "center" }}>
           Showing {enquiries.length} enquir{enquiries.length === 1 ? "y" : "ies"} - enquirer's reveal limit resets every 24 hours
         </div>
       )}
@@ -2349,7 +2330,7 @@ function expiryLabel(load) {
     const ago = Math.abs(diff);
     const days = Math.floor(ago / 86400000);
     const hrs  = Math.floor((ago % 86400000) / 3600000);
-    return { text: days > 0 ? `Expired ${days}d ago` : `Expired ${hrs}h ago`, color: "#6b7280", expired: true };
+    return { text: days > 0 ? `Expired ${days}d ago` : `Expired ${hrs}h ago`, color: "#94a3b8", expired: true };
   }
   const days = Math.floor(diff / 86400000);
   const hrs  = Math.floor((diff % 86400000) / 3600000);
@@ -2478,12 +2459,12 @@ export default function App() {
   const myEnquiries = enquiries.filter(e => e.loadTruckerName === user.name);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#030712", fontFamily: "'Barlow', sans-serif", color: "#f9fafb" }}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'DM Sans', sans-serif", color: "#1e293b" }}>
       {/* Google Fonts + Responsive CSS */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap');
         * { box-sizing: border-box; }
-        body { margin: 0; }
+        body { margin: 0; background: #f8fafc; }
 
         /* ── Responsive grid helpers ── */
         .tr-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -2499,10 +2480,10 @@ export default function App() {
         /* ── Tabs ── */
         .tr-tabs { display: flex; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .tr-tabs::-webkit-scrollbar { display: none; }
-        .tr-tab-btn { white-space: nowrap; padding: 16px 20px !important; font-size: 13px !important; }
+        .tr-tab-btn { white-space: nowrap; padding: 14px 20px !important; font-size: 13px !important; }
 
         /* ── Tables ── */
-        .tr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 2px solid #1f2937; }
+        .tr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid #e2e8f0; }
         .tr-table-wrap table { min-width: 520px; }
 
         /* ── LoadCard ── */
@@ -2521,61 +2502,59 @@ export default function App() {
           .tr-reveal-badge { display: none; }
           .tr-user-info { display: none; }
           .tr-header-right { gap: 8px; }
-          .tr-tab-btn { padding: 14px 12px !important; font-size: 11px !important; }
+          .tr-tab-btn { padding: 12px 10px !important; font-size: 11px !important; }
         }
       `}</style>
 
-      {/* Subtle grid bg */}
-      <div style={{ position: "fixed", inset: 0, backgroundImage: "linear-gradient(#ffffff03 1px, transparent 1px), linear-gradient(90deg, #ffffff03 1px, transparent 1px)", backgroundSize: "40px 40px", zIndex: 0 }} />
-
       {/* Limit Popup */}
       {limitPopup && (
-        <div style={{ position: "fixed", inset: 0, background: "#000000cc", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#111827", border: "2px solid #f59e0b", borderRadius: 16, padding: "36px 32px", maxWidth: 380, width: "100%", textAlign: "center", boxShadow: "0 0 60px #f59e0b33" }}>
+        <div style={{ position: "fixed", inset: 0, background: "#00000066", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(4px)" }}>
+          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 20, padding: "36px 32px", maxWidth: 380, width: "100%", textAlign: "center", boxShadow: "0 20px 60px #00000020" }}>
             <div style={{ fontSize: 52, marginBottom: 12 }}>🚛</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1, marginBottom: 12 }}>
+            <div style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif", marginBottom: 10 }}>
               Truck Owner will Call You
             </div>
-            <div style={{ fontSize: 15, color: "#9ca3af", lineHeight: 1.6, marginBottom: 24 }}>
+            <div style={{ fontSize: 14, color: "#64748b", lineHeight: 1.7, marginBottom: 24 }}>
               Thank you for using our Service.<br/>
-              <span style={{ color: "#6b7280", fontSize: 13 }}>The truck owner has been notified and will contact you shortly.</span>
+              <span style={{ color: "#94a3b8", fontSize: 13 }}>The truck owner has been notified and will contact you shortly.</span>
             </div>
             <button onClick={() => setLimitPopup(false)} style={{
-              width: "100%", padding: "12px", background: "#f59e0b", color: "#111827",
-              border: "none", borderRadius: 8, fontWeight: 900, fontSize: 15, cursor: "pointer",
-              fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 2, textTransform: "uppercase",
+              width: "100%", padding: "13px", background: "#f59e0b", color: "#ffffff",
+              border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 14px #f59e0b44",
             }}>OK, Got It</button>
-            <div style={{ marginTop: 14, fontSize: 12, color: "#4b5563" }}>
+            <div style={{ marginTop: 14, fontSize: 12, color: "#94a3b8" }}>
               You've reached the limit of {REVEAL_LIMIT} contact reveals per 24 hours.<br/>
-              <span style={{ color: "#6b7280" }}>Resets in {formatTimeLeft(timeLeft)}.</span>
+              Resets in {formatTimeLeft(timeLeft)}.
             </div>
           </div>
         </div>
       )}
 
       {/* Header */}
-      <header style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 }}>
+      <header style={{ position: "relative", zIndex: 10, background: "#ffffff", borderBottom: "1px solid #e2e8f0", padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64, boxShadow: "0 1px 8px #00000008" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 26 }}>🚛</span>
-          <span style={{ fontSize: 24, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 3 }}>
-            TRUCK<span style={{ color: "#f59e0b" }}>ROUTE</span>
+          <span style={{ fontSize: 28 }}>🚛</span>
+          <span style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
+            Truck<span style={{ color: "#f59e0b" }}>Route</span>
           </span>
         </div>
         <div className="tr-header-right">
-          {/* Reveal counter badge */}
           {user.role === "trucker" && (
-            <div className="tr-reveal-badge" style={{ background: "#1f2937", border: "1px solid #374151", borderRadius: 8, padding: "5px 12px", fontSize: 12, color: revealCount >= REVEAL_LIMIT ? "#f87171" : "#9ca3af" }}>
+            <div className="tr-reveal-badge" style={{ background: revealCount >= REVEAL_LIMIT ? "#fef2f2" : "#f0fdf4", border: `1px solid ${revealCount >= REVEAL_LIMIT ? "#fecaca" : "#bbf7d0"}`, borderRadius: 20, padding: "5px 14px", fontSize: 12, color: revealCount >= REVEAL_LIMIT ? "#dc2626" : "#16a34a", fontWeight: 600 }}>
                 {revealCount >= REVEAL_LIMIT
                   ? `📞 Limit reached · resets in ${formatTimeLeft(timeLeft)}`
                   : `📞 ${revealCount}/${REVEAL_LIMIT} reveals used today`}
               </div>
           )}
           <div className="tr-user-info">
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#f9fafb" }}>{user.name}</div>
-            <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 2, textTransform: "uppercase" }}>{user.role}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>{user.name}</div>
+            <div style={{ fontSize: 10, color: "#94a3b8", letterSpacing: 1.5, textTransform: "uppercase" }}>{user.role}</div>
           </div>
           <button onClick={handleLogout}
-            style={{ padding: "7px 14px", background: "#1f2937", color: "#9ca3af", border: "1px solid #374151", borderRadius: 6, fontSize: 12, cursor: "pointer", fontFamily: "'Barlow', sans-serif", fontWeight: 600 }}>
+            style={{ padding: "7px 16px", background: "#f1f5f9", color: "#64748b", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, transition: "all .15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "#fee2e2"; e.currentTarget.style.color = "#dc2626"; e.currentTarget.style.borderColor = "#fecaca"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#64748b"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
             Logout
           </button>
         </div>
@@ -2583,7 +2562,7 @@ export default function App() {
 
       {/* Trucker tabs */}
       {user.role === "trucker" && (
-        <div className="tr-tabs" style={{ position: "relative", zIndex: 10, background: "#0d1117", borderBottom: "2px solid #1f2937", padding: "0 16px" }}>
+        <div className="tr-tabs" style={{ position: "relative", zIndex: 10, background: "#ffffff", borderBottom: "1px solid #e2e8f0", padding: "0 20px" }}>
           {[
             { key: "post", label: "📤 Post Empty Load" },
             { key: "find", label: "🔍 Find Empty Load" },
@@ -2594,9 +2573,9 @@ export default function App() {
               className="tr-tab-btn"
               style={{
                 background: "transparent",
-                color: activeTab === t.key ? "#f59e0b" : t.key === "enquiries" && myEnquiries.length > 0 ? "#22c55e" : "#6b7280",
+                color: activeTab === t.key ? "#f59e0b" : t.key === "enquiries" && myEnquiries.length > 0 ? "#16a34a" : "#94a3b8",
                 border: "none", borderBottom: activeTab === t.key ? "3px solid #f59e0b" : "3px solid transparent",
-                fontWeight: 700, cursor: "pointer", fontFamily: "'Barlow', sans-serif", transition: "all .2s", letterSpacing: 0.5,
+                fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all .2s",
               }}>
               {t.label}
             </button>
@@ -2605,9 +2584,9 @@ export default function App() {
       )}
 
       {/* Content */}
-      <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "24px 16px" }}>
+      <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "28px 16px" }}>
         {loadsLoading && (
-          <div style={{ textAlign: "center", padding: "60px 20px", color: "#6b7280" }}>
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "#94a3b8" }}>
             <div style={{ fontSize: 36, marginBottom: 12 }}>🚛</div>
             <div style={{ fontSize: 14 }}>Loading loads...</div>
           </div>
