@@ -1148,6 +1148,17 @@ function AdminPanel({ loads, setLoads, currentUser }) {
   const [filterDate, setFilterDate] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
 
+  // -- Edit Load state --
+  const [editLoad, setEditLoad] = useState(null); // load being edited
+  const [editFields, setEditFields] = useState({});
+
+  // -- Trucker profiles --
+  const [profiles, setProfiles] = useState([]);
+  const [profilesLoading, setProfilesLoading] = useState(false);
+  const [confirmDeleteTrucker, setConfirmDeleteTrucker] = useState(null);
+  const [editTrucker, setEditTrucker] = useState(null);
+  const [editTruckerFields, setEditTruckerFields] = useState({});
+
   const today = new Date().toISOString().slice(0, 10);
 
   // -- Stats --
@@ -1195,6 +1206,46 @@ function AdminPanel({ loads, setLoads, currentUser }) {
     await supabase.from("loads").delete().eq("id", id);
     setLoads(prev => prev.filter(l => l.id !== id));
     setConfirmDelete(null);
+  };
+
+  // -- Load edit handlers --
+  const startEditLoad = (l) => {
+    setEditLoad(l.id);
+    setEditFields({ from: l.from, to: l.to, date: l.date, truckType: l.truckType || "", contact: l.contact || "" });
+  };
+  const saveEditLoad = async () => {
+    await supabase.from("loads").update({
+      from_city: editFields.from, to_city: editFields.to,
+      date: editFields.date, truck_type: editFields.truckType,
+      contact: editFields.contact,
+      via_cities: getCitiesAlongRoute(editFields.from, editFields.to).join(","),
+    }).eq("id", editLoad);
+    setLoads(prev => prev.map(l => l.id === editLoad
+      ? { ...l, from: editFields.from, to: editFields.to, date: editFields.date, truckType: editFields.truckType, contact: editFields.contact, via: getCitiesAlongRoute(editFields.from, editFields.to) }
+      : l));
+    setEditLoad(null);
+  };
+
+  // -- Trucker profile handlers --
+  const fetchProfiles = async () => {
+    setProfilesLoading(true);
+    const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    if (data) setProfiles(data);
+    setProfilesLoading(false);
+  };
+  const startEditTrucker = (p) => {
+    setEditTrucker(p.id);
+    setEditTruckerFields({ full_name: p.full_name || "", contact: p.contact || "", company_name: p.company_name || "" });
+  };
+  const saveEditTrucker = async () => {
+    await supabase.from("profiles").update(editTruckerFields).eq("id", editTrucker);
+    setProfiles(prev => prev.map(p => p.id === editTrucker ? { ...p, ...editTruckerFields } : p));
+    setEditTrucker(null);
+  };
+  const deleteTrucker = async (id) => {
+    await supabase.from("profiles").delete().eq("id", id);
+    setProfiles(prev => prev.filter(p => p.id !== id));
+    setConfirmDeleteTrucker(null);
   };
 
   const ADMIN_TABS = [
@@ -1344,16 +1395,34 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                   {[...filteredLoads].sort((a, b) => (b.postedAt || 0) - (a.postedAt || 0)).map((l, i) => {
                     const { text: liveText, color: liveColor, expired } = expiryLabel(l);
                     return (
-                      <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: i % 2 === 0 ? "transparent" : "#0d111766", opacity: expired ? 0.7 : 1 }}>
+                      <tr key={l.id} style={{ borderBottom: "1px solid #0d1117", background: editLoad === l.id ? "#1c1408" : i % 2 === 0 ? "transparent" : "#0d111766", opacity: expired ? 0.7 : 1 }}>
                         <td style={{ padding: "12px 14px", color: "#f9fafb", fontWeight: 600 }}>{l.truckerName}</td>
                         <td style={{ padding: "12px 14px" }}>
-                          <span style={{ color: "#f9fafb" }}>{l.from}</span>
-                          <span style={{ color: "#f59e0b", margin: "0 4px" }}>→</span>
-                          <span style={{ color: "#f9fafb" }}>{l.to}</span>
+                          {editLoad === l.id ? (
+                            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                              <select value={editFields.from} onChange={e => setEditFields(f => ({...f, from: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }}>
+                                {Object.keys(ROUTE_MAP).map(c => <option key={c}>{c}</option>)}
+                              </select>
+                              <span style={{ color: "#f59e0b" }}>→</span>
+                              <select value={editFields.to} onChange={e => setEditFields(f => ({...f, to: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }}>
+                                {Object.keys(ROUTE_MAP).map(c => <option key={c}>{c}</option>)}
+                              </select>
+                            </div>
+                          ) : (
+                            <><span style={{ color: "#f9fafb" }}>{l.from}</span><span style={{ color: "#f59e0b", margin: "0 4px" }}>→</span><span style={{ color: "#f9fafb" }}>{l.to}</span></>
+                          )}
                         </td>
                         <td style={{ padding: "12px 14px", color: "#60a5fa" }}>{l.via.length} cities</td>
-                        <td style={{ padding: "12px 14px", color: "#9ca3af" }}>{l.truckType || "-"}</td>
-                        <td style={{ padding: "12px 14px", color: "#d1d5db" }}>{l.date}</td>
+                        <td style={{ padding: "12px 14px", color: "#9ca3af" }}>
+                          {editLoad === l.id ? (
+                            <input value={editFields.truckType} onChange={e => setEditFields(f => ({...f, truckType: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12, width: 140 }} />
+                          ) : l.truckType || "-"}
+                        </td>
+                        <td style={{ padding: "12px 14px", color: "#d1d5db" }}>
+                          {editLoad === l.id ? (
+                            <input type="date" value={editFields.date} onChange={e => setEditFields(f => ({...f, date: e.target.value}))} style={{ background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12 }} />
+                          ) : l.date}
+                        </td>
                         <td style={{ padding: "12px 14px" }}>
                           <span style={{
                             display: "inline-block", padding: "3px 10px", borderRadius: 20,
@@ -1362,15 +1431,27 @@ function AdminPanel({ loads, setLoads, currentUser }) {
                             color: liveColor, border: `1px solid ${liveColor}44`,
                           }}>{expired ? "Expired" : "Live"}</span>
                         </td>
-                        <td style={{ padding: "12px 14px", color: "#6ee7b7", fontFamily: "monospace", fontSize: 12 }}>{l.contact || "-"}</td>
+                        <td style={{ padding: "12px 14px", color: "#6ee7b7", fontFamily: "monospace", fontSize: 12 }}>
+                          {editLoad === l.id ? (
+                            <input value={editFields.contact} onChange={e => setEditFields(f => ({...f, contact: e.target.value}))} style={{ background: "#0d1117", color: "#6ee7b7", border: "1px solid #f59e0b", borderRadius: 4, padding: "3px 6px", fontSize: 12, width: 120, fontFamily: "monospace" }} />
+                          ) : l.contact || "-"}
+                        </td>
                         <td style={{ padding: "12px 14px" }}>
-                          {confirmDelete === l.id ? (
+                          {editLoad === l.id ? (
+                            <div style={{ display: "flex", gap: 6 }}>
+                              <button onClick={saveEditLoad} style={{ padding: "4px 10px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>Save</button>
+                              <button onClick={() => setEditLoad(null)} style={{ padding: "4px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
+                            </div>
+                          ) : confirmDelete === l.id ? (
                             <div style={{ display: "flex", gap: 6 }}>
                               <button onClick={() => handleDelete(l.id)} style={{ padding: "4px 10px", background: "#dc2626", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>Confirm</button>
                               <button onClick={() => setConfirmDelete(null)} style={{ padding: "4px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>Cancel</button>
                             </div>
                           ) : (
-                            <button onClick={() => setConfirmDelete(l.id)} style={{ padding: "4px 12px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>✕ Delete</button>
+                            <div style={{ display: "flex", gap: 6 }}>
+                              <button onClick={() => startEditLoad(l)} style={{ padding: "4px 10px", background: "#1e3a5f", color: "#60a5fa", border: "1px solid #60a5fa44", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>✏️ Edit</button>
+                              <button onClick={() => setConfirmDelete(l.id)} style={{ padding: "4px 10px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>✕ Delete</button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -1386,47 +1467,79 @@ function AdminPanel({ loads, setLoads, currentUser }) {
       {/* -- TRUCKERS -- */}
       {activeTab === "truckers" && (
         <div>
-          <div style={{ marginBottom: 20 }}>
-            <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 4px" }}>TRUCKERS</h2>
-            <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>All registered truckers and their activity.</p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 10 }}>
+            <div>
+              <h2 style={{ fontSize: 26, fontWeight: 900, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif", margin: "0 0 4px" }}>TRUCKERS</h2>
+              <p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>All registered truckers — view, edit or delete accounts.</p>
+            </div>
+            <button onClick={fetchProfiles} style={{ padding: "8px 18px", background: "#1f2937", color: "#f9fafb", border: "2px solid #374151", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "'Barlow', sans-serif" }}>
+              🔄 Load Trucker List
+            </button>
           </div>
 
-          {topTruckers.length === 0 ? (
+          {profilesLoading ? (
+            <div style={{ textAlign: "center", padding: "48px", color: "#6b7280" }}>Loading...</div>
+          ) : profiles.length === 0 ? (
             <div style={{ textAlign: "center", padding: "48px", background: "#111827", borderRadius: 12, color: "#4b5563" }}>
-              <div style={{ fontSize: 40 }}>📦</div>
-              <div style={{ marginTop: 12 }}>No truckers have posted loads yet.</div>
+              <div style={{ fontSize: 40 }}>👤</div>
+              <div style={{ marginTop: 12 }}>Click "Load Trucker List" to view registered truckers.</div>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {topTruckers.map(([name, count], i) => {
-                const truckerLoads = loads.filter(l => l.truckerName === name);
-                const latestLoad = truckerLoads.sort((a, b) => b.date.localeCompare(a.date))[0];
-                const truckTypes = [...new Set(truckerLoads.map(l => l.truckType).filter(Boolean))];
+              {profiles.map((p) => {
+                const truckerLoads = loads.filter(l => l.truckerName === p.full_name);
+                const isEditing = editTrucker === p.id;
                 return (
-                  <div key={name} style={{ background: "#111827", border: "2px solid #1f2937", borderRadius: 12, padding: "18px 20px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f59e0b22", border: "2px solid #f59e0b44", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                      {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "🚛"}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 140 }}>
-                      <div style={{ fontSize: 16, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>{name}</div>
-                      {latestLoad && (
-                        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 3 }}>
-                          Last route: {latestLoad.from} → {latestLoad.to} on {latestLoad.date}
+                  <div key={p.id} style={{ background: "#111827", border: `2px solid ${isEditing ? "#f59e0b55" : "#1f2937"}`, borderRadius: 12, padding: "18px 20px" }}>
+                    {isEditing ? (
+                      // Edit mode
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", marginBottom: 12 }}>✏️ Editing Trucker Profile</div>
+                        <div className="tr-grid-2" style={{ marginBottom: 12 }}>
+                          <div>
+                            <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>FULL NAME</label>
+                            <input value={editTruckerFields.full_name} onChange={e => setEditTruckerFields(f => ({...f, full_name: e.target.value}))}
+                              style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "8px 10px", fontSize: 13, boxSizing: "border-box" }} />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>MOBILE</label>
+                            <input value={editTruckerFields.contact} onChange={e => setEditTruckerFields(f => ({...f, contact: e.target.value}))}
+                              style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "8px 10px", fontSize: 13, boxSizing: "border-box" }} />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>COMPANY NAME</label>
+                            <input value={editTruckerFields.company_name} onChange={e => setEditTruckerFields(f => ({...f, company_name: e.target.value}))}
+                              style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "8px 10px", fontSize: 13, boxSizing: "border-box" }} />
+                          </div>
                         </div>
-                      )}
-                      {truckTypes.length > 0 && (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
-                          {truckTypes.map(t => <Badge key={t} color="#a78bfa">{t}</Badge>)}
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button onClick={saveEditTrucker} style={{ padding: "7px 18px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💾 Save</button>
+                          <button onClick={() => setEditTrucker(null)} style={{ padding: "7px 14px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
                         </div>
-                      )}
-                    </div>
-                    <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <div style={{ fontSize: 28, fontWeight: 900, color: "#f59e0b", fontFamily: "'Barlow Condensed', sans-serif", lineHeight: 1 }}>{count}</div>
-                      <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase" }}>Load{count !== 1 ? "s" : ""} posted</div>
-                    </div>
-                    {latestLoad?.contact && (
-                      <div style={{ fontSize: 13, color: "#6ee7b7", fontFamily: "monospace", background: "#065f4622", border: "1px solid #065f4644", borderRadius: 6, padding: "6px 10px" }}>
-                        📞 {latestLoad.contact}
+                      </div>
+                    ) : (
+                      // View mode
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                        <div style={{ flex: 1, minWidth: 200 }}>
+                          <div style={{ fontSize: 16, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>{p.full_name || "-"}</div>
+                          {p.company_name && <div style={{ fontSize: 12, color: "#a78bfa", marginTop: 2 }}>🏢 {p.company_name}</div>}
+                          {p.contact && <div style={{ fontSize: 13, color: "#6ee7b7", marginTop: 4, fontFamily: "monospace" }}>📞 {p.contact}</div>}
+                          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
+                            {truckerLoads.length} load{truckerLoads.length !== 1 ? "s" : ""} posted
+                            {p.created_at && ` · Joined ${new Date(p.created_at).toLocaleDateString("en-IN")}`}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                          <button onClick={() => startEditTrucker(p)} style={{ padding: "6px 14px", background: "#1e3a5f", color: "#60a5fa", border: "1px solid #60a5fa44", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>✏️ Edit</button>
+                          {confirmDeleteTrucker === p.id ? (
+                            <>
+                              <button onClick={() => deleteTrucker(p.id)} style={{ padding: "6px 12px", background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Confirm</button>
+                              <button onClick={() => setConfirmDeleteTrucker(null)} style={{ padding: "6px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 12, cursor: "pointer" }}>Cancel</button>
+                            </>
+                          ) : (
+                            <button onClick={() => setConfirmDeleteTrucker(p.id)} style={{ padding: "6px 12px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🗑️ Delete</button>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
