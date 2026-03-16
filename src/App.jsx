@@ -1858,16 +1858,34 @@ function LoginScreen({ onLogin }) {
       );
       if (authError) { setError(authError.message); setLoading(false); return; }
 
-      // Step 2: Fetch profile (5s timeout)
+      // Step 2: Fetch profile using direct REST fetch
       let profileRows = null;
       try {
-        const result = await withTimeout(
-          supabase.from("profiles").select("*").eq("user_id", data.user.id)
+        const session = data.session;
+        console.log("Fetching profile for user:", data.user.id);
+        console.log("Access token exists:", !!session.access_token);
+        const url = `${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${data.user.id}&select=*`;
+        console.log("Fetch URL:", url);
+        const res = await withTimeout(
+          fetch(url, {
+              headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${session.access_token}`,
+                "Content-Type": "application/json",
+              }
+            }
+          ),
+          10000
         );
-        profileRows = result.data;
+        console.log("Profile response status:", res.status);
+        const text = await res.text();
+        console.log("Profile response body:", text);
+        profileRows = JSON.parse(text);
       } catch (e) {
-        // If profile fetch times out or fails, still allow login with basic info
         console.warn("Profile fetch failed:", e.message);
+        setError("Profile error: " + e.message);
+        await supabase.auth.signOut();
+        setLoading(false); return;
       }
 
       const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
@@ -2458,9 +2476,18 @@ export default function App() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          const { data: profileRows } = await supabase
-            .from("profiles").select("*").eq("user_id", session.user.id);
-          const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
+          const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${session.user.id}&select=*`,
+            {
+              headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${session.access_token}`,
+                "Content-Type": "application/json",
+              }
+            }
+          );
+          const profileRows = await res.json();
+          const profile = Array.isArray(profileRows) && profileRows.length > 0 ? profileRows[0] : null;
           if (profile && !profile.is_disabled) {
             setUser({
               name:        profile.full_name    || session.user.email,
@@ -2485,9 +2512,18 @@ export default function App() {
         setUser(null);
       } else if (event === "SIGNED_IN" && session?.user) {
         try {
-          const { data: profileRows } = await supabase
-            .from("profiles").select("*").eq("user_id", session.user.id);
-          const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
+          const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/profiles?user_id=eq.${session.user.id}&select=*`,
+            {
+              headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${session.access_token}`,
+                "Content-Type": "application/json",
+              }
+            }
+          );
+          const profileRows = await res.json();
+          const profile = Array.isArray(profileRows) && profileRows.length > 0 ? profileRows[0] : null;
           if (profile && !profile.is_disabled) {
             setUser({
               name:        profile.full_name    || session.user.email,
