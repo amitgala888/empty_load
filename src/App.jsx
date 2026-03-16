@@ -729,7 +729,7 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
           {load.from} <span style={{ color: "#f59e0b" }}>→</span> {load.to}
         </div>
         <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}>
-          🚛 {load.truckType || load.truckNo || "-"} &nbsp;|&nbsp; 👤 {load.truckerName}
+          🚛 {load.truckType || load.truckNo || "-"}
         </div>
       </div>
       <div style={{ textAlign: "right" }}>
@@ -1565,6 +1565,7 @@ function LoginScreen({ onLogin }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail]       = useState("");
   const [contact, setContact]   = useState("");
+  const [companyName, setCompanyName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
@@ -1596,10 +1597,11 @@ function LoginScreen({ onLogin }) {
       const { data: profile } = await supabase
         .from("profiles").select("*").eq("user_id", data.user.id).single();
       onLogin({
-        name:    profile?.full_name || email,
-        role:    "trucker",
-        contact: profile?.contact   || "",
+        name:        profile?.full_name   || email,
+        role:        "trucker",
+        contact:     profile?.contact     || "",
         email,
+        companyName: profile?.company_name || "",
       });
     } catch (e) { setError("Something went wrong. Please try again."); }
     setLoading(false);
@@ -1620,12 +1622,13 @@ function LoginScreen({ onLogin }) {
       });
       if (authError) { setError(authError.message); setLoading(false); return; }
       await supabase.from("profiles").insert({
-        user_id:   data.user.id,
-        full_name: fullName,
-        contact:   contact,
-        role:      "trucker",
+        user_id:      data.user.id,
+        full_name:    fullName,
+        contact:      contact,
+        company_name: companyName,
+        role:         "trucker",
       });
-      onLogin({ name: fullName, role: "trucker", contact, email });
+      onLogin({ name: fullName, role: "trucker", contact, email, companyName });
     } catch (e) { setError("Something went wrong. Please try again."); }
     setLoading(false);
   };
@@ -1683,6 +1686,9 @@ function LoginScreen({ onLogin }) {
               <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Mobile Number</label>
               <input style={inputStyle} placeholder="e.g. 98765-43210"
                 value={contact} onChange={e => setContact(e.target.value)} />
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Company Name <span style={{ color: "#4b5563", fontWeight: 400, letterSpacing: 0, textTransform: "none", fontSize: 11 }}>(optional)</span></label>
+              <input style={inputStyle} placeholder="e.g. Yadav Transport Co."
+                value={companyName} onChange={e => setCompanyName(e.target.value)} />
             </>
           )}
 
