@@ -1815,10 +1815,10 @@ function AdminPanel({ loads, setLoads, currentUser }) {
 
 // --- Supabase timeout helper --------------------------------------------------
 // Prevents any Supabase query from hanging forever
-function withTimeout(promise, ms = 5000) {
+function withTimeout(promise, ms = 8000) {
   return Promise.race([
     promise,
-    new Promise((_, reject) => setTimeout(() => reject(new Error("Request timed out")), ms))
+    new Promise((_, reject) => setTimeout(() => reject(new Error("Connection timed out. Please check your internet and try again.")), ms))
   ]);
 }
 
@@ -1844,7 +1844,13 @@ function LoginScreen({ onLogin }) {
   };
 
   const handleLogin = async () => {
-    setError(""); setLoading(true);
+    setError(""); 
+    // Basic validation before hitting Supabase
+    if (!email.includes("@") || !email.includes(".")) {
+      setError("Please enter a valid email address (e.g. name@gmail.com)"); return;
+    }
+    if (!password) { setError("Please enter your password."); return; }
+    setLoading(true);
     try {
       // Step 1: Sign in with Supabase Auth (5s timeout)
       const { data, error: authError } = await withTimeout(
@@ -1900,7 +1906,9 @@ function LoginScreen({ onLogin }) {
         email,
         companyName: profile?.company_name || "",
       });
-    } catch (e) { setError("Something went wrong. Please try again."); }
+    } catch (e) {
+      setError(e.message || "Something went wrong. Please try again.");
+    }
     setLoading(false);
   };
 
