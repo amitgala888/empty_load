@@ -1698,7 +1698,7 @@ function LoginScreen({ onLogin }) {
           {/* Email */}
           <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Email Address</label>
           <input style={inputStyle} type="email"
-            placeholder={authType === "admin" ? "admin@truckroute.in" : "you@email.com"}
+            placeholder={authType === "admin" ? "amitgala888@gmail.com" : "you@email.com"}
             value={email} onChange={e => setEmail(e.target.value)}
             onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())} />
 
