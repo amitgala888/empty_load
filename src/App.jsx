@@ -1048,7 +1048,7 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
       )}
 
       {/* My Posts list at bottom */}
-      <MyPostsPanel loads={loads} truckerName={truckerName} onEdit={handleEdit} />
+      <MyPostsPanel loads={loads} truckerName={truckerName} onEdit={handleEdit} currentUser={currentUser} />
 
     </div>
   );
@@ -1924,7 +1924,7 @@ function LoginScreen({ onLogin }) {
 }
 
 // --- My Posts Panel -----------------------------------------------------------
-function MyPostsPanel({ loads, truckerName, onEdit }) {
+function MyPostsPanel({ loads, truckerName, onEdit, currentUser }) {
   const myLoads = loads
     .filter(l => l.truckerName === truckerName)
     .sort((a, b) => (b.postedAt || 0) - (a.postedAt || 0));
@@ -1957,7 +1957,7 @@ function MyPostsPanel({ loads, truckerName, onEdit }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {myLoads.map((l) => {
             const { color: liveColor, expired } = expiryLabel(l);
-            const waMsg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n*Company Name:* ${l.truckerCompany || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
+            const waMsg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n*Company Name:* ${currentUser?.companyName || l.truckerCompany || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
             return (
               <div key={l.id} style={{
                 background: "#111827",
