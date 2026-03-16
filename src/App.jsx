@@ -2416,8 +2416,15 @@ export default function App() {
   const [limitPopup, setLimitPopup] = useState(false);
   const [timeLeft, setTimeLeft] = useState(24 * 60 * 60 * 1000);
 
-  // ── Restore session on app load / tab focus ──────────────────────────────
+  // ── Restore session on app load ──────────────────────────────────────────
   useEffect(() => {
+    let done = false;
+
+    // Safety timeout — never stay stuck on loading screen
+    const timeout = setTimeout(() => {
+      if (!done) { done = true; setAuthLoading(false); }
+    }, 3000);
+
     async function restoreSession() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -2427,9 +2434,9 @@ export default function App() {
           const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
           if (profile && !profile.is_disabled) {
             setUser({
-              name:        profile.full_name   || session.user.email,
-              role:        profile.role        || "trucker",
-              contact:     profile.contact     || "",
+              name:        profile.full_name    || session.user.email,
+              role:        profile.role         || "trucker",
+              contact:     profile.contact      || "",
               email:       session.user.email,
               companyName: profile.company_name || "",
             });
@@ -2437,31 +2444,34 @@ export default function App() {
         }
       } catch (e) {
         console.warn("Session restore failed:", e);
+      } finally {
+        if (!done) { done = true; clearTimeout(timeout); setAuthLoading(false); }
       }
-      setAuthLoading(false);
     }
     restoreSession();
 
-    // Also listen for auth changes (login/logout from other tabs)
+    // Listen for auth changes across tabs
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_OUT") {
         setUser(null);
       } else if (event === "SIGNED_IN" && session?.user) {
-        const { data: profileRows } = await supabase
-          .from("profiles").select("*").eq("user_id", session.user.id);
-        const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
-        if (profile && !profile.is_disabled) {
-          setUser({
-            name:        profile.full_name   || session.user.email,
-            role:        profile.role        || "trucker",
-            contact:     profile.contact     || "",
-            email:       session.user.email,
-            companyName: profile.company_name || "",
-          });
-        }
+        try {
+          const { data: profileRows } = await supabase
+            .from("profiles").select("*").eq("user_id", session.user.id);
+          const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
+          if (profile && !profile.is_disabled) {
+            setUser({
+              name:        profile.full_name    || session.user.email,
+              role:        profile.role         || "trucker",
+              contact:     profile.contact      || "",
+              email:       session.user.email,
+              companyName: profile.company_name || "",
+            });
+          }
+        } catch(e) { console.warn("Auth state change error:", e); }
       }
     });
-    return () => subscription.unsubscribe();
+    return () => { subscription.unsubscribe(); clearTimeout(timeout); };
   }, []);
 
   // Helper to convert Supabase row to app load object
@@ -2570,12 +2580,12 @@ export default function App() {
     setActiveTab("post");
   };
 
-  // Show blank/spinner while checking existing session
+  // Show splash screen while checking existing session
   if (authLoading) return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, fontFamily: "'DM Sans', sans-serif" }}>
-      <div style={{ fontSize: 48 }}>🚛</div>
-      <div style={{ fontSize: 18, fontWeight: 700, color: "#1e293b" }}>Truck<span style={{ color: "#f59e0b" }}>Route</span></div>
-      <div style={{ fontSize: 13, color: "#94a3b8" }}>Loading...</div>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #f0f7ff 0%, #fef9f0 50%, #f0fff4 100%)", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ fontSize: 64 }}>🚛</div>
+      <div style={{ fontSize: 28, fontWeight: 800, color: "#1e293b" }}>Truck<span style={{ color: "#f59e0b" }}>Route</span></div>
+      <div style={{ fontSize: 13, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase" }}>Loading...</div>
     </div>
   );
 
