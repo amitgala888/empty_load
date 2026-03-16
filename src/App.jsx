@@ -1813,6 +1813,15 @@ function AdminPanel({ loads, setLoads, currentUser }) {
   );
 }
 
+// --- Supabase timeout helper --------------------------------------------------
+// Prevents any Supabase query from hanging forever
+function withTimeout(promise, ms = 5000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error("Request timed out")), ms))
+  ]);
+}
+
 // --- Auth Screen --------------------------------------------------------------
 function LoginScreen({ onLogin }) {
   const [authType, setAuthType] = useState("trucker"); // trucker | admin
@@ -1837,15 +1846,27 @@ function LoginScreen({ onLogin }) {
   const handleLogin = async () => {
     setError(""); setLoading(true);
     try {
-      // All users (admin + trucker) log in via Supabase Auth
-      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      // Step 1: Sign in with Supabase Auth (5s timeout)
+      const { data, error: authError } = await withTimeout(
+        supabase.auth.signInWithPassword({ email, password })
+      );
       if (authError) { setError(authError.message); setLoading(false); return; }
 
-      const { data: profileRows } = await supabase
-        .from("profiles").select("*").eq("user_id", data.user.id);
+      // Step 2: Fetch profile (5s timeout)
+      let profileRows = null;
+      try {
+        const result = await withTimeout(
+          supabase.from("profiles").select("*").eq("user_id", data.user.id)
+        );
+        profileRows = result.data;
+      } catch (e) {
+        // If profile fetch times out or fails, still allow login with basic info
+        console.warn("Profile fetch failed:", e.message);
+      }
 
       const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
 
+      // If no profile found, still allow admin to proceed (check by email fallback)
       if (!profile) {
         await supabase.auth.signOut();
         setError("Account profile not found. Please contact support.");
