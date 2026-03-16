@@ -2407,6 +2407,7 @@ function expiryLabel(load) {
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true); // true until session checked
   const [activeTab, setActiveTab] = useState("post");
   const [loads, setLoads] = useState([]);
   const [loadsLoading, setLoadsLoading] = useState(true);
@@ -2414,6 +2415,54 @@ export default function App() {
   const [enquiries, setEnquiries] = useState([]);
   const [limitPopup, setLimitPopup] = useState(false);
   const [timeLeft, setTimeLeft] = useState(24 * 60 * 60 * 1000);
+
+  // ── Restore session on app load / tab focus ──────────────────────────────
+  useEffect(() => {
+    async function restoreSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data: profileRows } = await supabase
+            .from("profiles").select("*").eq("user_id", session.user.id);
+          const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
+          if (profile && !profile.is_disabled) {
+            setUser({
+              name:        profile.full_name   || session.user.email,
+              role:        profile.role        || "trucker",
+              contact:     profile.contact     || "",
+              email:       session.user.email,
+              companyName: profile.company_name || "",
+            });
+          }
+        }
+      } catch (e) {
+        console.warn("Session restore failed:", e);
+      }
+      setAuthLoading(false);
+    }
+    restoreSession();
+
+    // Also listen for auth changes (login/logout from other tabs)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_OUT") {
+        setUser(null);
+      } else if (event === "SIGNED_IN" && session?.user) {
+        const { data: profileRows } = await supabase
+          .from("profiles").select("*").eq("user_id", session.user.id);
+        const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
+        if (profile && !profile.is_disabled) {
+          setUser({
+            name:        profile.full_name   || session.user.email,
+            role:        profile.role        || "trucker",
+            contact:     profile.contact     || "",
+            email:       session.user.email,
+            companyName: profile.company_name || "",
+          });
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Helper to convert Supabase row to app load object
   const rowToLoad = (l) => ({
@@ -2515,10 +2564,20 @@ export default function App() {
     return true;
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     setActiveTab("post");
   };
+
+  // Show blank/spinner while checking existing session
+  if (authLoading) return (
+    <div style={{ minHeight: "100vh", background: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ fontSize: 48 }}>🚛</div>
+      <div style={{ fontSize: 18, fontWeight: 700, color: "#1e293b" }}>Truck<span style={{ color: "#f59e0b" }}>Route</span></div>
+      <div style={{ fontSize: 13, color: "#94a3b8" }}>Loading...</div>
+    </div>
+  );
 
   if (!user) return <LoginScreen onLogin={setUser} />;
 
