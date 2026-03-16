@@ -801,24 +801,39 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     setPreview({ from, to, date, via, truckerName, truckType, contact, postDuration });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const via = getCitiesAlongRoute(from, to);
     if (editingId) {
-      setLoads(loads.map(l => l.id === editingId
-        ? { ...l, truckType, from, to, date, via, contact, postDuration: Number(postDuration), notifyByEmail, ownerEmail: currentUser?.email || "" }
-        : l
-      ));
+      // Update in Supabase
+      const { data } = await supabase.from("loads").update({
+        truck_type: truckType, from_city: from, to_city: to,
+        via_cities: via.join(","), contact, date,
+        post_duration: Number(postDuration),
+        notify_by_email: notifyByEmail,
+        owner_email: currentUser?.email || "",
+      }).eq("id", editingId).select().single();
+      if (data) setLoads(loads.map(l => l.id === editingId ? { ...l, truckType, from, to, via, contact, date, postDuration: Number(postDuration), notifyByEmail, ownerEmail: currentUser?.email || "" } : l));
       setEditingId(null);
     } else {
-      const newLoad = {
-        id: Date.now(),
-        truckerName, truckType, from, to, date, via, contact,
-        postDuration: Number(postDuration),
-        notifyByEmail,
+      // Insert into Supabase
+      const { data } = await supabase.from("loads").insert({
+        trucker_name: truckerName,
+        truck_type: truckType,
+        from_city: from,
+        to_city: to,
+        via_cities: via.join(","),
+        contact, date,
+        post_duration: Number(postDuration),
+        notify_by_email: notifyByEmail,
+        owner_email: currentUser?.email || "",
+        posted_at: Date.now(),
+      }).select().single();
+      if (data) setLoads(prev => [{
+        id: data.id, truckerName, truckType, from, to, via, contact, date,
+        postDuration: Number(postDuration), notifyByEmail,
         ownerEmail: currentUser?.email || "",
-        postedAt: Date.now(),
-      };
-      setLoads([newLoad, ...loads]);
+        postedAt: data.posted_at,
+      }, ...prev]);
     }
     setSubmitted(true);
     setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null); }, 3000);
@@ -843,8 +858,9 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null);
   };
 
-  const handleDeleteFromEdit = () => {
+  const handleDeleteFromEdit = async () => {
     if (!window.confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
+    await supabase.from("loads").delete().eq("id", editingId);
     setLoads(loads.filter(l => l.id !== editingId));
     handleCancelEdit();
   };
@@ -1172,7 +1188,8 @@ function AdminPanel({ loads, setLoads, currentUser }) {
     return matchSearch && matchType && matchDate;
   });
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    await supabase.from("loads").delete().eq("id", id);
     setLoads(prev => prev.filter(l => l.id !== id));
     setConfirmDelete(null);
   };
@@ -1974,23 +1991,42 @@ function expiryLabel(load) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
-  // Persist loads in localStorage so they survive logout and re-login
-  const [loads, setLoadsState] = useState(() => {
-    try {
-      const saved = localStorage.getItem("truckroute_loads");
-      return saved ? JSON.parse(saved) : SEED_LOADS;
-    } catch { return SEED_LOADS; }
-  });
-
-  const setLoads = (newLoads) => {
-    const resolved = typeof newLoads === "function" ? newLoads(loads) : newLoads;
-    setLoadsState(resolved);
-    try { localStorage.setItem("truckroute_loads", JSON.stringify(resolved)); } catch {}
-  };
+  const [loads, setLoads] = useState([]);
+  const [loadsLoading, setLoadsLoading] = useState(true);
   const [revealCount, setRevealCount] = useState(0);
   const [enquiries, setEnquiries] = useState([]);
   const [limitPopup, setLimitPopup] = useState(false);
   const [timeLeft, setTimeLeft] = useState(24 * 60 * 60 * 1000);
+
+  // Helper to convert Supabase row to app load object
+  const rowToLoad = (l) => ({
+    id: l.id,
+    truckerName: l.trucker_name,
+    truckType: l.truck_type,
+    from: l.from_city,
+    to: l.to_city,
+    via: l.via_cities ? l.via_cities.split(",") : [],
+    contact: l.contact,
+    date: l.date,
+    postDuration: l.post_duration || 0,
+    notifyByEmail: l.notify_by_email || false,
+    ownerEmail: l.owner_email || "",
+    postedAt: l.posted_at || 0,
+  });
+
+  // Fetch all loads from Supabase on startup
+  useEffect(() => {
+    async function fetchLoads() {
+      setLoadsLoading(true);
+      const { data, error } = await supabase
+        .from("loads")
+        .select("*")
+        .order("posted_at", { ascending: false });
+      if (data) setLoads(data.map(rowToLoad));
+      setLoadsLoading(false);
+    }
+    fetchLoads();
+  }, []);
 
   // Load quota when user logs in, and tick every minute
   useEffect(() => {
@@ -2202,9 +2238,15 @@ export default function App() {
 
       {/* Content */}
       <main style={{ position: "relative", zIndex: 1, maxWidth: user.role === "admin" ? 1000 : 760, margin: "0 auto", padding: "24px 16px" }}>
-        {user.role === "admin" && <AdminPanel loads={loads} setLoads={setLoads} currentUser={user} />}
-        {user.role === "trucker" && activeTab === "post" && <PostLoad loads={loads} setLoads={setLoads} truckerName={user.name} currentUser={user} />}
-        {user.role === "trucker" && activeTab === "find" && <FindLoad loads={loads} currentUser={user} onRevealAttempt={handleRevealAttempt} revealCount={revealCount} revealLimit={REVEAL_LIMIT} timeLeft={timeLeft} />}
+        {loadsLoading && (
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "#6b7280" }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🚛</div>
+            <div style={{ fontSize: 14 }}>Loading loads...</div>
+          </div>
+        )}
+        {!loadsLoading && user.role === "admin" && <AdminPanel loads={loads} setLoads={setLoads} currentUser={user} />}
+        {!loadsLoading && user.role === "trucker" && activeTab === "post" && <PostLoad loads={loads} setLoads={setLoads} truckerName={user.name} currentUser={user} />}
+        {!loadsLoading && user.role === "trucker" && activeTab === "find" && <FindLoad loads={loads} currentUser={user} onRevealAttempt={handleRevealAttempt} revealCount={revealCount} revealLimit={REVEAL_LIMIT} timeLeft={timeLeft} />}
         {user.role === "trucker" && activeTab === "enquiries" && <EnquiriesPanel enquiries={myEnquiries} truckerName={user.name} />}
       </main>
     </div>
