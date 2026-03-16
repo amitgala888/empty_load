@@ -696,9 +696,9 @@ const LoadCard = ({ load, highlight, currentUser, onRevealAttempt }) => {
   const [showContact, setShowContact] = useState(false);
   const isOwner = currentUser && currentUser.name === load.truckerName;
 
-  const handleContactClick = () => {
+  const handleContactClick = async () => {
     if (showContact) { setShowContact(false); return; }
-    const allowed = onRevealAttempt ? onRevealAttempt(load) : true;
+    const allowed = onRevealAttempt ? await onRevealAttempt(load) : true;
     if (allowed) setShowContact(true);
   };
 
@@ -1757,9 +1757,6 @@ function LoginScreen({ onLogin }) {
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
 
-  const ADMIN_EMAIL    = "amitgala888@gmail.com";
-  const ADMIN_PASSWORD = "AdminAdmin444*";
-
   const inputStyle = {
     width: "100%", background: "#0d1117", color: "#f9fafb",
     border: "2px solid #374151", borderRadius: 8,
@@ -1771,27 +1768,36 @@ function LoginScreen({ onLogin }) {
   const handleLogin = async () => {
     setError(""); setLoading(true);
     try {
-      if (authType === "admin") {
-        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-          onLogin({ name: "Admin", role: "admin", contact: "" });
-        } else {
-          setError("Invalid admin credentials.");
-        }
-        setLoading(false); return;
-      }
+      // All users (admin + trucker) log in via Supabase Auth
       const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
       if (authError) { setError(authError.message); setLoading(false); return; }
+
       const { data: profile } = await supabase
         .from("profiles").select("*").eq("user_id", data.user.id).single();
+
+      // Check role matches selected tab
+      const actualRole = profile?.role || "trucker";
+      if (authType === "admin" && actualRole !== "admin") {
+        await supabase.auth.signOut();
+        setError("This account does not have admin access.");
+        setLoading(false); return;
+      }
+      if (authType === "trucker" && actualRole === "admin") {
+        await supabase.auth.signOut();
+        setError("Please use the Admin tab to log in.");
+        setLoading(false); return;
+      }
+
       // Block disabled accounts
       if (profile?.is_disabled) {
         await supabase.auth.signOut();
         setError("Your account has been disabled. Please contact the administrator.");
         setLoading(false); return;
       }
+
       onLogin({
         name:        profile?.full_name   || email,
-        role:        "trucker",
+        role:        actualRole,
         contact:     profile?.contact     || "",
         email,
         companyName: profile?.company_name || "",
@@ -1888,7 +1894,7 @@ function LoginScreen({ onLogin }) {
           {/* Email */}
           <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Email Address</label>
           <input style={inputStyle} type="email"
-            placeholder={authType === "admin" ? "amitgala888@gmail.com" : "you@email.com"}
+            placeholder={authType === "admin" ? "your admin email" : "you@email.com"}
             value={email} onChange={e => setEmail(e.target.value)}
             onKeyDown={e => e.key === "Enter" && (mode === "login" ? handleLogin() : handleSignup())} />
 
@@ -2261,41 +2267,47 @@ function EnquiriesPanel({ enquiries, truckerName }) {
 
 // --- Main App -----------------------------------------------------------------
 // --- Reveal quota helpers (24-hour reset via localStorage) -------------------
-const QUOTA_KEY_PREFIX = "truckroute_reveal_quota_";
 const REVEAL_LIMIT = 2;
+const RESET_HOURS  = 24;
 
-function getUserQuotaKey(email) {
-  // Use email (or fallback) as unique key per user
-  return QUOTA_KEY_PREFIX + (email || "guest").replace(/[^a-zA-Z0-9]/g, "_");
-}
-
-function getQuota(email) {
+// Fetch quota from Supabase for the current user
+async function getQuotaFromDB() {
   try {
-    const key = getUserQuotaKey(email);
-    const raw = localStorage.getItem(key);
-    if (!raw) return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
-    const q = JSON.parse(raw);
-    if (Date.now() > q.resetAt) {
-      const fresh = { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 };
-      localStorage.setItem(key, JSON.stringify(fresh));
-      return fresh;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { count: 0, resetAt: Date.now() + RESET_HOURS * 3600000 };
+    const { data } = await supabase
+      .from("contact_reveals")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+    if (!data) return { count: 0, resetAt: Date.now() + RESET_HOURS * 3600000 };
+    // Auto-reset if 24h passed
+    if (Date.now() > data.reset_at) {
+      const resetAt = Date.now() + RESET_HOURS * 3600000;
+      await supabase.from("contact_reveals")
+        .update({ reveal_count: 0, reset_at: resetAt })
+        .eq("user_id", user.id);
+      return { count: 0, resetAt };
     }
-    return q;
-  } catch { return { count: 0, resetAt: Date.now() + 24 * 60 * 60 * 1000 }; }
+    return { count: data.reveal_count || 0, resetAt: data.reset_at };
+  } catch { return { count: 0, resetAt: Date.now() + RESET_HOURS * 3600000 }; }
 }
 
-function saveQuota(q, email) {
-  try { localStorage.setItem(getUserQuotaKey(email), JSON.stringify(q)); } catch {}
-}
-
-function msUntilReset(email) {
+async function incrementQuotaInDB() {
   try {
-    const key = getUserQuotaKey(email);
-    const raw = localStorage.getItem(key);
-    if (!raw) return 24 * 60 * 60 * 1000;
-    const q = JSON.parse(raw);
-    return Math.max(0, q.resetAt - Date.now());
-  } catch { return 0; }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const resetAt = Date.now() + RESET_HOURS * 3600000;
+    const { data: existing } = await supabase
+      .from("contact_reveals").select("*").eq("user_id", user.id).single();
+    if (!existing) {
+      await supabase.from("contact_reveals").insert({ user_id: user.id, reveal_count: 1, reset_at: resetAt });
+    } else {
+      const newCount = (Date.now() > existing.reset_at) ? 1 : (existing.reveal_count || 0) + 1;
+      const newResetAt = (Date.now() > existing.reset_at) ? resetAt : existing.reset_at;
+      await supabase.from("contact_reveals").update({ reveal_count: newCount, reset_at: newResetAt }).eq("user_id", user.id);
+    }
+  } catch {}
 }
 
 function formatTimeLeft(ms) {
@@ -2375,18 +2387,16 @@ export default function App() {
     fetchLoads();
   }, []);
 
-  // Load quota when user logs in, and tick every minute
+  // Load quota from Supabase when user logs in, refresh every minute
   useEffect(() => {
     if (!user) return;
-    const email = user.email || "";
-    const q = getQuota(email);
-    setRevealCount(q.count);
-    setTimeLeft(msUntilReset(email));
-    const interval = setInterval(() => {
-      const q2 = getQuota(email);
-      setRevealCount(q2.count);
-      setTimeLeft(msUntilReset(email));
-    }, 60000);
+    async function loadQuota() {
+      const q = await getQuotaFromDB();
+      setRevealCount(q.count);
+      setTimeLeft(Math.max(0, q.resetAt - Date.now()));
+    }
+    loadQuota();
+    const interval = setInterval(loadQuota, 60000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -2419,9 +2429,8 @@ export default function App() {
   };
 
   // Called by LoadCard when user taps "Contact Number"
-  const handleRevealAttempt = (load) => {
-    const email = user.email || "";
-    const q = getQuota(email);
+  const handleRevealAttempt = async (load) => {
+    const q = await getQuotaFromDB();
     if (q.count >= REVEAL_LIMIT) {
       const now = new Date();
       setEnquiries(prev => [...prev, {
@@ -2436,14 +2445,14 @@ export default function App() {
         date: now.toLocaleDateString("en-IN"),
         time: now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
       }]);
-      // Send email - limit exceeded case
       sendEmailNotification(load, user, "limit");
       setLimitPopup(true);
       return false;
     }
-    const updated = { ...q, count: q.count + 1 };
-    saveQuota(updated, email);
-    setRevealCount(updated.count);
+    await incrementQuotaInDB();
+    const newCount = q.count + 1;
+    setRevealCount(newCount);
+    setTimeLeft(Math.max(0, q.resetAt - Date.now()));
     return true;
   };
 
