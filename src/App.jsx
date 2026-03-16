@@ -1772,11 +1772,22 @@ function LoginScreen({ onLogin }) {
       const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
       if (authError) { setError(authError.message); setLoading(false); return; }
 
-      const { data: profile } = await supabase
-        .from("profiles").select("*").eq("user_id", data.user.id).single();
+      const { data: profileRows } = await supabase
+        .from("profiles").select("*").eq("user_id", data.user.id);
+
+      // Safely grab first matching profile row (avoids .single() crash on duplicates)
+      const profile = profileRows && profileRows.length > 0 ? profileRows[0] : null;
+      console.log("Profile found:", profile);
+
+      // No profile row found at all
+      if (!profile) {
+        await supabase.auth.signOut();
+        setError("Account profile not found. Please contact support.");
+        setLoading(false); return;
+      }
 
       // Check role matches selected tab
-      const actualRole = profile?.role || "trucker";
+      const actualRole = profile.role;
       if (authType === "admin" && actualRole !== "admin") {
         await supabase.auth.signOut();
         setError("This account does not have admin access.");
@@ -1789,7 +1800,7 @@ function LoginScreen({ onLogin }) {
       }
 
       // Block disabled accounts
-      if (profile?.is_disabled) {
+      if (profile.is_disabled) {
         await supabase.auth.signOut();
         setError("Your account has been disabled. Please contact the administrator.");
         setLoading(false); return;
