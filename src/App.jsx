@@ -1158,6 +1158,7 @@ function AdminPanel({ loads, setLoads, currentUser }) {
   const [confirmDeleteTrucker, setConfirmDeleteTrucker] = useState(null);
   const [editTrucker, setEditTrucker] = useState(null);
   const [editTruckerFields, setEditTruckerFields] = useState({});
+  const [expandedTrucker, setExpandedTrucker] = useState(null);
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -1246,6 +1247,12 @@ function AdminPanel({ loads, setLoads, currentUser }) {
     await supabase.from("profiles").delete().eq("id", id);
     setProfiles(prev => prev.filter(p => p.id !== id));
     setConfirmDeleteTrucker(null);
+  };
+
+  const toggleDisable = async (p) => {
+    const newVal = !p.is_disabled;
+    await supabase.from("profiles").update({ is_disabled: newVal }).eq("id", p.id);
+    setProfiles(prev => prev.map(x => x.id === p.id ? { ...x, is_disabled: newVal } : x));
   };
 
   const ADMIN_TABS = [
@@ -1485,61 +1492,125 @@ function AdminPanel({ loads, setLoads, currentUser }) {
               <div style={{ marginTop: 12 }}>Click "Load Trucker List" to view registered truckers.</div>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {profiles.map((p) => {
                 const truckerLoads = loads.filter(l => l.truckerName === p.full_name);
+                const isExpanded = expandedTrucker === p.id;
                 const isEditing = editTrucker === p.id;
+                const isDisabled = p.is_disabled;
                 return (
-                  <div key={p.id} style={{ background: "#111827", border: `2px solid ${isEditing ? "#f59e0b55" : "#1f2937"}`, borderRadius: 12, padding: "18px 20px" }}>
-                    {isEditing ? (
-                      // Edit mode
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", marginBottom: 12 }}>✏️ Editing Trucker Profile</div>
-                        <div className="tr-grid-2" style={{ marginBottom: 12 }}>
-                          <div>
-                            <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>FULL NAME</label>
-                            <input value={editTruckerFields.full_name} onChange={e => setEditTruckerFields(f => ({...f, full_name: e.target.value}))}
-                              style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "8px 10px", fontSize: 13, boxSizing: "border-box" }} />
-                          </div>
-                          <div>
-                            <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>MOBILE</label>
-                            <input value={editTruckerFields.contact} onChange={e => setEditTruckerFields(f => ({...f, contact: e.target.value}))}
-                              style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "8px 10px", fontSize: 13, boxSizing: "border-box" }} />
-                          </div>
-                          <div>
-                            <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>COMPANY NAME</label>
-                            <input value={editTruckerFields.company_name} onChange={e => setEditTruckerFields(f => ({...f, company_name: e.target.value}))}
-                              style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "8px 10px", fontSize: 13, boxSizing: "border-box" }} />
-                          </div>
+                  <div key={p.id} style={{
+                    background: "#111827",
+                    border: `2px solid ${isDisabled ? "#7f1d1d55" : isExpanded ? "#f59e0b44" : "#1f2937"}`,
+                    borderRadius: 12,
+                    overflow: "hidden",
+                    transition: "border-color .2s",
+                  }}>
+                    {/* ── Collapsed row (always visible) ── */}
+                    <div
+                      onClick={() => setExpandedTrucker(isExpanded ? null : p.id)}
+                      style={{ padding: "14px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", gap: 12, flexWrap: "wrap" }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 160 }}>
+                        <div style={{ width: 38, height: 38, borderRadius: "50%", background: isDisabled ? "#7f1d1d44" : "#f59e0b22", border: `2px solid ${isDisabled ? "#dc2626" : "#f59e0b44"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>
+                          {isDisabled ? "🔒" : "🚛"}
                         </div>
-                        <div style={{ display: "flex", gap: 8 }}>
-                          <button onClick={saveEditTrucker} style={{ padding: "7px 18px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💾 Save</button>
-                          <button onClick={() => setEditTrucker(null)} style={{ padding: "7px 14px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 800, color: isDisabled ? "#6b7280" : "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                            {p.full_name || "—"}
+                            {isDisabled && <span style={{ marginLeft: 8, fontSize: 10, background: "#7f1d1d", color: "#f87171", borderRadius: 4, padding: "1px 6px", fontWeight: 700, letterSpacing: 1 }}>DISABLED</span>}
+                          </div>
+                          {p.company_name && <div style={{ fontSize: 11, color: "#a78bfa", marginTop: 1 }}>🏢 {p.company_name}</div>}
                         </div>
                       </div>
-                    ) : (
-                      // View mode
-                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-                        <div style={{ flex: 1, minWidth: 200 }}>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: "#f9fafb", fontFamily: "'Barlow Condensed', sans-serif" }}>{p.full_name || "-"}</div>
-                          {p.company_name && <div style={{ fontSize: 12, color: "#a78bfa", marginTop: 2 }}>🏢 {p.company_name}</div>}
-                          {p.contact && <div style={{ fontSize: 13, color: "#6ee7b7", marginTop: 4, fontFamily: "monospace" }}>📞 {p.contact}</div>}
-                          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
-                            {truckerLoads.length} load{truckerLoads.length !== 1 ? "s" : ""} posted
-                            {p.created_at && ` · Joined ${new Date(p.created_at).toLocaleDateString("en-IN")}`}
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                        <span style={{ fontSize: 12, color: "#6b7280" }}>{truckerLoads.length} load{truckerLoads.length !== 1 ? "s" : ""}</span>
+                        <span style={{ fontSize: 18, color: "#6b7280", transition: "transform .2s", display: "inline-block", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                      </div>
+                    </div>
+
+                    {/* ── Expanded section ── */}
+                    {isExpanded && (
+                      <div style={{ borderTop: "1px solid #1f2937", padding: "18px 18px 20px" }}>
+
+                        {isEditing ? (
+                          // Edit form
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", marginBottom: 14 }}>✏️ Editing Profile</div>
+                            <div className="tr-grid-2" style={{ marginBottom: 14 }}>
+                              {[["Full Name", "full_name", "e.g. Rajan Yadav"], ["Mobile Number", "contact", "e.g. 98765-43210"], ["Company Name", "company_name", "e.g. Yadav Transport"]].map(([label, key, ph]) => (
+                                <div key={key}>
+                                  <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4, letterSpacing: 1, textTransform: "uppercase" }}>{label}</label>
+                                  <input value={editTruckerFields[key] || ""} placeholder={ph}
+                                    onChange={e => setEditTruckerFields(f => ({...f, [key]: e.target.value}))}
+                                    style={{ width: "100%", background: "#0d1117", color: "#f9fafb", border: "1px solid #f59e0b", borderRadius: 6, padding: "9px 12px", fontSize: 13, boxSizing: "border-box", fontFamily: "'Barlow', sans-serif" }} />
+                                </div>
+                              ))}
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                              <button onClick={saveEditTrucker} style={{ padding: "8px 20px", background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>💾 Save Changes</button>
+                              <button onClick={() => setEditTrucker(null)} style={{ padding: "8px 14px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                            </div>
                           </div>
-                        </div>
-                        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                          <button onClick={() => startEditTrucker(p)} style={{ padding: "6px 14px", background: "#1e3a5f", color: "#60a5fa", border: "1px solid #60a5fa44", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>✏️ Edit</button>
-                          {confirmDeleteTrucker === p.id ? (
-                            <>
-                              <button onClick={() => deleteTrucker(p.id)} style={{ padding: "6px 12px", background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Confirm</button>
-                              <button onClick={() => setConfirmDeleteTrucker(null)} style={{ padding: "6px 10px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 12, cursor: "pointer" }}>Cancel</button>
-                            </>
-                          ) : (
-                            <button onClick={() => setConfirmDeleteTrucker(p.id)} style={{ padding: "6px 12px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🗑️ Delete</button>
-                          )}
-                        </div>
+                        ) : (
+                          // Full profile view
+                          <div>
+                            {/* Profile details */}
+                            <div className="tr-grid-2" style={{ marginBottom: 16 }}>
+                              {[
+                                ["Full Name", p.full_name || "—", "#f9fafb"],
+                                ["Mobile Number", p.contact || "—", "#6ee7b7"],
+                                ["Company Name", p.company_name || "—", "#a78bfa"],
+                                ["Loads Posted", truckerLoads.length, "#f59e0b"],
+                                ["Joined On", p.created_at ? new Date(p.created_at).toLocaleDateString("en-IN") : "—", "#6b7280"],
+                                ["Account Status", isDisabled ? "Disabled" : "Active", isDisabled ? "#f87171" : "#22c55e"],
+                              ].map(([label, val, color]) => (
+                                <div key={label} style={{ background: "#0d1117", borderRadius: 8, padding: "10px 14px" }}>
+                                  <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
+                                  <div style={{ fontSize: 14, fontWeight: 700, color }}>{val}</div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Recent loads */}
+                            {truckerLoads.length > 0 && (
+                              <div style={{ marginBottom: 16 }}>
+                                <div style={{ fontSize: 11, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Recent Loads</div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                                  {truckerLoads.slice(0, 3).map(l => (
+                                    <div key={l.id} style={{ background: "#0d1117", borderRadius: 6, padding: "8px 12px", display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+                                      <span style={{ color: "#f9fafb" }}>{l.from} <span style={{ color: "#f59e0b" }}>→</span> {l.to}</span>
+                                      <span style={{ color: "#6b7280" }}>{l.date}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Action buttons */}
+                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                              <button onClick={() => startEditTrucker(p)} style={{ padding: "8px 18px", background: "#1e3a5f", color: "#60a5fa", border: "1px solid #60a5fa44", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>✏️ Edit Profile</button>
+
+                              {/* Disable / Enable toggle */}
+                              <button onClick={() => toggleDisable(p)} style={{
+                                padding: "8px 18px", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none",
+                                background: isDisabled ? "#14532d55" : "#7f1d1d55",
+                                color: isDisabled ? "#22c55e" : "#f87171",
+                              }}>
+                                {isDisabled ? "✅ Enable Account" : "🔒 Disable Account"}
+                              </button>
+
+                              {confirmDeleteTrucker === p.id ? (
+                                <>
+                                  <button onClick={() => deleteTrucker(p.id)} style={{ padding: "8px 14px", background: "#dc2626", color: "#fff", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Confirm Delete</button>
+                                  <button onClick={() => setConfirmDeleteTrucker(null)} style={{ padding: "8px 12px", background: "#374151", color: "#9ca3af", border: "none", borderRadius: 6, fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                                </>
+                              ) : (
+                                <button onClick={() => setConfirmDeleteTrucker(p.id)} style={{ padding: "8px 16px", background: "#7f1d1d33", color: "#f87171", border: "1px solid #7f1d1d66", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🗑️ Delete</button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1712,6 +1783,12 @@ function LoginScreen({ onLogin }) {
       if (authError) { setError(authError.message); setLoading(false); return; }
       const { data: profile } = await supabase
         .from("profiles").select("*").eq("user_id", data.user.id).single();
+      // Block disabled accounts
+      if (profile?.is_disabled) {
+        await supabase.auth.signOut();
+        setError("Your account has been disabled. Please contact the administrator.");
+        setLoading(false); return;
+      }
       onLogin({
         name:        profile?.full_name   || email,
         role:        "trucker",
