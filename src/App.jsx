@@ -1797,7 +1797,7 @@ function MyPostsPanel({ loads, truckerName, onEdit }) {
                   </div>
                   <div>
                     <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>Posted On</div>
-                    <div style={{ fontSize: 13, color: "#6b7280" }}>{l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}</div>
+                    <div style={{ fontSize: 13, color: "#6b7280", fontWeight: 700 }}>{l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}</div>
                   </div>
                 </div>
 
