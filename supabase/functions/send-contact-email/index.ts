@@ -27,8 +27,9 @@ serve(async (req) => {
         <div style="background:#111827;border-radius:10px;padding:20px;margin-bottom:20px;border:1px solid #1f2937;">
           <p style="margin:0 0 8px;font-size:18px;font-weight:700;">📬 Someone tried to contact you</p>
           <p style="margin:0;color:#9ca3af;font-size:14px;">
-            ${inquirerName} exceeded their daily contact reveal limit but tried to view your contact number.
-            Call them back at the number below.
+            ${inquirerName} There is an inquiry for an empty load for your truck.
+			Below mentioned user has seen you Empty Load Post on TruckRoute webapp and wants to connect with you.
+            Please call them back on the mobile number mentioned below. Thank you.
           </p>
         </div>
         <table style="width:100%;border-collapse:collapse;">

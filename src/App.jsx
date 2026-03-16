@@ -801,31 +801,28 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     setPreview({ from, to, date, via, truckerName, truckType, contact, postDuration });
   };
 
-  const handleSubmit = async () => {
-  const via = getCitiesAlongRoute(from, to);
-  const newLoad = {
-    trucker_name: truckerName,
-    truck_type: truckType,
-    from_city: from,
-    to_city: to,
-    via_cities: via.join(','),
-    contact,
-    date,
-    post_duration: Number(postDuration),
-    notify_by_email: notifyByEmail,
-    owner_email: currentUser?.email || '',
-    posted_at: Date.now(),
+  const handleSubmit = () => {
+    const via = getCitiesAlongRoute(from, to);
+    if (editingId) {
+      setLoads(loads.map(l => l.id === editingId
+        ? { ...l, truckType, from, to, date, via, contact, postDuration: Number(postDuration), notifyByEmail, ownerEmail: currentUser?.email || "" }
+        : l
+      ));
+      setEditingId(null);
+    } else {
+      const newLoad = {
+        id: Date.now(),
+        truckerName, truckType, from, to, date, via, contact,
+        postDuration: Number(postDuration),
+        notifyByEmail,
+        ownerEmail: currentUser?.email || "",
+        postedAt: Date.now(),
+      };
+      setLoads([newLoad, ...loads]);
+    }
+    setSubmitted(true);
+    setTimeout(() => { setSubmitted(false); setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null); }, 3000);
   };
-  const { data } = await supabase.from('loads').insert(newLoad).select().single();
-  if (data) setLoads(prev => [{ ...data,
-    truckerName: data.trucker_name, truckType: data.truck_type,
-    from: data.from_city, to: data.to_city,
-    via: data.via_cities ? data.via_cities.split(',') : [],
-    postDuration: data.post_duration,
-    notifyByEmail: data.notify_by_email,
-    ownerEmail: data.owner_email,
-  }, ...prev]);
-};
 
   const handleEdit = (load) => {
     setEditingId(load.id);
@@ -846,12 +843,11 @@ function PostLoad({ loads, setLoads, truckerName, currentUser }) {
     setFrom(""); setTo(""); setDate(""); setTruckType(""); setContact(""); setPostDuration(0); setNotifyByEmail(false); setPreview(null);
   };
 
-  const handleDeleteFromEdit = async () => {
-  if (!window.confirm('Delete this post?')) return;
-  await supabase.from('loads').delete().eq('id', editingId);
-  setLoads(loads.filter(l => l.id !== editingId));
-  handleCancelEdit();
-};
+  const handleDeleteFromEdit = () => {
+    if (!window.confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
+    setLoads(loads.filter(l => l.id !== editingId));
+    handleCancelEdit();
+  };
 
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
@@ -1778,19 +1774,41 @@ function MyPostsPanel({ loads, truckerName, onEdit }) {
                       {l.postedAt ? new Date(l.postedAt).toLocaleDateString("en-IN") : "-"}
                     </td>
                     <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
-                      <button
-                        onClick={() => onEdit(l)}
-                        style={{
-                          padding: "5px 14px", background: "#1e3a5f", color: "#60a5fa",
-                          border: "1px solid #60a5fa55", borderRadius: 6,
-                          fontSize: 12, fontWeight: 700, cursor: "pointer",
-                          fontFamily: "'Barlow', sans-serif", transition: "all .15s",
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.color = "#fff"; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = "#1e3a5f"; e.currentTarget.style.color = "#60a5fa"; }}
-                      >
-                        ✏️ Edit
-                      </button>
+                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                        <button
+                          onClick={() => onEdit(l)}
+                          style={{
+                            padding: "5px 14px", background: "#1e3a5f", color: "#60a5fa",
+                            border: "1px solid #60a5fa55", borderRadius: 6,
+                            fontSize: 12, fontWeight: 700, cursor: "pointer",
+                            fontFamily: "'Barlow', sans-serif", transition: "all .15s",
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.background = "#2563eb"; e.currentTarget.style.color = "#fff"; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = "#1e3a5f"; e.currentTarget.style.color = "#60a5fa"; }}
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            const msg = `🚛 *Empty Truck Available*\n\n*Route:* ${l.from} → ${l.to}\n*Travel Start Date:* ${l.date}\n*Truck Type:* ${l.truckType || "-"}\n*Contact:* ${l.contact || "-"}\n\n_Posted on TruckRoute - truckroute.in_`;
+                            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+                          }}
+                          style={{
+                            padding: "5px 12px", background: "#14432155", color: "#25D366",
+                            border: "1px solid #25D36655", borderRadius: 6,
+                            fontSize: 15, cursor: "pointer", transition: "all .15s",
+                            display: "flex", alignItems: "center", gap: 4,
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.background = "#25D366"; e.currentTarget.style.color = "#fff"; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = "#14432155"; e.currentTarget.style.color = "#25D366"; }}
+                          title="Share on WhatsApp"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                          </svg>
+                          Share
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -1957,32 +1975,12 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
   // Persist loads in localStorage so they survive logout and re-login
-  const [loads, setLoads] = useState([]);
-   // Load all loads from Supabase on startup
-useEffect(() => {
-  async function fetchLoads() {
-    const { data } = await supabase
-      .from('loads')
-      .select('*')
-      .order('posted_at', { ascending: false });
-    if (data) setLoads(data.map(l => ({
-      id: l.id,
-      truckerName: l.trucker_name,
-      truckType: l.truck_type,
-      from: l.from_city,
-      to: l.to_city,
-      via: l.via_cities ? l.via_cities.split(',') : [],
-      contact: l.contact,
-      date: l.date,
-      postDuration: l.post_duration,
-      notifyByEmail: l.notify_by_email,
-      ownerEmail: l.owner_email,
-      postedAt: l.posted_at,
-    })));
-  }
-  fetchLoads();
-}, []);
-
+  const [loads, setLoadsState] = useState(() => {
+    try {
+      const saved = localStorage.getItem("truckroute_loads");
+      return saved ? JSON.parse(saved) : SEED_LOADS;
+    } catch { return SEED_LOADS; }
+  });
 
   const setLoads = (newLoads) => {
     const resolved = typeof newLoads === "function" ? newLoads(loads) : newLoads;
