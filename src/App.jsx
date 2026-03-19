@@ -1965,7 +1965,7 @@ function LoginScreen({ onLogin }) {
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 440 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           {/* Truck icon SVG */}
-          <svg width="220" height="130" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", margin: "0 auto" }}>
+          <svg width="320" height="190" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", margin: "0 auto" }}>
             <rect x="214" y="140" width="252" height="5" rx="2.5" fill="#1a3f72" opacity="0.12"/>
             <rect x="230" y="140" width="36" height="5" rx="2.5" fill="#1a3f72" opacity="0.22"/>
             <rect x="286" y="140" width="36" height="5" rx="2.5" fill="#1a3f72" opacity="0.22"/>
@@ -1991,7 +1991,7 @@ function LoginScreen({ onLogin }) {
             <path d="M307 66 Q360 48 392 78" fill="none" stroke="#3d7dd4" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round"/>
           </svg>
           {/* Wordmark row */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, marginTop: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, marginTop: 0 }}>
             <span style={{ fontSize: 36, fontWeight: 900, fontFamily: "'DM Sans', Arial Black, sans-serif", color: "#0f2447", letterSpacing: "-1px" }}>Truck</span>
             <span style={{ fontSize: 36, fontWeight: 900, fontFamily: "'DM Sans', Arial Black, sans-serif", color: "#3d7dd4", letterSpacing: "-1px" }}>route</span>
             <span style={{ fontSize: 14, fontWeight: 700, background: "#1e5dbf", color: "#e8f0fc", borderRadius: 10, padding: "3px 9px", marginLeft: 6, alignSelf: "center" }}>.in</span>
