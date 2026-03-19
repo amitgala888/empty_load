@@ -2005,7 +2005,7 @@ function LoginScreen({ onLogin }) {
             <rect x="456" y="240" width="34" height="20" rx="10" fill="#1e5dbf"/>
             <text x="473" y="254" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="11" fill="#e8f0fc">.in</text>
             {/* Tagline */}
-            <text x="340" y="300" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="13" fill="#3d7dd4" letterSpacing="0.8">Online platform to find an empty truck</text>
+            <text x="340" y="302" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="16" fill="#3d7dd4" letterSpacing="0.8">Online platform to find an empty truck</text>
           </svg>
         </div>
         <div style={{ display: "flex", background: "#e2e8f0", borderRadius: 12, padding: 4, marginBottom: 16 }}>
