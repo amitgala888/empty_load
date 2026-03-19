@@ -1964,11 +1964,49 @@ function LoginScreen({ onLogin }) {
       </div>
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 440 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 56, marginBottom: 10 }}>🚛</div>
-          <div style={{ fontSize: 36, fontWeight: 800, color: "#1e293b", fontFamily: "'DM Sans', sans-serif" }}>
-            Truck<span style={{ color: "#f59e0b" }}>Route</span>
-          </div>
-          <div style={{ fontSize: 12, color: "#64748b", letterSpacing: 3, textTransform: "uppercase", marginTop: 6, fontWeight: 500 }}>Empty Load Network</div>
+          <svg width="260" height="160" viewBox="0 0 680 350" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block" }}>
+            {/* Road dashes */}
+            <rect x="214" y="196" width="252" height="6" rx="3" fill="#1a3f72" opacity="0.12"/>
+            <rect x="230" y="196" width="36" height="6" rx="3" fill="#1a3f72" opacity="0.22"/>
+            <rect x="286" y="196" width="36" height="6" rx="3" fill="#1a3f72" opacity="0.22"/>
+            <rect x="342" y="196" width="36" height="6" rx="3" fill="#1a3f72" opacity="0.22"/>
+            <rect x="398" y="196" width="36" height="6" rx="3" fill="#1a3f72" opacity="0.22"/>
+            {/* Truck cargo body */}
+            <rect x="218" y="130" width="180" height="64" rx="8" fill="#1a3f72"/>
+            {/* Cab */}
+            <path d="M398 145 L398 194 L454 194 L454 163 Q454 152 446 147 L420 135 Q414 132 408 132 L402 132 Q398 132 398 136 Z" fill="#1d4d8a"/>
+            {/* Windshield */}
+            <path d="M404 142 L404 162 L448 162 L448 165 Q448 155 441 150 L420 140 Q416 138 411 138 L407 138 Q404 138 404 142 Z" fill="#a8c8f0" opacity="0.7"/>
+            {/* Cab stripe */}
+            <rect x="398" y="174" width="56" height="4" rx="2" fill="#2a69c8" opacity="0.5"/>
+            {/* Door lines */}
+            <line x1="308" y1="134" x2="308" y2="190" stroke="#2a5fa0" strokeWidth="1.5"/>
+            <line x1="354" y1="134" x2="354" y2="190" stroke="#2a5fa0" strokeWidth="1.5"/>
+            {/* Undercarriage */}
+            <rect x="218" y="191" width="236" height="5" rx="2.5" fill="#153264"/>
+            {/* Wheels */}
+            {[[434,200],[266,200],[310,200]].map(([cx,cy],i) => (
+              <g key={i}>
+                <circle cx={cx} cy={cy} r="16" fill="#0f2447"/>
+                <circle cx={cx} cy={cy} r="9"  fill="#1e3a6e"/>
+                <circle cx={cx} cy={cy} r="4"  fill="#a8c8f0"/>
+              </g>
+            ))}
+            {/* Pin */}
+            <circle cx="295" cy="118" r="12" fill="#e8f0fc" stroke="#1a3f72" strokeWidth="2"/>
+            <circle cx="295" cy="116" r="5"  fill="#1a3f72"/>
+            <path d="M295 123 L290 132 L295 128 L300 132 Z" fill="#1a3f72"/>
+            {/* Route arc */}
+            <path d="M307 118 Q360 100 392 130" fill="none" stroke="#3d7dd4" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round"/>
+            {/* Wordmark */}
+            <text x="222" y="262" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="40" fill="#0f2447" letterSpacing="-1">Truck</text>
+            <text x="342" y="262" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="40" fill="#3d7dd4" letterSpacing="-1">route</text>
+            {/* .in badge */}
+            <rect x="456" y="240" width="34" height="20" rx="10" fill="#1e5dbf"/>
+            <text x="473" y="254" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="11" fill="#e8f0fc">.in</text>
+            {/* Tagline */}
+            <text x="340" y="300" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="13" fill="#3d7dd4" letterSpacing="0.8">Online platform to find an empty truck</text>
+          </svg>
         </div>
         <div style={{ display: "flex", background: "#e2e8f0", borderRadius: 12, padding: 4, marginBottom: 16 }}>
           {["trucker", "admin"].map(t => (
