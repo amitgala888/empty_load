@@ -1965,7 +1965,7 @@ function LoginScreen({ onLogin }) {
       <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 440 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           {/* Truck icon SVG */}
-          <svg width="380" height="220" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", margin: "0 auto", marginBottom: -18 }}>
+          <svg width="440" height="260" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style={{ display: "block", margin: "0 auto", marginBottom: -50 }}>
             <rect x="214" y="140" width="252" height="5" rx="2.5" fill="#1a3f72" opacity="0.12"/>
             <rect x="230" y="140" width="36" height="5" rx="2.5" fill="#1a3f72" opacity="0.22"/>
             <rect x="286" y="140" width="36" height="5" rx="2.5" fill="#1a3f72" opacity="0.22"/>
