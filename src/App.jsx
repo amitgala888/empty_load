@@ -1999,11 +1999,12 @@ function LoginScreen({ onLogin }) {
             {/* Route arc */}
             <path d="M307 118 Q360 100 392 130" fill="none" stroke="#3d7dd4" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round"/>
             {/* Wordmark */}
-            <text x="222" y="262" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="40" fill="#0f2447" letterSpacing="-1">Truck</text>
-            <text x="342" y="262" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="40" fill="#3d7dd4" letterSpacing="-1">route</text>
+            <text y="262" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="40" letterSpacing="-1">
+              <tspan x="222" fill="#0f2447">Truck</tspan><tspan fill="#3d7dd4">route</tspan>
+            </text>
             {/* .in badge */}
-            <rect x="456" y="240" width="34" height="20" rx="10" fill="#1e5dbf"/>
-            <text x="473" y="254" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="11" fill="#e8f0fc">.in</text>
+            <rect x="444" y="237" width="44" height="26" rx="13" fill="#1e5dbf"/>
+            <text x="466" y="255" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="15" fill="#e8f0fc">.in</text>
             {/* Tagline */}
             <text x="340" y="302" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="16" fill="#3d7dd4" letterSpacing="0.8">Online platform to find an empty truck</text>
           </svg>
@@ -2809,11 +2810,12 @@ export default function App() {
             {/* Route arc */}
             <path d="M53 10 Q72 2 82 18" fill="none" stroke="#3d7dd4" strokeWidth="1.5" strokeDasharray="3 3" strokeLinecap="round"/>
             {/* Wordmark */}
-            <text x="132" y="56" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="36" fill="#0f2447" letterSpacing="-0.5">Truck</text>
-            <text x="268" y="56" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="36" fill="#3d7dd4" letterSpacing="-0.5">route</text>
-            {/* .in badge */}
-            <rect x="384" y="36" width="28" height="16" rx="8" fill="#1e5dbf"/>
-            <text x="398" y="48" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="9" fill="#e8f0fc">.in</text>
+            <text y="56" fontFamily="'DM Sans', Arial Black, sans-serif" fontWeight="900" fontSize="36" letterSpacing="-0.5">
+              <tspan fill="#0f2447">Truck</tspan><tspan fill="#3d7dd4">route</tspan>
+            </text>
+            {/* .in badge — inline after wordmark */}
+            <rect x="332" y="33" width="38" height="22" rx="11" fill="#1e5dbf"/>
+            <text x="351" y="49" textAnchor="middle" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="700" fontSize="13" fill="#e8f0fc">.in</text>
             {/* Tagline */}
             <text x="132" y="76" fontFamily="'DM Sans', Arial, sans-serif" fontWeight="600" fontSize="11" fill="#3d7dd4" letterSpacing="0.3">Online platform to find an empty truck</text>
           </svg>
