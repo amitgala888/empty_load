@@ -1823,6 +1823,71 @@ function withTimeout(promise, ms = 8000) {
 }
 
 // --- Auth Screen --------------------------------------------------------------
+function PasswordResetScreen({ onDone }) {
+  const [newPw, setNewPw]       = useState("");
+  const [confirm, setConfirm]   = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
+  const [success, setSuccess]   = useState(false);
+
+  const inputStyle = {
+    width: "100%", padding: "13px 16px", background: "#ffffff",
+    color: "#1e293b", border: "1.5px solid #e2e8f0", borderRadius: 10,
+    fontSize: 15, fontFamily: "'DM Sans', sans-serif", outline: "none",
+    boxSizing: "border-box", marginBottom: 14,
+  };
+
+  const handleReset = async () => {
+    setError("");
+    if (!newPw || !confirm) { setError("Please fill in both fields."); return; }
+    if (newPw.length < 6)   { setError("Password must be at least 6 characters."); return; }
+    if (newPw !== confirm)  { setError("Passwords do not match."); return; }
+    setLoading(true);
+    const { error: err } = await supabase.auth.updateUser({ password: newPw });
+    setLoading(false);
+    if (err) { setError(err.message); return; }
+    setSuccess(true);
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #f0f7ff 0%, #fef9f0 50%, #f0fff4 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif", padding: 20 }}>
+      <div style={{ width: "100%", maxWidth: 420, background: "#ffffff", borderRadius: 20, padding: "40px 36px", boxShadow: "0 20px 60px #00000015", border: "1.5px solid #e2e8f0" }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ fontSize: 48, marginBottom: 10 }}>🔐</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: "#1e293b" }}>Reset Your Password</div>
+          <div style={{ fontSize: 14, color: "#64748b", marginTop: 6 }}>Enter your new password below</div>
+        </div>
+
+        {success ? (
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#16a34a", marginBottom: 8 }}>Password updated!</div>
+            <div style={{ fontSize: 14, color: "#64748b", marginBottom: 24 }}>Your password has been changed successfully.</div>
+            <button onClick={onDone} style={{ width: "100%", padding: "13px", background: "#f59e0b", color: "#ffffff", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+              Go to Login →
+            </button>
+          </div>
+        ) : (
+          <>
+            <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>New Password</label>
+            <input style={inputStyle} type="password" placeholder="Min 6 characters" value={newPw} onChange={e => setNewPw(e.target.value)} />
+
+            <label style={{ display: "block", fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#f59e0b", textTransform: "uppercase", marginBottom: 6 }}>Confirm Password</label>
+            <input style={inputStyle} type="password" placeholder="Re-enter new password" value={confirm} onChange={e => setConfirm(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleReset()} />
+
+            {error && <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, padding: "10px 14px", fontSize: 13, color: "#dc2626", marginBottom: 14 }}>{error}</div>}
+
+            <button onClick={handleReset} disabled={loading} style={{ width: "100%", padding: "13px", background: "#f59e0b", color: "#ffffff", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 15, cursor: loading ? "not-allowed" : "pointer", fontFamily: "'DM Sans', sans-serif", opacity: loading ? 0.7 : 1 }}>
+              {loading ? "Updating..." : "Update Password →"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function LoginScreen({ onLogin }) {
   const [authType, setAuthType] = useState("trucker"); // trucker | admin
   const [mode, setMode]         = useState("login");   // login | signup
@@ -2484,6 +2549,7 @@ function expiryLabel(load) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true); // true until session checked
+  const [passwordReset, setPasswordReset] = useState(false); // true when recovery link clicked
   const [activeTab, setActiveTab] = useState("post");
   const [loads, setLoads] = useState([]);
   const [loadsLoading, setLoadsLoading] = useState(true);
@@ -2537,6 +2603,11 @@ export default function App() {
 
     // Listen for auth changes across tabs
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setPasswordReset(true);
+        setUser(null);
+        return;
+      }
       if (event === "SIGNED_OUT") {
         setUser(null);
       } else if (event === "SIGNED_IN" && session?.user) {
@@ -2682,6 +2753,8 @@ export default function App() {
       <div style={{ fontSize: 13, color: "#94a3b8", letterSpacing: 2, textTransform: "uppercase" }}>Loading...</div>
     </div>
   );
+
+  if (passwordReset) return <PasswordResetScreen onDone={() => { setPasswordReset(false); supabase.auth.signOut(); }} />;
 
   if (!user) return <LoginScreen onLogin={setUser} />;
 
