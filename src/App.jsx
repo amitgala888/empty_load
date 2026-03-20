@@ -450,6 +450,25 @@ const ROUTE_MAP = {
   "Perambalur": { lat: 11.232, lng: 78.881, type: "minor" },
   "Kallakurichi": { lat: 11.737, lng: 78.958, type: "minor" },
 
+  // Goa
+  "Panaji": { lat: 15.499, lng: 73.824, type: "major" },
+  "Margao": { lat: 15.274, lng: 73.958, type: "major" },
+  "Vasco da Gama": { lat: 15.398, lng: 73.811, type: "major" },
+  "Mapusa": { lat: 15.592, lng: 73.810, type: "major" },
+  "Ponda": { lat: 15.403, lng: 74.002, type: "minor" },
+  "Bicholim": { lat: 15.594, lng: 73.953, type: "minor" },
+  "Curchorem": { lat: 15.257, lng: 74.108, type: "minor" },
+  "Calangute": { lat: 15.544, lng: 73.752, type: "minor" },
+  "Anjuna": { lat: 15.573, lng: 73.742, type: "minor" },
+  "Colva": { lat: 15.278, lng: 73.921, type: "minor" },
+  "Candolim": { lat: 15.517, lng: 73.762, type: "minor" },
+  "Pernem": { lat: 15.723, lng: 73.797, type: "minor" },
+  "Quepem": { lat: 15.212, lng: 74.074, type: "minor" },
+  "Canacona": { lat: 14.993, lng: 74.030, type: "minor" },
+  "Sanguem": { lat: 15.232, lng: 74.148, type: "minor" },
+  "Old Goa": { lat: 15.504, lng: 73.912, type: "minor" },
+  "Valpoi": { lat: 15.532, lng: 74.136, type: "minor" },
+
   // Karnataka
   "Bangalore": { lat: 12.971, lng: 77.594, type: "major" },
   "Mysore": { lat: 12.295, lng: 76.644, type: "major" },
@@ -578,7 +597,7 @@ const ROUTE_MAP = {
   "Ambikapur": { lat: 23.119, lng: 83.196, type: "minor" },
   "Mahasamund": { lat: 21.106, lng: 82.099, type: "minor" },
 
-  // North East
+  // Assam (expanded)
   "Guwahati": { lat: 26.144, lng: 91.736, type: "major" },
   "Dibrugarh": { lat: 27.481, lng: 94.912, type: "major" },
   "Silchar": { lat: 24.829, lng: 92.798, type: "major" },
@@ -588,15 +607,112 @@ const ROUTE_MAP = {
   "Bongaigaon": { lat: 26.479, lng: 90.557, type: "minor" },
   "Dhubri": { lat: 26.019, lng: 89.980, type: "minor" },
   "Kokrajhar": { lat: 26.400, lng: 90.270, type: "minor" },
+  "Tinsukia": { lat: 27.490, lng: 95.360, type: "minor" },
+  "Sivasagar": { lat: 26.983, lng: 94.637, type: "minor" },
+  "Barpeta": { lat: 26.322, lng: 91.005, type: "minor" },
+  "Karimganj": { lat: 24.865, lng: 92.355, type: "minor" },
+  "Dhemaji": { lat: 27.478, lng: 94.562, type: "minor" },
+  "Goalpara": { lat: 26.168, lng: 90.625, type: "minor" },
+  "Diphu": { lat: 25.840, lng: 93.433, type: "minor" },
+  "North Lakhimpur": { lat: 27.234, lng: 94.103, type: "minor" },
 
-  // J&K / Himachal / Uttarakhand
+  // Manipur
+  "Imphal": { lat: 24.817, lng: 93.944, type: "major" },
+  "Churachandpur": { lat: 24.333, lng: 93.683, type: "minor" },
+  "Bishnupur": { lat: 24.621, lng: 93.774, type: "minor" },
+  "Thoubal": { lat: 24.636, lng: 93.994, type: "minor" },
+  "Senapati": { lat: 25.267, lng: 94.017, type: "minor" },
+  "Ukhrul": { lat: 25.102, lng: 94.362, type: "minor" },
+
+  // Meghalaya
+  "Shillong": { lat: 25.578, lng: 91.893, type: "major" },
+  "Tura": { lat: 25.516, lng: 90.213, type: "minor" },
+  "Jowai": { lat: 25.450, lng: 92.200, type: "minor" },
+  "Nongstoin": { lat: 25.517, lng: 91.267, type: "minor" },
+  "Williamnagar": { lat: 25.500, lng: 90.617, type: "minor" },
+  "Baghmara": { lat: 25.198, lng: 90.629, type: "minor" },
+
+  // Mizoram
+  "Aizawl": { lat: 23.727, lng: 92.718, type: "major" },
+  "Lunglei": { lat: 22.883, lng: 92.733, type: "minor" },
+  "Champhai": { lat: 23.458, lng: 93.325, type: "minor" },
+  "Serchhip": { lat: 23.300, lng: 92.850, type: "minor" },
+  "Kolasib": { lat: 24.228, lng: 92.680, type: "minor" },
+  "Lawngtlai": { lat: 22.532, lng: 92.898, type: "minor" },
+
+  // Nagaland
+  "Kohima": { lat: 25.674, lng: 94.110, type: "major" },
+  "Dimapur": { lat: 25.904, lng: 93.727, type: "major" },
+  "Mokokchung": { lat: 26.326, lng: 94.521, type: "minor" },
+  "Wokha": { lat: 26.097, lng: 94.265, type: "minor" },
+  "Tuensang": { lat: 26.272, lng: 94.824, type: "minor" },
+  "Mon": { lat: 26.726, lng: 95.005, type: "minor" },
+  "Phek": { lat: 25.659, lng: 94.471, type: "minor" },
+
+  // Sikkim
+  "Gangtok": { lat: 27.329, lng: 88.612, type: "major" },
+  "Namchi": { lat: 27.167, lng: 88.367, type: "minor" },
+  "Gyalshing": { lat: 27.283, lng: 88.267, type: "minor" },
+  "Mangan": { lat: 27.508, lng: 88.533, type: "minor" },
+  "Rangpo": { lat: 27.176, lng: 88.533, type: "minor" },
+
+  // Tripura
+  "Agartala": { lat: 23.831, lng: 91.286, type: "major" },
+  "Udaipur": { lat: 23.533, lng: 91.483, type: "minor" },
+  "Dharmanagar": { lat: 24.379, lng: 92.163, type: "minor" },
+  "Ambassa": { lat: 23.927, lng: 91.863, type: "minor" },
+  "Belonia": { lat: 23.252, lng: 91.454, type: "minor" },
+  "Sabroom": { lat: 23.007, lng: 91.659, type: "minor" },
+  "Kailashahar": { lat: 24.332, lng: 92.007, type: "minor" },
+
+  // Arunachal Pradesh
+  "Itanagar": { lat: 27.085, lng: 93.606, type: "major" },
+  "Naharlagun": { lat: 27.104, lng: 93.694, type: "minor" },
+  "Pasighat": { lat: 28.066, lng: 95.325, type: "minor" },
+  "Tawang": { lat: 27.586, lng: 91.859, type: "minor" },
+  "Bomdila": { lat: 27.265, lng: 92.424, type: "minor" },
+  "Ziro": { lat: 27.548, lng: 93.829, type: "minor" },
+  "Along": { lat: 28.167, lng: 94.800, type: "minor" },
+  "Tezu": { lat: 27.917, lng: 96.167, type: "minor" },
+
+  // J&K (expanded)
   "Srinagar": { lat: 34.083, lng: 74.797, type: "major" },
   "Jammu": { lat: 32.726, lng: 74.857, type: "major" },
+  "Anantnag": { lat: 33.731, lng: 75.153, type: "minor" },
+  "Baramulla": { lat: 34.198, lng: 74.343, type: "minor" },
+  "Sopore": { lat: 34.300, lng: 74.467, type: "minor" },
+  "Udhampur": { lat: 32.916, lng: 75.141, type: "minor" },
+  "Kathua": { lat: 32.382, lng: 75.517, type: "minor" },
+  "Poonch": { lat: 33.772, lng: 74.097, type: "minor" },
+  "Rajouri": { lat: 33.377, lng: 74.310, type: "minor" },
+  "Pulwama": { lat: 33.875, lng: 74.898, type: "minor" },
+  "Kupwara": { lat: 34.521, lng: 74.261, type: "minor" },
+  "Kulgam": { lat: 33.644, lng: 75.019, type: "minor" },
+
+  // Ladakh (UT)
+  "Leh": { lat: 34.166, lng: 77.584, type: "major" },
+  "Kargil": { lat: 34.558, lng: 76.131, type: "minor" },
+  "Nubra": { lat: 34.627, lng: 77.553, type: "minor" },
+  "Zanskar": { lat: 33.497, lng: 76.847, type: "minor" },
+
+  // Himachal Pradesh (expanded)
   "Shimla": { lat: 31.104, lng: 77.167, type: "major" },
   "Manali": { lat: 32.241, lng: 77.189, type: "minor" },
   "Dharamsala": { lat: 32.220, lng: 76.319, type: "minor" },
   "Mandi": { lat: 31.709, lng: 76.932, type: "minor" },
   "Solan": { lat: 30.909, lng: 77.096, type: "minor" },
+  "Kullu": { lat: 31.958, lng: 77.110, type: "minor" },
+  "Una": { lat: 31.468, lng: 76.270, type: "minor" },
+  "Hamirpur": { lat: 31.685, lng: 76.521, type: "minor" },
+  "Kangra": { lat: 32.100, lng: 76.267, type: "minor" },
+  "Chamba": { lat: 32.554, lng: 76.126, type: "minor" },
+  "Bilaspur": { lat: 31.340, lng: 76.757, type: "minor" },
+  "Nahan": { lat: 30.560, lng: 77.295, type: "minor" },
+  "Palampur": { lat: 32.109, lng: 76.534, type: "minor" },
+  "Baddi": { lat: 30.958, lng: 76.793, type: "minor" },
+  "Sundernagar": { lat: 31.530, lng: 76.900, type: "minor" },
+
+  // Uttarakhand
   "Dehradun": { lat: 30.316, lng: 78.032, type: "major" },
   "Haridwar": { lat: 29.946, lng: 78.161, type: "major" },
   "Rishikesh": { lat: 30.087, lng: 78.269, type: "minor" },
@@ -609,6 +725,30 @@ const ROUTE_MAP = {
   "Almora": { lat: 29.597, lng: 79.659, type: "minor" },
   "Pithoragarh": { lat: 29.582, lng: 80.217, type: "minor" },
   "Uttarkashi": { lat: 30.726, lng: 78.442, type: "minor" },
+  "Roorkee": { lat: 29.868, lng: 77.888, type: "minor" },
+  "Ramnagar": { lat: 29.394, lng: 79.127, type: "minor" },
+  "Tehri": { lat: 30.378, lng: 78.480, type: "minor" },
+  "Chamoli": { lat: 30.408, lng: 79.321, type: "minor" },
+
+  // Dadra & Nagar Haveli and Daman & Diu (UT)
+  "Daman": { lat: 20.397, lng: 72.832, type: "minor" },
+  "Diu": { lat: 20.714, lng: 70.987, type: "minor" },
+  "Silvassa": { lat: 20.274, lng: 73.015, type: "minor" },
+
+  // Andaman & Nicobar Islands (UT)
+  "Port Blair": { lat: 11.662, lng: 92.746, type: "major" },
+  "Diglipur": { lat: 13.270, lng: 92.975, type: "minor" },
+  "Car Nicobar": { lat: 9.153, lng: 92.821, type: "minor" },
+
+  // Lakshadweep (UT)
+  "Kavaratti": { lat: 10.563, lng: 72.637, type: "major" },
+  "Agatti": { lat: 10.862, lng: 72.196, type: "minor" },
+  "Minicoy": { lat: 8.300, lng: 73.033, type: "minor" },
+
+  // Puducherry (UT - expanded)
+  "Karaikal": { lat: 10.924, lng: 79.836, type: "minor" },
+  "Mahe": { lat: 11.700, lng: 75.533, type: "minor" },
+  "Yanam": { lat: 16.732, lng: 82.213, type: "minor" },
 };
 
 const CITY_NAMES = Object.keys(ROUTE_MAP);
